@@ -1,131 +1,202 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
-type Match = {
-  team1: string[];
-  team2: string[];
-  goalsTeam1: number[];
-  goalsTeam2: number[];
-};
+interface Player {
+  name: string;
+  goals: number;
+}
 
-type MatchesData = {
-  [key: number]: Match;
-};
-
-// Mock data using players from table page
-const MOCK_MATCHES: MatchesData = {
-  1: {
-    team1: ["Carlos Vela", "Leo Suárez", "Diego Torres", "Juan Pérez", "Roberto Silva", "Miguel Ángel", "Andrés López", "Fernando Ruiz"],
-    team2: ["Pablo Martín", "Gabriel Soto", "Diego Torres", "Juan Pérez", "Roberto Silva", "Miguel Ángel", "Andrés López", "Fernando Ruiz"],
-    goalsTeam1: [2, 1, 0, 0, 0, 0, 0, 0],
-    goalsTeam2: [0, 0, 1, 0, 0, 0, 0, 0]
-  },
-  2: {
-    team1: ["Gabriel Soto", "Pablo Martín", "Fernando Ruiz", "Andrés López", "Miguel Ángel", "Roberto Silva", "Juan Pérez", "Diego Torres"],
-    team2: ["Carlos Vela", "Leo Suárez", "Diego Torres", "Juan Pérez", "Roberto Silva", "Miguel Ángel", "Andrés López", "Fernando Ruiz"],
-    goalsTeam1: [0, 0, 0, 1, 0, 0, 0, 0],
-    goalsTeam2: [3, 0, 0, 0, 0, 0, 0, 0]
-  },
-  3: {
-    team1: ["Leo Suárez", "Carlos Vela", "Roberto Silva", "Miguel Ángel", "Andrés López", "Fernando Ruiz", "Pablo Martín", "Gabriel Soto"],
-    team2: ["Diego Torres", "Juan Pérez", "Roberto Silva", "Miguel Ángel", "Andrés López", "Fernando Ruiz", "Pablo Martín", "Gabriel Soto"],
-    goalsTeam1: [2, 2, 0, 0, 0, 0, 0, 0],
-    goalsTeam2: [1, 1, 0, 0, 0, 0, 0, 0]
-  }
-};
+interface Match {
+  _id: string;
+  matchNumber: number;
+  oscuras: Player[];
+  claras: Player[];
+  date: string;
+}
 
 export default function Matches() {
-  const [matchNumber, setMatchNumber] = useState('');
-  const selectedMatch = MOCK_MATCHES[Number(matchNumber)];
+  const [matchNumber, setMatchNumber] = useState('1');
+  const [match, setMatch] = useState<Match | null>(null);
+  const [maxMatchNumber, setMaxMatchNumber] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const calculateTotalGoals = (goals: number[]) => goals.reduce((sum, goal) => sum + goal, 0);
+  // Fetch max match number on component mount
+  useEffect(() => {
+    const fetchMaxMatchNumber = async () => {
+      try {
+        const response = await fetch('/api/matches/latest');
+        const data = await response.json();
+        if (response.ok && data.maxMatchNumber) {
+          setMaxMatchNumber(data.maxMatchNumber);
+        }
+      } catch (error) {
+        console.error('Error fetching max match number:', error);
+      }
+    };
+
+    fetchMaxMatchNumber();
+  }, []);
+
+  const fetchMatch = async (number: string) => {
+    setIsLoading(true);
+    setError('');
+    setMatch(null);
+
+    try {
+      const response = await fetch(`/api/matches/${number}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al buscar el partido');
+      }
+
+      if (data.match) {
+        setMatch(data.match);
+      } else {
+        setError('Partido no encontrado');
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Error al buscar el partido');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchMatch(matchNumber);
+  };
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
-      <div className="mb-8">
-        <div className="max-w-md mx-auto">
-          <label htmlFor="matchNumber" className="block text-lg font-semibold text-gray-700 mb-2">
-            Buscar Partido
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg 
-                className="h-5 w-5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path 
-                  fillRule="evenodd" 
-                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" 
-                  clipRule="evenodd" 
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center space-y-4 mb-8">
+            <label className="text-lg font-semibold text-gray-700">
+              Seleccionar Partido
+            </label>
+            <div className="flex items-center space-x-4">
+              <div className="relative flex items-center">
+                <input
+                  type="number"
+                  min="1"
+                  max={maxMatchNumber}
+                  value={matchNumber}
+                  onChange={(e) => setMatchNumber(e.target.value)}
+                  className="w-24 px-4 py-3 text-center text-lg font-semibold text-gray-700 
+                           border-2 border-gray-300 rounded-lg 
+                           focus:ring-2 focus:ring-green-500 focus:border-transparent
+                           transition-all duration-200"
                 />
-              </svg>
+                <span className="ml-2 text-lg font-semibold text-gray-600">
+                  de {maxMatchNumber}
+                </span>
+              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 
+                         text-white font-semibold rounded-lg
+                         hover:from-green-600 hover:to-green-700
+                         transform hover:scale-105 transition-all duration-200
+                         shadow-md hover:shadow-lg
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         flex items-center space-x-2"
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Buscando...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span>Buscar</span>
+                  </>
+                )}
+              </button>
             </div>
-            <input
-              id="matchNumber"
-              type="number"
-              min="1"
-              max="3"
-              value={matchNumber}
-              onChange={(e) => setMatchNumber(e.target.value)}
-              placeholder="Ingresa el número de partido (1-3)"
-              className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-gray-800 placeholder-gray-400 transition-all duration-200"
-            />
-          </div>
-          <p className="mt-2 text-sm text-gray-500">
-            Ingresa un número de partido (1-3) para ver los detalles
-          </p>
+          </form>
+
+          {error && (
+            <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">
+              {error}
+            </div>
+          )}
+
+          {match && (
+            <>
+              <div className="overflow-x-auto mb-6">
+                <table className="min-w-full">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center">
+                        Goles
+                      </th>
+                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-red-300">
+                        Oscuras
+                      </th>
+                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-blue-300">
+                        Claras
+                      </th>
+                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center">
+                        Goles
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: Math.max(match.oscuras.length, match.claras.length) }).map((_, index) => (
+                      <tr key={index} className="border-t">
+                        <td className="px-4 py-3 text-center text-black">
+                          {match.oscuras[index]?.goals || 0}
+                        </td>
+                        <td className="px-4 py-3 text-center bg-red-300">
+                          {match.oscuras[index]?.name || ''}
+                        </td>
+                        <td className="px-4 py-3 text-center bg-blue-300">
+                          {match.claras[index]?.name || ''}
+                        </td>
+                        <td className="px-4 py-3 text-center text-black">
+                          {match.claras[index]?.goals || 0}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="overflow-x-auto mb-6">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2 border-gray-300">
+                      <th colSpan={2} className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-lg text-center">
+                        Resultado
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-t hover:bg-gray-50">
+                      <td className="px-4 py-3 text-center bg-red-300 text-xl font-semibold whitespace-nowrap w-1/2">
+                        {match.oscuras.reduce((sum, player) => sum + (player.goals || 0), 0)}
+                      </td>
+                      <td className="px-4 py-3 text-center bg-blue-300 text-xl font-semibold whitespace-nowrap w-1/2">
+                        {match.claras.reduce((sum, player) => sum + (player.goals || 0), 0)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </div>
       </div>
-
-      {selectedMatch && (
-        <>
-          <div className="overflow-x-auto bg-white rounded-lg shadow">
-            <table className="min-w-full">
-              <thead>
-                <tr className="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2 border-gray-300">
-                  <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Goles</th>
-                  <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Equipo 1</th>
-                  <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Equipo 2</th>
-                  <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Goles</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedMatch.team1.map((player, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="px-4 py-2 text-center text-gray-800 font-semibold">
-                      {selectedMatch.goalsTeam1[index] || '-'}
-                    </td>
-                    <td className="px-4 py-2 text-gray-800 bg-red-400">{player}</td>
-                    <td className="px-4 py-2 text-gray-800 bg-blue-300">{selectedMatch.team2[index]}</td>
-                    <td className="px-4 py-2 text-center text-gray-800 font-semibold">
-                      {selectedMatch.goalsTeam2[index] || '-'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-6 overflow-x-auto bg-white rounded-lg shadow">
-            <table className="min-w-full">
-              <thead>
-                <tr className="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2 border-gray-300">
-                  <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Resultado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t">
-                  <td className="px-4 py-2 text-center font-bold text-xl text-black">
-                    {calculateTotalGoals(selectedMatch.goalsTeam1)} - {calculateTotalGoals(selectedMatch.goalsTeam2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
     </div>
   );
 } 

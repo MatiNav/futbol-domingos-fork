@@ -1,29 +1,42 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const MOCK_PLAYERS = [
-  "Carlos Vela",
-  "Leo Suárez",
-  "Diego Torres",
-  "Juan Pérez",
-  "Roberto Silva",
-  "Miguel Ángel",
-  "Andrés López",
-  "Fernando Ruiz",
-  "Pablo Martín",
-  "Gabriel Soto"
-];
+interface Player {
+  _id: string;
+  name: string;
+  image: string;
+  wins: number;
+  draws: number;
+  losses: number;
+  goals: number;
+}
 
 export default function ArmarEquipos() {
   const [team1, setTeam1] = useState<string[]>([]);
   const [team2, setTeam2] = useState<string[]>([]);
   const [searchTerms, setSearchTerms] = useState<{ [key: number]: { team1: string; team2: string } }>(
-    Array(8).fill(null).reduce((acc, _, index) => ({
-      ...acc,
-      [index]: { team1: '', team2: '' }
-    }), {})
+    Array(8).fill(null).reduce((acc, _, index) => ({ ...acc, [index]: { team1: '', team2: '' } }), {})
   );
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch('/api/players');
+        const data = await response.json();
+        if (response.ok) {
+          setPlayers(data);
+        }
+      } catch (error) {
+        console.error('Error fetching players:', error);
+      }
+    };
+
+    fetchPlayers();
+  }, []);
 
   const handlePlayerSelect = (player: string, team: 'team1' | 'team2', index: number) => {
     if (team === 'team1') {
@@ -58,25 +71,71 @@ export default function ArmarEquipos() {
   };
 
   const getFilteredPlayers = (searchTerm: string, index: number, team: 'team1' | 'team2') => {
-    const usedPlayers = [...team1, ...team2].filter(Boolean);
-    const currentTeamPlayer = team === 'team1' ? team1[index] : team2[index];
-    
-    return MOCK_PLAYERS.filter(player => 
-      player.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (!usedPlayers.includes(player) || player === currentTeamPlayer)
-    );
+    const otherTeam = team === 'team1' ? team2 : team1;
+    return players
+      .filter(player => 
+        player.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !team1.includes(player.name) &&
+        !team2.includes(player.name)
+      )
+      .map(player => player.name);
+  };
+
+  const handleSaveTeams = async () => {
+    if (team1.length === 0 || team2.length === 0) {
+      setMessage('Por favor, selecciona jugadores para ambos equipos');
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/matches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          oscuras: team1.map(player => ({ name: player, goals: 0 })),
+          claras: team2.map(player => ({ name: player, goals: 0 })),
+          date: new Date(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al guardar los equipos');
+      }
+
+      setMessage('Equipos guardados exitosamente');
+      setTeam1([]);
+      setTeam2([]);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Error al guardar los equipos');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Armar Equipos</h2>
+        {message && (
+          <div className={`p-4 rounded-lg mb-6 ${
+            message.includes('error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+          }`}>
+            {message}
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
               <tr className="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2 border-gray-300">
-                <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Equipo 1</th>
-                <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Equipo 2</th>
+                <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Oscuras</th>
+                <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">Claras</th>
               </tr>
             </thead>
             <tbody>
@@ -97,7 +156,7 @@ export default function ArmarEquipos() {
                           focus:border-red-300 focus:ring-2 focus:ring-red-300 
                           appearance-none cursor-pointer hover:bg-red-900 transition-colors pr-10
                           placeholder-red-300"
-                        placeholder="Buscar jugador..."
+                        placeholder="Jugador"
                       />
                       {(team1[index] || searchTerms[index].team1) && (
                         <button
@@ -143,7 +202,7 @@ export default function ArmarEquipos() {
                           focus:border-blue-500 focus:ring-2 focus:ring-blue-400 
                           appearance-none cursor-pointer hover:bg-blue-200 transition-colors pr-10
                           placeholder-blue-400"
-                        placeholder="Buscar jugador..."
+                        placeholder="Jugador"
                       />
                       {(team2[index] || searchTerms[index].team2) && (
                         <button
@@ -178,6 +237,38 @@ export default function ArmarEquipos() {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={handleSaveTeams}
+            disabled={isLoading}
+            className={`
+              px-6 py-3 rounded-lg text-white font-semibold
+              bg-gradient-to-r from-green-500 to-green-600
+              hover:from-green-600 hover:to-green-700
+              transform hover:scale-105 transition-all duration-200
+              shadow-lg hover:shadow-xl
+              disabled:opacity-50 disabled:cursor-not-allowed
+              flex items-center gap-2
+            `}
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Guardando...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Guardar Equipos</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

@@ -1,15 +1,43 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
 
 export default function AgregarJugador() {
   const [playerName, setPlayerName] = useState('');
   const [playerImage, setPlayerImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add player logic here
-    console.log('Player added:', { playerName, playerImage });
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/players', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playerName,
+          playerImage,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error creating player');
+      }
+
+      setMessage('Jugador agregado exitosamente');
+      setPlayerName('');
+      setPlayerImage('');
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Error creating player');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -18,6 +46,13 @@ export default function AgregarJugador() {
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Agregar Jugador
         </h2>
+        {message && (
+          <div className={`p-4 rounded-lg mb-6 ${
+            message.includes('error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+          }`}>
+            {message}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="playerName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -31,6 +66,7 @@ export default function AgregarJugador() {
               className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white text-gray-800 placeholder-gray-400"
               placeholder="Ingresa el nombre del jugador"
               required
+              disabled={isLoading}
             />
           </div>
           <div>
@@ -44,13 +80,17 @@ export default function AgregarJugador() {
               onChange={(e) => setPlayerImage(e.target.value)}
               className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white text-gray-800 placeholder-gray-400"
               placeholder="https://ejemplo.com/imagen.jpg"
+              disabled={isLoading}
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium"
+            disabled={isLoading}
+            className={`w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Agregar Jugador
+            {isLoading ? 'Agregando...' : 'Agregar Jugador'}
           </button>
         </form>
       </div>
