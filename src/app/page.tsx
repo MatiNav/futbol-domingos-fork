@@ -8,6 +8,25 @@ import PasswordModal from "./components/PasswordModal";
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleReset = async () => {
+    if (confirm('¿Estás seguro que quieres reiniciar todas las estadísticas de los jugadores?')) {
+      try {
+        const response = await fetch('/api/players/reset', {
+          method: 'POST',
+        });
+        
+        if (response.ok) {
+          alert('Estadísticas reiniciadas exitosamente');
+        } else {
+          alert('Error al reiniciar las estadísticas');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al reiniciar las estadísticas');
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-600 to-green-800">
       {/* Hero Section */}
@@ -116,6 +135,16 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={handleReset}
+          className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg
+                   hover:bg-red-600 transition-colors duration-200
+                   focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        >
+          Reiniciar Estadísticas
+        </button>
+      </div>
     </div>
   );
 }

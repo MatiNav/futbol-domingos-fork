@@ -80,6 +80,9 @@ export default async function TablePage() {
                       Jugador
                     </th>
                     <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
+                      J
+                    </th>
+                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
                       G
                     </th>
                     <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
@@ -124,6 +127,9 @@ export default async function TablePage() {
 
                           <div>{player.name}</div>
                         </div>
+                      </td>
+                      <td className="px-4 py-2 text-center whitespace-nowrap">
+                        {player.wins + player.draws + player.losses}
                       </td>
                       <td className="px-4 py-2 text-center whitespace-nowrap text-green-800">
                         {player.wins}
