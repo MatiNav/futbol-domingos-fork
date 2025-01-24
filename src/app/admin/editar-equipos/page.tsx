@@ -1,34 +1,19 @@
 "use client";
+import { DBMatch } from "@/app/constants/types/db-models/Match";
+import { DBPlayer } from "@/app/constants/types/db-models/Player";
+import { ObjectId } from "mongodb";
 import { useState, useEffect } from "react";
-
-interface Player {
-  name: string;
-  goals: number;
-}
-
-interface DBPlayer {
-  _id: string;
-  name: string;
-  image: string;
-}
-
-interface Match {
-  _id: string;
-  matchNumber: number;
-  oscuras: Player[];
-  claras: Player[];
-  date: string;
-}
 
 export default function EditarEquipos() {
   const [matchNumber, setMatchNumber] = useState("1");
-  const [match, setMatch] = useState<Match | null>(null);
+  const [match, setMatch] = useState<DBMatch | null>(null);
   const [maxMatchNumber, setMaxMatchNumber] = useState(1);
+  const [players, setPlayers] = useState<DBPlayer[]>([]);
+  const [playersMap, setPlayersMap] = useState<{ [key: string]: DBPlayer }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [availablePlayers, setAvailablePlayers] = useState<DBPlayer[]>([]);
 
   useEffect(() => {
     const fetchMaxMatchNumber = async () => {
@@ -48,7 +33,16 @@ export default function EditarEquipos() {
         const response = await fetch("/api/players");
         const data = await response.json();
         if (response.ok) {
-          setAvailablePlayers(data);
+          setPlayers(data.players);
+          setPlayersMap(
+            data.players.reduce(
+              (acc: { [key: string]: DBPlayer }, player: DBPlayer) => {
+                acc[player._id.toString()] = player;
+                return acc;
+              },
+              {} as { [key: string]: DBPlayer }
+            )
+          );
         }
       } catch (error) {
         console.error("Error fetching players:", error);
@@ -99,27 +93,32 @@ export default function EditarEquipos() {
   ) => {
     if (!match) return;
 
-    const updatedMatch = {
-      ...match,
-      [team]: match[team].map((player, i) =>
-        i === index ? { ...player, goals } : player
-      ),
-    };
+    setMatch((prevMatch) => {
+      if (prevMatch == null) return null;
 
-    setMatch(updatedMatch);
+      return {
+        ...prevMatch,
+        [team]: {
+          ...prevMatch[team],
+          players: prevMatch[team].players.map((player, i) =>
+            i === index ? { ...player, goals } : player
+          ),
+        },
+      };
+    });
   };
 
   const updatePlayer = (
     team: "oscuras" | "claras",
     index: number,
-    playerName: string
+    playerId: ObjectId
   ) => {
     if (!match) return;
 
     const updatedMatch = {
       ...match,
-      [team]: match[team].map((player, i) =>
-        i === index ? { name: playerName, goals: player.goals } : player
+      [team]: match[team].players.map((player, i) =>
+        i === index ? { _id: player._id, goals: player.goals } : player
       ),
     };
 
@@ -140,8 +139,8 @@ export default function EditarEquipos() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          oscuras: match.oscuras,
-          claras: match.claras,
+          oscuras: { team: "oscuras", players: match.oscuras.players },
+          claras: { team: "claras", players: match.claras.players },
         }),
       });
 
@@ -162,19 +161,19 @@ export default function EditarEquipos() {
   };
 
   const isPlayerAvailable = (
-    playerName: string,
+    playerId: ObjectId,
     team: "oscuras" | "claras",
     currentIndex: number
   ) => {
     if (!match) return false;
 
-    const isInOscuras = match.oscuras.some(
+    const isInOscuras = match.oscuras.players.some(
       (p, i) =>
-        p.name === playerName && i !== (team === "oscuras" ? currentIndex : -1)
+        p._id === playerId && i !== (team === "oscuras" ? currentIndex : -1)
     );
-    const isInClaras = match.claras.some(
+    const isInClaras = match.claras.players.some(
       (p, i) =>
-        p.name === playerName && i !== (team === "claras" ? currentIndex : -1)
+        p._id === playerId && i !== (team === "claras" ? currentIndex : -1)
     );
 
     return !isInOscuras && !isInClaras;
@@ -296,8 +295,8 @@ export default function EditarEquipos() {
                   <tbody>
                     {Array.from({
                       length: Math.max(
-                        match.oscuras.length,
-                        match.claras.length
+                        match.oscuras.players?.length || 0,
+                        match.claras.players?.length || 0
                       ),
                     }).map((_, index) => (
                       <tr key={index} className="border-t">
@@ -305,7 +304,7 @@ export default function EditarEquipos() {
                           <input
                             type="number"
                             min="0"
-                            value={match.oscuras[index]?.goals || 0}
+                            value={match.oscuras.players[index]?.goals || 0}
                             onChange={(e) =>
                               updatePlayerGoals(
                                 "oscuras",
@@ -318,25 +317,33 @@ export default function EditarEquipos() {
                         </td>
                         <td className="px-4 py-3 text-center bg-red-300">
                           <select
-                            value={match.oscuras[index]?.name || ""}
-                            onChange={(e) =>
-                              updatePlayer("oscuras", index, e.target.value)
+                            value={
+                              match.oscuras.players[index]?._id.toString() || ""
                             }
+                            onChange={(e) => {
+                              const playerId = players.find(
+                                (player) => player.name === e.target.value
+                              )?._id;
+                              if (playerId) {
+                                updatePlayer("oscuras", index, playerId);
+                              }
+                            }}
                             className="w-[115px] px-2 py-1 bg-transparent border border-red-400 rounded-lg"
                           >
                             <option value="">
-                              {match.oscuras[index]?.name ||
-                                "Seleccionar jugador"}
+                              {playersMap[
+                                match.oscuras.players[index]?._id.toString()
+                              ]?.name || "Seleccionar jugador"}
                             </option>
-                            {availablePlayers.map((player) => {
+                            {players.map((player) => {
                               const isAvailable = isPlayerAvailable(
-                                player.name,
+                                player._id,
                                 "oscuras",
                                 index
                               );
                               return (
                                 <option
-                                  key={player._id}
+                                  key={player._id.toString()}
                                   value={player.name}
                                   disabled={!isAvailable}
                                   className={`${
@@ -357,25 +364,33 @@ export default function EditarEquipos() {
                         </td>
                         <td className="px-4 py-3 text-center bg-blue-300">
                           <select
-                            value={match.claras[index]?.name || ""}
-                            onChange={(e) =>
-                              updatePlayer("claras", index, e.target.value)
+                            value={
+                              match.claras.players[index]?._id.toString() || ""
                             }
+                            onChange={(e) => {
+                              const playerId = players.find(
+                                (player) => player.name === e.target.value
+                              )?._id;
+                              if (playerId) {
+                                updatePlayer("claras", index, playerId);
+                              }
+                            }}
                             className="w-[115px] px-2 py-1 bg-transparent border border-blue-400 rounded-lg"
                           >
                             <option value="">
-                              {match.claras[index]?.name ||
-                                "Seleccionar jugador"}
+                              {playersMap[
+                                match.claras.players[index]?._id.toString()
+                              ]?.name || "Seleccionar jugador"}
                             </option>
-                            {availablePlayers.map((player) => {
+                            {players.map((player) => {
                               const isAvailable = isPlayerAvailable(
-                                player.name,
+                                player._id,
                                 "claras",
                                 index
                               );
                               return (
                                 <option
-                                  key={player._id}
+                                  key={player._id.toString()}
                                   value={player.name}
                                   disabled={!isAvailable}
                                   className={`${
@@ -398,7 +413,7 @@ export default function EditarEquipos() {
                           <input
                             type="number"
                             min="0"
-                            value={match.claras[index]?.goals || 0}
+                            value={match.claras.players[index]?.goals || 0}
                             onChange={(e) =>
                               updatePlayerGoals(
                                 "claras",
@@ -430,13 +445,13 @@ export default function EditarEquipos() {
                   <tbody>
                     <tr className="border-t hover:bg-gray-50">
                       <td className="px-4 py-3 text-center bg-red-300 text-xl font-semibold whitespace-nowrap w-1/2">
-                        {match.oscuras.reduce(
+                        {match.oscuras.players.reduce(
                           (sum, player) => sum + (player.goals || 0),
                           0
                         )}
                       </td>
                       <td className="px-4 py-3 text-center bg-blue-300 text-xl font-semibold whitespace-nowrap w-1/2">
-                        {match.claras.reduce(
+                        {match.claras.players.reduce(
                           (sum, player) => sum + (player.goals || 0),
                           0
                         )}

@@ -1,10 +1,6 @@
-import { NextResponse } from 'next/server';
-import clientPromise from '@/lib/mongodb';
-
-interface Player {
-  name: string;
-  goals: number;
-}
+import { NextResponse } from "next/server";
+import clientPromise from "@/lib/mongodb";
+import { MatchPlayer } from "@/app/constants/types/db-models/Match";
 
 export async function GET(
   request: Request,
@@ -15,29 +11,26 @@ export async function GET(
 
     if (isNaN(matchNumber)) {
       return NextResponse.json(
-        { error: 'Invalid match number' },
+        { error: "Invalid match number" },
         { status: 400 }
       );
     }
 
     const client = await clientPromise;
-    const db = client.db('futbol');
-    const collection = db.collection('matches');
+    const db = client.db("futbol");
+    const collection = db.collection("matches");
 
     const match = await collection.findOne({ matchNumber });
 
     if (!match) {
-      return NextResponse.json(
-        { error: 'Match not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Match not found" }, { status: 404 });
     }
 
     return NextResponse.json({ match });
   } catch (error) {
-    console.error('Error fetching match:', error);
+    console.error("Error fetching match:", error);
     return NextResponse.json(
-      { error: 'Error fetching match' },
+      { error: "Error fetching match" },
       { status: 500 }
     );
   }
@@ -53,87 +46,46 @@ export async function PUT(
 
     if (isNaN(matchNumber)) {
       return NextResponse.json(
-        { error: 'Invalid match number' },
+        { error: "Invalid match number" },
         { status: 400 }
       );
     }
 
     const client = await clientPromise;
-    const db = client.db('futbol');
-    const matchesCollection = db.collection('matches');
-    const playersCollection = db.collection('players');
+    const db = client.db("futbol");
+    const matchesCollection = db.collection("matches");
 
-    // Get the original match
-    const originalMatch = await matchesCollection.findOne({ matchNumber });
+    const result = getMatchResult(oscuras, claras);
 
-    if (!originalMatch) {
-      return NextResponse.json(
-        { error: 'Original match not found' },
-        { status: 404 }
-      );
-    }
-
-    // Calculate goals for original match
-    const originalOscurasGoals = originalMatch.oscuras.reduce((sum: number, player: Player) => sum + (player.goals || 0), 0);
-    const originalClarasGoals = originalMatch.claras.reduce((sum: number, player: Player) => sum + (player.goals || 0), 0);
-
-    // Calculate goals for new match state
-    const oscurasGoals = oscuras.reduce((sum: number, player: Player) => sum + (player.goals || 0), 0);
-    const clarasGoals = claras.reduce((sum: number, player: Player) => sum + (player.goals || 0), 0);
-
-    // First, remove old statistics
-    for (const player of [...originalMatch.oscuras, ...originalMatch.claras]) {
-      const isOriginalOscuras = originalMatch.oscuras.some((p: Player) => p.name === player.name);
-      const updateQuery = {
-        $inc: {
-          goals: -player.goals,
-          wins: originalOscurasGoals > originalClarasGoals ? (isOriginalOscuras ? -1 : 0) : (isOriginalOscuras ? 0 : -1),
-          losses: originalOscurasGoals < originalClarasGoals ? (isOriginalOscuras ? -1 : 0) : (isOriginalOscuras ? 0 : -1),
-          draws: originalOscurasGoals === originalClarasGoals ? -1 : 0
-        }
-      };
-
-      await playersCollection.updateOne(
-        { name: player.name },
-        updateQuery,
-        { upsert: true }
-      );
-    }
-
-    // Then, add new statistics
-    for (const player of [...oscuras, ...claras]) {
-      const isOscuras = oscuras.some((p: Player) => p.name === player.name);
-      const updateQuery = {
-        $inc: {
-          goals: player.goals,
-          wins: oscurasGoals > clarasGoals ? (isOscuras ? 1 : 0) : (isOscuras ? 0 : 1),
-          losses: oscurasGoals < clarasGoals ? (isOscuras ? 1 : 0) : (isOscuras ? 0 : 1),
-          draws: oscurasGoals === clarasGoals ? 1 : 0
-        }
-      };
-
-      await playersCollection.updateOne(
-        { name: player.name },
-        updateQuery,
-        { upsert: true }
-      );
-    }
-
-    // Update the match itself
     await matchesCollection.updateOne(
       { matchNumber },
-      { $set: { oscuras, claras } }
+      { $set: { oscuras, claras, winner: result } }
     );
 
-    return NextResponse.json({ 
-      message: 'Match and player statistics updated successfully' 
+    return NextResponse.json({
+      message: "Match and player statistics updated successfully",
     });
-
   } catch (error) {
-    console.error('Error updating match:', error);
+    console.error("Error updating match:", error);
     return NextResponse.json(
-      { error: 'Error updating match' },
+      { error: "Error updating match" },
       { status: 500 }
     );
   }
-} 
+}
+
+function getMatchResult(oscuras: Match, claras: Match) {
+  const oscurasGoals = oscuras.players.reduce(
+    (acc: number, player: MatchPlayer) => acc + player.goals,
+    0
+  );
+  const clarasGoals = claras.players.reduce(
+    (acc: number, player: MatchPlayer) => acc + player.goals,
+    0
+  );
+  return oscurasGoals > clarasGoals
+    ? "oscuras"
+    : oscurasGoals < clarasGoals
+      ? "claras"
+      : "draw";
+}

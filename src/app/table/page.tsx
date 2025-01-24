@@ -1,5 +1,13 @@
 import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
+import { DBPlayer } from "../constants/types/db-models/Player";
+import { DBMatch } from "../constants/types/db-models/Match";
+
+// Cosas para hacer:
+// - Arreglar la logica de cuando ponemos el resultado del partido que la tabla de los jugadores quede bien
+// - Buscar un diseño mas parecido a promiedos
+// - Cambiar la foto al lado del nombre del jugador por la foto del jugador o el logo del club que es hincha
+// - Agregar alguna opción para cuando ingresas elegir entre la tabla de los jueves y la tabla de los domingos
 
 interface Player {
   _id: string;
@@ -22,15 +30,59 @@ const DEFAULT_PLAYER_IMAGE_1 =
 const DEFAULT_PLAYER_IMAGE_2 =
   "https://img.lovepik.com/element/40127/4259.png_1200.png";
 
+// if a match has "winner" it counts for stats, if it hasn't it doesn't
+
 async function getPlayers(): Promise<PlayerWithStats[]> {
   const client = await clientPromise;
   const db = client.db("futbol");
-  const collection = db.collection("players");
+  const matchesCollection = db.collection("matches");
+  const playersCollection = db.collection("players");
 
-  const players = (await collection.find({}).toArray()) as unknown as Player[];
+  const dbMatches = await matchesCollection.find<DBMatch>({}).toArray();
+  const dbPlayers = await playersCollection.find<DBPlayer>({}).toArray();
+
+  //percentage will be calculated in the frontend
+  const playersForTable = dbPlayers.map((player) => ({
+    ...player,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goals: 0,
+  }));
+  if (!Array.isArray(dbMatches)) {
+    return [];
+  }
+
+  dbMatches.forEach(({ oscuras, claras, winner }) => {
+    [claras, oscuras].map(({ players, team }) => {
+      if (!Array.isArray(players)) {
+        return;
+      }
+      players.forEach((matchPlayer) => {
+        const playerData = playersForTable.find(
+          (playerForTable) =>
+            playerForTable._id.toString() === matchPlayer._id.toString()
+        );
+
+        if (!playerData) {
+          throw new Error("Player not found");
+        }
+
+        if (winner === team) {
+          playerData.wins += 1;
+        } else if (winner === "draw") {
+          playerData.draws += 1;
+        } else {
+          playerData.losses += 1;
+        }
+
+        playerData.goals += matchPlayer.goals;
+      });
+    });
+  });
 
   // Calculate stats and sort players
-  const playersWithStats = players.map((player) => {
+  const playersWithStats = playersForTable.map((player) => {
     const points = player.wins * 3 + player.draws;
     const totalGames = player.wins + player.draws + player.losses;
     const maxPoints = totalGames * 3;
@@ -50,10 +102,10 @@ async function getPlayers(): Promise<PlayerWithStats[]> {
     }
     return b.goals - a.goals;
   });
-
   // Add position
   return sortedPlayers.map((player, index) => ({
     ...player,
+    _id: player._id.toString(), // Convert ObjectId to string
     position: index + 1,
   }));
 }
@@ -62,10 +114,12 @@ export default async function TablePage() {
   const players = await getPlayers();
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-no-repeat" 
-         style={{
-           backgroundImage: `url('https://www.ringtina.com.ar/Descargar/Fondos%20de%20Pantalla/Deportes/ImgDeportes%20056.jpg')`,
-         }}>
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url('https://www.ringtina.com.ar/Descargar/Fondos%20de%20Pantalla/Deportes/ImgDeportes%20056.jpg')`,
+      }}
+    >
       <div className="min-h-screen bg-black/50 flex items-center justify-center">
         <div className="max-w-7xl mx-auto px-4 w-full my-8">
           <div className="bg-white rounded-lg shadow-lg">
@@ -104,7 +158,10 @@ export default async function TablePage() {
                 </thead>
                 <tbody>
                   {players.map((player, index) => (
-                    <tr key={player._id} className="border-t hover:bg-gray-50 text-black">
+                    <tr
+                      key={player._id}
+                      className="border-t hover:bg-gray-50 text-black"
+                    >
                       <td className="px-4 py-3 text-center">
                         {player.position}
                       </td>
