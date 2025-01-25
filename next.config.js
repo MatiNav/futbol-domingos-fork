@@ -2,9 +2,10 @@
 const nextConfig = {
   images: {
     domains: [
-      "cdn-icons-png.flaticon.com", 
+      "cdn-icons-png.flaticon.com",
       "img.lovepik.com",
-      "www.ringtina.com.ar"
+      "www.ringtina.com.ar",
+      "i.postimg.cc",
     ],
   },
   env: {
