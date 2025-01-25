@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
-import { MatchPlayer } from "@/app/constants/types/db-models/Match";
+import { MatchPlayer, Team } from "@/app/constants/types/db-models/Match";
 
 export async function GET(
   request: Request,
@@ -74,7 +74,7 @@ export async function PUT(
   }
 }
 
-function getMatchResult(oscuras: Match, claras: Match) {
+function getMatchResult(oscuras: Team, claras: Team) {
   const oscurasGoals = oscuras.players.reduce(
     (acc: number, player: MatchPlayer) => acc + player.goals,
     0

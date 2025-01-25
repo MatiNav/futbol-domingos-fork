@@ -1,16 +1,15 @@
 import { ObjectId } from "mongodb";
 
+export type Team = {
+  players: MatchPlayer[];
+  team: "oscuras" | "claras";
+};
+
 export type DBMatch = {
   _id: ObjectId;
   matchNumber: number;
-  oscuras: {
-    players: MatchPlayer[];
-    team: "oscuras";
-  };
-  claras: {
-    players: MatchPlayer[];
-    team: "claras";
-  };
+  oscuras: Team;
+  claras: Team;
   winner?: MatchResult;
   date: string;
 };
