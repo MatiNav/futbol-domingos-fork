@@ -35,7 +35,7 @@ export default function ArmarEquipos() {
         const response = await fetch("/api/players");
         const data = await response.json();
         if (response.ok) {
-          setPlayers(data);
+          setPlayers(data.players);
         }
       } catch (error) {
         console.error("Error fetching players:", error);
