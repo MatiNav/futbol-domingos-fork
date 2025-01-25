@@ -4,4 +4,5 @@ export type DBPlayer = {
   _id: ObjectId; // unique id for the player
   name: string;
   image: string;
+  favoriteTeam: string;
 };

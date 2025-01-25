@@ -2,7 +2,7 @@ import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
 import { DBPlayer } from "../constants/types/db-models/Player";
 import { DBMatch } from "../constants/types/db-models/Match";
-
+import TEAMS_IMAGES from "../constants/images/teams";
 // Cosas para hacer:
 // - Arreglar la logica de cuando ponemos el resultado del partido que la tabla de los jugadores quede bien
 // - Buscar un diseño mas parecido a promiedos
@@ -13,6 +13,7 @@ interface Player {
   _id: string;
   name: string;
   image: string;
+  favoriteTeam: string;
   wins: number;
   draws: number;
   losses: number;
@@ -171,6 +172,9 @@ export default async function TablePage() {
                             <Image
                               src={
                                 player.image ||
+                                TEAMS_IMAGES[
+                                  player.favoriteTeam as keyof typeof TEAMS_IMAGES
+                                ] ||
                                 (index % 2 === 0
                                   ? DEFAULT_PLAYER_IMAGE_1
                                   : DEFAULT_PLAYER_IMAGE_2)

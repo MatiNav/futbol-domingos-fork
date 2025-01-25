@@ -3,7 +3,8 @@ import clientPromise from "@/lib/mongodb";
 
 export async function POST(request: Request) {
   try {
-    const { playerName, playerImage } = await request.json();
+    const { playerName, playerImage, playerFavoriteTeam } =
+      await request.json();
 
     if (!playerName) {
       return NextResponse.json(
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     const result = await collection.insertOne({
       name: playerName,
       image: playerImage || "",
+      favoriteTeam: playerFavoriteTeam,
       createdAt: new Date(),
     });
 
