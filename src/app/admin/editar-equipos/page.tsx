@@ -110,8 +110,8 @@ export default function EditarEquipos() {
 
   const updatePlayer = (
     team: "oscuras" | "claras",
-    index: number,
-    playerId: ObjectId
+    index: number
+    // playerId: ObjectId
   ) => {
     if (!match) return;
 
@@ -325,7 +325,8 @@ export default function EditarEquipos() {
                                 (player) => player.name === e.target.value
                               )?._id;
                               if (playerId) {
-                                updatePlayer("oscuras", index, playerId);
+                                // updatePlayer("oscuras", index, playerId);
+                                updatePlayer("oscuras", index);
                               }
                             }}
                             className="w-[115px] px-2 py-1 bg-transparent border border-red-400 rounded-lg"
@@ -372,7 +373,8 @@ export default function EditarEquipos() {
                                 (player) => player.name === e.target.value
                               )?._id;
                               if (playerId) {
-                                updatePlayer("claras", index, playerId);
+                                // updatePlayer("claras", index, playerId);
+                                updatePlayer("claras", index);
                               }
                             }}
                             className="w-[115px] px-2 py-1 bg-transparent border border-blue-400 rounded-lg"

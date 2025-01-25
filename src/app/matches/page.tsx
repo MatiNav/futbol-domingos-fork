@@ -6,7 +6,6 @@ import { DBPlayer } from "@/app/constants/types/db-models/Player";
 export default function Matches() {
   const [matchNumber, setMatchNumber] = useState("1");
   const [match, setMatch] = useState<DBMatch | null>(null);
-  const [players, setPlayers] = useState<DBPlayer[]>([]);
   const [playersMap, setPlayersMap] = useState<{ [key: string]: DBPlayer }>({});
   const [maxMatchNumber, setMaxMatchNumber] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +28,6 @@ export default function Matches() {
     const fetchPlayers = async () => {
       const response = await fetch("/api/players");
       const data = await response.json();
-      setPlayers(data.players);
       setPlayersMap(
         data.players.reduce(
           (acc: { [key: string]: DBPlayer }, player: DBPlayer) => {

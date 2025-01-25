@@ -82,9 +82,9 @@ export default function ArmarEquipos() {
   };
 
   const getFilteredPlayers = (
-    searchTerm: string,
-    index: number,
-    team: "team1" | "team2"
+    searchTerm: string
+    // index: number,
+    // team: "team1" | "team2"
   ) => {
     // const otherTeam = team === "team1" ? team2 : team1;
     return players
@@ -218,9 +218,9 @@ export default function ArmarEquipos() {
                         {searchTerms[index].team1 && !team1[index] && (
                           <div className="absolute z-10 w-full mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto bg-red-700 border-2 border-red-400">
                             {getFilteredPlayers(
-                              searchTerms[index].team1,
-                              index,
-                              "team1"
+                              searchTerms[index].team1
+                              // index,
+                              // "team1"
                             ).map((player) => (
                               <div
                                 key={player._id}
@@ -273,9 +273,9 @@ export default function ArmarEquipos() {
                         {searchTerms[index].team2 && !team2[index] && (
                           <div className="absolute z-10 w-full mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto bg-white border-2 border-blue-400">
                             {getFilteredPlayers(
-                              searchTerms[index].team2,
-                              index,
-                              "team2"
+                              searchTerms[index].team2
+                              // index,
+                              // "team2"
                             ).map((player) => (
                               <div
                                 key={player._id}
