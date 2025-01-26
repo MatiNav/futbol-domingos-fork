@@ -110,16 +110,23 @@ export default function EditarEquipos() {
 
   const updatePlayer = (
     team: "oscuras" | "claras",
-    index: number
-    // playerId: ObjectId
+    index: number,
+    playerId: ObjectId
   ) => {
     if (!match) return;
 
+    const newPlayer = players.find((player) => player._id === playerId);
+
     const updatedMatch = {
       ...match,
-      [team]: match[team].players.map((player, i) =>
-        i === index ? { _id: player._id, goals: player.goals } : player
-      ),
+      [team]: {
+        team,
+        players: match[team].players.map((player, i) =>
+          i === index && !!newPlayer
+            ? { _id: newPlayer._id, goals: player.goals }
+            : player
+        ),
+      },
     };
 
     setMatch(updatedMatch);
@@ -325,8 +332,7 @@ export default function EditarEquipos() {
                                 (player) => player.name === e.target.value
                               )?._id;
                               if (playerId) {
-                                // updatePlayer("oscuras", index, playerId);
-                                updatePlayer("oscuras", index);
+                                updatePlayer("oscuras", index, playerId);
                               }
                             }}
                             className="w-[115px] px-2 py-1 bg-transparent border border-red-400 rounded-lg"
@@ -373,8 +379,7 @@ export default function EditarEquipos() {
                                 (player) => player.name === e.target.value
                               )?._id;
                               if (playerId) {
-                                // updatePlayer("claras", index, playerId);
-                                updatePlayer("claras", index);
+                                updatePlayer("claras", index, playerId);
                               }
                             }}
                             className="w-[115px] px-2 py-1 bg-transparent border border-blue-400 rounded-lg"
