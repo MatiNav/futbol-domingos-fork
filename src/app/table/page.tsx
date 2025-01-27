@@ -135,6 +135,12 @@ export default async function TablePage() {
                       Jugador
                     </th>
                     <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
+                      Pts
+                    </th>
+                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
+                      GF
+                    </th>
+                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
                       J
                     </th>
                     <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
@@ -145,12 +151,6 @@ export default async function TablePage() {
                     </th>
                     <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
                       P
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      Pts
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      GF
                     </th>
                     <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
                       %
@@ -189,6 +189,12 @@ export default async function TablePage() {
                           <div>{player.name}</div>
                         </div>
                       </td>
+                      <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
+                        {player.points}
+                      </td>
+                      <td className="px-4 py-2 text-center whitespace-nowrap">
+                        {player.goals}
+                      </td>
                       <td className="px-4 py-2 text-center whitespace-nowrap">
                         {player.wins + player.draws + player.losses}
                       </td>
@@ -200,12 +206,6 @@ export default async function TablePage() {
                       </td>
                       <td className="px-4 py-2 text-center whitespace-nowrap text-red-800">
                         {player.losses}
-                      </td>
-                      <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
-                        {player.points}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {player.goals}
                       </td>
                       <td className="px-4 py-2 text-center whitespace-nowrap">
                         {player.percentage.toFixed(1)}%
