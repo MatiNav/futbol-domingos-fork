@@ -7,9 +7,7 @@ import { ObjectId } from "mongodb";
 import { useState, useEffect } from "react";
 
 export default function EditarEquipos() {
-  const [currentMatchNumber, setCurrentMatchNumber] = useState(1);
   const [match, setMatch] = useState<DBMatch | null>(null);
-  const [maxMatchNumber, setMaxMatchNumber] = useState(1);
   const [players, setPlayers] = useState<DBPlayer[]>([]);
   const [playersMap, setPlayersMap] = useState<{ [key: string]: DBPlayer }>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -17,21 +15,7 @@ export default function EditarEquipos() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const enableEditor = maxMatchNumber == currentMatchNumber;
-
   useEffect(() => {
-    const fetchMaxMatchNumber = async () => {
-      try {
-        const response = await fetch("/api/matches/latest");
-        const data = await response.json();
-        if (response.ok && data.maxMatchNumber) {
-          setMaxMatchNumber(data.maxMatchNumber);
-        }
-      } catch (error) {
-        console.error("Error fetching max match number:", error);
-      }
-    };
-
     const fetchPlayers = async () => {
       try {
         const response = await fetch("/api/players");
@@ -53,7 +37,6 @@ export default function EditarEquipos() {
       }
     };
 
-    fetchMaxMatchNumber();
     fetchPlayers();
   }, []);
 
@@ -73,7 +56,6 @@ export default function EditarEquipos() {
 
       if (data.match) {
         setMatch(data.match);
-        setCurrentMatchNumber(Number(number));
       } else {
         setError("Partido no encontrado");
       }
@@ -237,7 +219,6 @@ export default function EditarEquipos() {
                             type="number"
                             min="0"
                             value={match.oscuras.players[index]?.goals || 0}
-                            disabled={!enableEditor}
                             onChange={(e) =>
                               updatePlayerGoals(
                                 "oscuras",
@@ -267,7 +248,6 @@ export default function EditarEquipos() {
                                 updatePlayer("oscuras", index, playerId);
                               }
                             }}
-                            disabled={!enableEditor}
                             className="w-[115px] px-2 py-1 bg-transparent border border-red-400 rounded-lg"
                           >
                             <option value="">
@@ -315,7 +295,6 @@ export default function EditarEquipos() {
                                 updatePlayer("claras", index, playerId);
                               }
                             }}
-                            disabled={!enableEditor}
                             className="w-[115px] px-2 py-1 bg-transparent border border-blue-400 rounded-lg"
                           >
                             <option value="">
@@ -355,13 +334,18 @@ export default function EditarEquipos() {
                             type="number"
                             min="0"
                             value={match.claras.players[index]?.goals || 0}
-                            disabled={!enableEditor}
                             onChange={(e) =>
                               updatePlayerGoals(
                                 "claras",
                                 index,
                                 parseInt(e.target.value) || 0
                               )
+                            }
+                            onFocus={(e) =>
+                              (e.target as HTMLInputElement).select()
+                            }
+                            onClick={(e) =>
+                              (e.target as HTMLInputElement).select()
                             }
                             className="w-16 px-2 py-1 text-center border rounded-lg"
                           />
@@ -377,12 +361,12 @@ export default function EditarEquipos() {
               <div className="flex justify-center">
                 <button
                   onClick={saveChanges}
-                  disabled={isSaving || !enableEditor}
+                  disabled={isSaving}
                   className={`px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 
                     text-white font-semibold rounded-lg
                     shadow-md flex items-center space-x-2
                     ${
-                      !(isSaving || !enableEditor)
+                      !isSaving
                         ? `hover:from-blue-600 hover:to-blue-700
                            transform hover:scale-105 transition-all duration-200
                            hover:shadow-lg`
