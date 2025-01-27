@@ -4,6 +4,7 @@ import { DBMatch } from "@/app/constants/types/db-models/Match";
 import { DBPlayer } from "@/app/constants/types/db-models/Player";
 import MatchSelector from "../components/MatchSelector";
 import MatchResultTable from "../components/MatchResult";
+import MatchDetailsTable from "../components/Table/MatchDetailsTable";
 
 export default function Matches() {
   const [match, setMatch] = useState<DBMatch | null>(null);
@@ -70,55 +71,7 @@ export default function Matches() {
 
           {match && (
             <>
-              <div className="overflow-x-auto mb-6">
-                <table className="min-w-full">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center">
-                        Goles
-                      </th>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-red-300">
-                        Oscuras
-                      </th>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-blue-300">
-                        Claras
-                      </th>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center">
-                        Goles
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({
-                      length: Math.max(
-                        match.oscuras.players.length,
-                        match.claras.players.length
-                      ),
-                    }).map((_, index) => (
-                      <tr key={index} className="border-t">
-                        <td className="px-4 py-3 text-center text-black">
-                          {match.oscuras.players[index]?.goals || 0}
-                        </td>
-                        <td className="px-4 py-3 text-center bg-red-300">
-                          {/* TODO: show the name instead of the id */}
-                          {playersMap[
-                            match.oscuras.players[index]?._id.toString()
-                          ]?.name || ""}
-                        </td>
-                        <td className="px-4 py-3 text-center bg-blue-300">
-                          {/* TODO: show the name instead of the id */}
-                          {playersMap[
-                            match.claras.players[index]?._id.toString()
-                          ]?.name || ""}
-                        </td>
-                        <td className="px-4 py-3 text-center text-black">
-                          {match.claras.players[index]?.goals || 0}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <MatchDetailsTable match={match} playersMap={playersMap} />
 
               <MatchResultTable match={match} />
             </>

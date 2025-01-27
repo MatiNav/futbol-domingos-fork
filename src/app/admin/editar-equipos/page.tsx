@@ -1,4 +1,5 @@
 "use client";
+import MatchDetailsTable from "@/app/components/Table/MatchDetailsTable";
 import MatchResultTable from "@/app/components/MatchResult";
 import MatchSelector from "@/app/components/MatchSelector";
 import { DBMatch } from "@/app/constants/types/db-models/Match";
@@ -188,173 +189,14 @@ export default function EditarEquipos() {
 
           {match && (
             <>
-              <div className="overflow-x-auto mb-6">
-                <table className="min-w-full">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center">
-                        Goles
-                      </th>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-red-300">
-                        Oscuras
-                      </th>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-blue-300">
-                        Claras
-                      </th>
-                      <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm w-1/4 text-center">
-                        Goles
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({
-                      length: Math.max(
-                        match.oscuras.players?.length || 0,
-                        match.claras.players?.length || 0
-                      ),
-                    }).map((_, index) => (
-                      <tr key={index} className="border-t">
-                        <td className="px-4 py-3 text-center text-black">
-                          <input
-                            type="number"
-                            min="0"
-                            value={match.oscuras.players[index]?.goals || 0}
-                            onChange={(e) =>
-                              updatePlayerGoals(
-                                "oscuras",
-                                index,
-                                parseInt(e.target.value) || 0
-                              )
-                            }
-                            onFocus={(e) =>
-                              (e.target as HTMLInputElement).select()
-                            }
-                            onClick={(e) =>
-                              (e.target as HTMLInputElement).select()
-                            }
-                            className="w-16 px-2 py-1 text-center border rounded-lg"
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-center bg-red-300">
-                          <select
-                            value={
-                              match.oscuras.players[index]?._id.toString() || ""
-                            }
-                            onChange={(e) => {
-                              const playerId = players.find(
-                                (player) => player.name === e.target.value
-                              )?._id;
-                              if (playerId) {
-                                updatePlayer("oscuras", index, playerId);
-                              }
-                            }}
-                            className="w-[115px] px-2 py-1 bg-transparent border border-red-400 rounded-lg"
-                          >
-                            <option value="">
-                              {playersMap[
-                                match.oscuras.players[index]?._id.toString()
-                              ]?.name || "Seleccionar jugador"}
-                            </option>
-                            {players.map((player) => {
-                              const isAvailable = isPlayerAvailable(
-                                player._id,
-                                "oscuras",
-                                index
-                              );
-                              return (
-                                <option
-                                  key={player._id.toString()}
-                                  value={player.name}
-                                  disabled={!isAvailable}
-                                  className={`${
-                                    isAvailable
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }`}
-                                  style={{
-                                    color: isAvailable ? "#16a34a" : "#dc2626",
-                                    backgroundColor: "white",
-                                  }}
-                                >
-                                  {player.name}
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </td>
-                        <td className="px-4 py-3 text-center bg-blue-300">
-                          <select
-                            value={
-                              match.claras.players[index]?._id.toString() || ""
-                            }
-                            onChange={(e) => {
-                              const playerId = players.find(
-                                (player) => player.name === e.target.value
-                              )?._id;
-                              if (playerId) {
-                                updatePlayer("claras", index, playerId);
-                              }
-                            }}
-                            className="w-[115px] px-2 py-1 bg-transparent border border-blue-400 rounded-lg"
-                          >
-                            <option value="">
-                              {playersMap[
-                                match.claras.players[index]?._id.toString()
-                              ]?.name || "Seleccionar jugador"}
-                            </option>
-                            {players.map((player) => {
-                              const isAvailable = isPlayerAvailable(
-                                player._id,
-                                "claras",
-                                index
-                              );
-                              return (
-                                <option
-                                  key={player._id.toString()}
-                                  value={player.name}
-                                  disabled={!isAvailable}
-                                  className={`${
-                                    isAvailable
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }`}
-                                  style={{
-                                    color: isAvailable ? "#16a34a" : "#dc2626",
-                                    backgroundColor: "white",
-                                  }}
-                                >
-                                  {player.name}
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </td>
-                        <td className="px-4 py-3 text-center text-black">
-                          <input
-                            type="number"
-                            min="0"
-                            value={match.claras.players[index]?.goals || 0}
-                            onChange={(e) =>
-                              updatePlayerGoals(
-                                "claras",
-                                index,
-                                parseInt(e.target.value) || 0
-                              )
-                            }
-                            onFocus={(e) =>
-                              (e.target as HTMLInputElement).select()
-                            }
-                            onClick={(e) =>
-                              (e.target as HTMLInputElement).select()
-                            }
-                            className="w-16 px-2 py-1 text-center border rounded-lg"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <MatchDetailsTable
+                match={match}
+                playersMap={playersMap}
+                onUpdatePlayerGoals={updatePlayerGoals}
+                isPlayerAvailable={isPlayerAvailable}
+                onUpdatePlayer={updatePlayer}
+                isEditable
+              />
 
               <MatchResultTable match={match} />
 

@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export type Team = {
   players: MatchPlayer[];
-  team: "oscuras" | "claras";
+  team: MatchTeam;
 };
 
 export type DBMatch = {
@@ -20,3 +20,5 @@ export type MatchPlayer = {
 };
 
 export type MatchResult = "oscuras" | "claras" | "draw";
+
+export type MatchTeam = "oscuras" | "claras";
