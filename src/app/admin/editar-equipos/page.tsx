@@ -324,6 +324,12 @@ export default function EditarEquipos() {
                                 parseInt(e.target.value) || 0
                               )
                             }
+                            onFocus={(e) =>
+                              (e.target as HTMLInputElement).select()
+                            }
+                            onClick={(e) =>
+                              (e.target as HTMLInputElement).select()
+                            }
                             className="w-16 px-2 py-1 text-center border rounded-lg"
                           />
                         </td>

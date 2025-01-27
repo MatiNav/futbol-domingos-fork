@@ -7,9 +7,10 @@ export async function GET(
   { params }: { params: { matchNumber: string } }
 ) {
   try {
-    const matchNumber = parseInt(params.matchNumber);
+    const { matchNumber } = await params;
+    const matchNum = parseInt(matchNumber);
 
-    if (isNaN(matchNumber)) {
+    if (isNaN(matchNum)) {
       return NextResponse.json(
         { error: "Invalid match number" },
         { status: 400 }
@@ -20,7 +21,7 @@ export async function GET(
     const db = client.db("futbol");
     const collection = db.collection("matches");
 
-    const match = await collection.findOne({ matchNumber });
+    const match = await collection.findOne({ matchNumber: matchNum });
 
     if (!match) {
       return NextResponse.json({ error: "Match not found" }, { status: 404 });
