@@ -14,23 +14,23 @@ export default function MatchResultTable({ match }: MatchResultTableProps) {
 
   return (
     <div className="overflow-x-auto mb-6">
-      <table className="min-w-full">
+      <table className="min-w-full bg-[#1a472a]">
         <thead>
-          <tr className="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2 border-gray-300">
+          <tr>
             <th
               colSpan={2}
-              className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-lg text-center"
+              className="px-4 py-2 text-white font-bold uppercase tracking-wider text-lg text-center border-b border-green-700"
             >
               Resultado
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr className="border-t hover:bg-gray-50">
-            <td className="px-4 py-3 text-center bg-red-300 text-xl font-semibold whitespace-nowrap w-1/2">
+          <tr>
+            <td className="px-4 py-3 text-center bg-[#8B0000] text-white text-xl font-semibold whitespace-nowrap w-1/2 border-r border-green-700">
               {oscurasTotal}
             </td>
-            <td className="px-4 py-3 text-center bg-blue-300 text-xl font-semibold whitespace-nowrap w-1/2">
+            <td className="px-4 py-3 text-center bg-[#93C5FD] text-gray-700 text-xl font-semibold whitespace-nowrap w-1/2">
               {clarasTotal}
             </td>
           </tr>

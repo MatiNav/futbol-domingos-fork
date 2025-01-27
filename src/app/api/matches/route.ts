@@ -32,7 +32,6 @@ export async function POST(request: Request) {
     const nextMatchNumber =
       lastMatch.length > 0 ? lastMatch[0].matchNumber + 1 : 1;
 
-    console.log(JSON.stringify(oscuras, null, 2));
     const oscurasDoc = {
       team: oscuras.team,
       players: oscuras.players.map((player: PlayerWithGoals) => ({
@@ -48,8 +47,6 @@ export async function POST(request: Request) {
         goals: player.goals,
       })),
     };
-
-    console.log(oscurasDoc, clarasDoc);
 
     const result = await matchesCollection.insertOne({
       oscuras: oscurasDoc,

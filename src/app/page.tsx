@@ -9,9 +9,8 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-600 to-green-800">
-      {/* Hero Section */}
-      <main className="p-6">
+    <div className="min-h-screen bg-[#0B2818] p-4">
+      <div className="max-w-7xl mx-auto rounded-lg p-6">
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
             Torneo de Fútbol
@@ -111,7 +110,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-      </main>
+      </div>
       <PasswordModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

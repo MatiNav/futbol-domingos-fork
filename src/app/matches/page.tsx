@@ -58,25 +58,23 @@ export default function Matches() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <MatchSelector onMatchSelect={fetchMatch} isLoading={isLoading} />
+    <div className="min-h-screen bg-[#0B2818] p-4">
+      <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
+        <MatchSelector onMatchSelect={fetchMatch} isLoading={isLoading} />
 
-          {error && (
-            <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
 
-          {match && (
-            <>
-              <MatchDetailsTable match={match} playersMap={playersMap} />
+        {match && (
+          <>
+            <MatchDetailsTable match={match} playersMap={playersMap} />
 
-              <MatchResultTable match={match} />
-            </>
-          )}
-        </div>
+            <MatchResultTable match={match} />
+          </>
+        )}
       </div>
     </div>
   );

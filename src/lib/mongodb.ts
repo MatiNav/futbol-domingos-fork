@@ -5,7 +5,6 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI;
-console.log("MongoDB URI exists:", !!uri); // Debug log (don't log the actual URI)
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;

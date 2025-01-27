@@ -170,9 +170,9 @@ export default function EditarEquipos() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="min-h-screen bg-[#0B2818] py-8">
+      <div className="max-w-7xl mx-auto px-4 ">
+        <div className="bg-[#77777736] rounded-lg shadow-lg p-6">
           <MatchSelector onMatchSelect={fetchMatch} isLoading={isLoading} />
 
           {error && (
@@ -204,16 +204,18 @@ export default function EditarEquipos() {
                 <button
                   onClick={saveChanges}
                   disabled={isSaving}
-                  className={`px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 
+                  className={`
+                    px-6 py-3 
+                    bg-[#1a472a] hover:bg-[#143620]
                     text-white font-semibold rounded-lg
                     shadow-md flex items-center space-x-2
+                    border border-green-700
                     ${
                       !isSaving
-                        ? `hover:from-blue-600 hover:to-blue-700
-                           transform hover:scale-105 transition-all duration-200
-                           hover:shadow-lg`
-                        : `opacity-50 cursor-not-allowed`
-                    }`}
+                        ? "transform hover:scale-105 transition-all duration-200 hover:shadow-lg"
+                        : "opacity-50 cursor-not-allowed"
+                    }
+                  `}
                 >
                   {isSaving ? (
                     <>

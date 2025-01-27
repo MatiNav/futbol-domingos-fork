@@ -115,107 +115,103 @@ export default async function TablePage() {
   const players = await getPlayers();
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('https://www.ringtina.com.ar/Descargar/Fondos%20de%20Pantalla/Deportes/ImgDeportes%20056.jpg')`,
-      }}
-    >
-      <div className="min-h-screen bg-black/50 flex items-center justify-center">
-        <div className="max-w-7xl mx-auto px-4 w-full my-8">
-          <div className="bg-white rounded-lg shadow-lg">
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead>
-                  <tr className="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2 border-gray-300">
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      Pos
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      Jugador
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      Pts
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      GF
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      J
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      G
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      E
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      P
-                    </th>
-                    <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
-                      %
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {players.map((player, index) => (
-                    <tr
-                      key={player._id}
-                      className="border-t hover:bg-gray-50 text-black"
-                    >
-                      <td className="px-4 py-3 text-center">
-                        {player.position}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 mr-4">
-                            <Image
-                              src={
-                                player.image ||
-                                TEAMS_IMAGES[
-                                  player.favoriteTeam as keyof typeof TEAMS_IMAGES
-                                ] ||
-                                (index % 2 === 0
-                                  ? DEFAULT_PLAYER_IMAGE_1
-                                  : DEFAULT_PLAYER_IMAGE_2)
-                              }
-                              alt={player.name}
-                              width={40}
-                              height={40}
-                              className={`h-10 w-10 object-contain ${!player.image && player.favoriteTeam ? "" : "rounded-full"}`}
-                            />
-                          </div>
-
-                          <div>{player.name}</div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
-                        {player.points}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {player.goals}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {player.wins + player.draws + player.losses}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap text-green-800">
-                        {player.wins}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap text-orange-500">
-                        {player.draws}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap text-red-800">
-                        {player.losses}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {player.percentage.toFixed(1)}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#0B2818] p-4">
+      <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="bg-[#2b2b2b] text-white border-b border-gray-600">
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  Pos
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-left">
+                  Jugador
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  Pts
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  GF
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  J
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  G
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  E
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  P
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  %
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {players.map((player, index) => (
+                <tr
+                  key={player._id}
+                  className={`border-b border-gray-700 text-white ${
+                    index % 2 === 0 ? "bg-[#3a3a3a]" : "bg-[#2d2d2d]"
+                  } hover:bg-[#4a4a4a]`}
+                >
+                  <td
+                    className={`px-4 py-3 text-center ${
+                      index === 0 ? "bg-green-700" : ""
+                    }`}
+                  >
+                    {player.position}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10 mr-4">
+                        <Image
+                          src={
+                            player.image ||
+                            TEAMS_IMAGES[
+                              player.favoriteTeam as keyof typeof TEAMS_IMAGES
+                            ] ||
+                            (index % 2 === 0
+                              ? DEFAULT_PLAYER_IMAGE_1
+                              : DEFAULT_PLAYER_IMAGE_2)
+                          }
+                          alt={player.name}
+                          width={40}
+                          height={40}
+                          className={`h-10 w-10 object-contain ${!player.image && player.favoriteTeam ? "" : "rounded-full"}`}
+                        />
+                      </div>
+                      <div className="text-white">{player.name}</div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
+                    {player.points}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap">
+                    {player.goals}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap">
+                    {player.wins + player.draws + player.losses}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap text-green-400">
+                    {player.wins}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap text-yellow-400">
+                    {player.draws}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap text-red-400">
+                    {player.losses}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap">
+                    {player.percentage.toFixed(1)}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
