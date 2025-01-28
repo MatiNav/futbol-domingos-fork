@@ -9,7 +9,7 @@ import TEAMS_IMAGES from "../constants/images/teams";
 // - Cambiar la foto al lado del nombre del jugador por la foto del jugador o el logo del club que es hincha
 // - Agregar alguna opción para cuando ingresas elegir entre la tabla de los jueves y la tabla de los domingos
 
-interface Player {
+type PlayerWithStats = {
   _id: string;
   name: string;
   image: string;
@@ -18,20 +18,127 @@ interface Player {
   draws: number;
   losses: number;
   goals: number;
-}
-
-interface PlayerWithStats extends Player {
   points: number;
   percentage: number;
   position: number;
-}
+};
 
 const DEFAULT_PLAYER_IMAGE_1 =
   "https://cdn-icons-png.flaticon.com/512/166/166344.png";
 const DEFAULT_PLAYER_IMAGE_2 =
   "https://img.lovepik.com/element/40127/4259.png_1200.png";
 
-// if a match has "winner" it counts for stats, if it hasn't it doesn't
+export default async function TablePage() {
+  const players = await getPlayers();
+  const pichichis = getPichichis(players);
+
+  return (
+    <div className="min-h-screen bg-[#0B2818] p-4">
+      <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="bg-[#2b2b2b] text-white border-b border-gray-600">
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  Pos
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-left">
+                  Jugador
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  Pts
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  GF
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  J
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  G
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  E
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  P
+                </th>
+                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                  %
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {players.map((player, index) => (
+                <tr
+                  key={player._id}
+                  className={`border-b border-gray-700 text-white ${
+                    index % 2 === 0 ? "bg-[#3a3a3a]" : "bg-[#2d2d2d]"
+                  } hover:bg-[#4a4a4a]`}
+                >
+                  <td
+                    className={`px-4 py-3 text-center ${
+                      pichichis.some((p) => p._id === player._id)
+                        ? "bg-yellow-500"
+                        : index === 0
+                          ? "bg-green-700"
+                          : ""
+                    }`}
+                  >
+                    {player.position}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10 mr-4">
+                        <Image
+                          src={
+                            player.image ||
+                            TEAMS_IMAGES[
+                              player.favoriteTeam as keyof typeof TEAMS_IMAGES
+                            ] ||
+                            (index % 2 === 0
+                              ? DEFAULT_PLAYER_IMAGE_1
+                              : DEFAULT_PLAYER_IMAGE_2)
+                          }
+                          alt={player.name}
+                          width={40}
+                          height={40}
+                          className={`h-10 w-10 object-contain ${!player.image && player.favoriteTeam ? "" : "rounded-full"}`}
+                        />
+                      </div>
+                      <div className="text-white">{player.name}</div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
+                    {player.points}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap">
+                    {player.goals}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap">
+                    {player.wins + player.draws + player.losses}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap text-green-400">
+                    {player.wins}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap text-yellow-400">
+                    {player.draws}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap text-red-400">
+                    {player.losses}
+                  </td>
+                  <td className="px-4 py-2 text-center whitespace-nowrap">
+                    {player.percentage.toFixed(1)}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 async function getPlayers(): Promise<PlayerWithStats[]> {
   const client = await clientPromise;
@@ -111,109 +218,13 @@ async function getPlayers(): Promise<PlayerWithStats[]> {
   }));
 }
 
-export default async function TablePage() {
-  const players = await getPlayers();
-
-  return (
-    <div className="min-h-screen bg-[#0B2818] p-4">
-      <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr className="bg-[#2b2b2b] text-white border-b border-gray-600">
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  Pos
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-left">
-                  Jugador
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  Pts
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  GF
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  J
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  G
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  E
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  P
-                </th>
-                <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
-                  %
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map((player, index) => (
-                <tr
-                  key={player._id}
-                  className={`border-b border-gray-700 text-white ${
-                    index % 2 === 0 ? "bg-[#3a3a3a]" : "bg-[#2d2d2d]"
-                  } hover:bg-[#4a4a4a]`}
-                >
-                  <td
-                    className={`px-4 py-3 text-center ${
-                      index === 0 ? "bg-green-700" : ""
-                    }`}
-                  >
-                    {player.position}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 mr-4">
-                        <Image
-                          src={
-                            player.image ||
-                            TEAMS_IMAGES[
-                              player.favoriteTeam as keyof typeof TEAMS_IMAGES
-                            ] ||
-                            (index % 2 === 0
-                              ? DEFAULT_PLAYER_IMAGE_1
-                              : DEFAULT_PLAYER_IMAGE_2)
-                          }
-                          alt={player.name}
-                          width={40}
-                          height={40}
-                          className={`h-10 w-10 object-contain ${!player.image && player.favoriteTeam ? "" : "rounded-full"}`}
-                        />
-                      </div>
-                      <div className="text-white">{player.name}</div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
-                    {player.points}
-                  </td>
-                  <td className="px-4 py-2 text-center whitespace-nowrap">
-                    {player.goals}
-                  </td>
-                  <td className="px-4 py-2 text-center whitespace-nowrap">
-                    {player.wins + player.draws + player.losses}
-                  </td>
-                  <td className="px-4 py-2 text-center whitespace-nowrap text-green-400">
-                    {player.wins}
-                  </td>
-                  <td className="px-4 py-2 text-center whitespace-nowrap text-yellow-400">
-                    {player.draws}
-                  </td>
-                  <td className="px-4 py-2 text-center whitespace-nowrap text-red-400">
-                    {player.losses}
-                  </td>
-                  <td className="px-4 py-2 text-center whitespace-nowrap">
-                    {player.percentage.toFixed(1)}%
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+function getPichichis(players: PlayerWithStats[]) {
+  return players.reduce((pichichis, player) => {
+    if (pichichis.length === 0 || player.goals > pichichis[0].goals) {
+      return [player];
+    } else if (player.goals === pichichis[0].goals) {
+      return [...pichichis, player];
+    }
+    return pichichis;
+  }, [] as PlayerWithStats[]);
 }
