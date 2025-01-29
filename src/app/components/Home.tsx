@@ -21,7 +21,7 @@ export default function HomePageContent({
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
-      <div className="max-w-7xl mx-auto rounded-lg p-6">
+      <div className="max-w-7xl mx-auto rounded-lg p-1">
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-8">
             Torneo Clausura 2025
@@ -144,7 +144,7 @@ const getBannerCarousel = (
     throw new Error("Fer player not found");
   }
   const lastTournamentWinner = {
-    title: "El Campeón del 2024",
+    title: "Campeón del 2024",
     player: ferPlayer,
     gradientFrom: "from-blue-900",
     gradientTo: "to-blue-600",
