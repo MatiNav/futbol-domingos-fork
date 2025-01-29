@@ -4,7 +4,7 @@ import Image from "next/image";
 
 interface BannerData {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   player: PlayerWithStats;
   gradientFrom?: string;
   gradientTo?: string;
@@ -84,27 +84,31 @@ export default function BannerCarousel({
                   {banner.subtitle}
                 </p>
 
-                {/* Player Name and Stats */}
-                <div
-                  className={`transform transition-all duration-500 delay-200
+                {/* Don't show player name and stats if it's the last tournament winner */}
+                {!banner.image ? (
+                  <div
+                    className={`transform transition-all duration-500 delay-200
                   ${isTransitioning ? "translate-y-10 opacity-0" : "translate-y-0 opacity-100"}`}
-                >
-                  <div className="flex flex-col">
-                    <h3 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-[0_4px_8px_rgba(0,0,0,1)]">
-                      {banner.player.name}
-                    </h3>
+                  >
+                    <div className="flex flex-col">
+                      <h3 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-[0_4px_8px_rgba(0,0,0,1)]">
+                        {banner.player.name}
+                      </h3>
 
-                    {banner.showGoals && (
-                      <div className="flex items-center space-x-2 mt-2">
-                        <div className="px-3 py-1 rounded-full">
-                          <span className="text-sm md:text-base text-green-400 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-                            {banner.player.goals} goles
-                          </span>
+                      {banner.showGoals && (
+                        <div className="flex items-center space-x-2 mt-2">
+                          <div className="px-3 py-1 rounded-full">
+                            <span className="text-sm md:text-base text-green-400 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                              {banner.player.goals} goles
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </div>

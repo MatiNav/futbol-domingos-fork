@@ -144,8 +144,7 @@ const getBannerCarousel = (
     throw new Error("Fer player not found");
   }
   const lastTournamentWinner = {
-    title: "El Campeón",
-    subtitle: "El mejor jugador del torneo Apertura 2024",
+    title: "El Campeón del 2024",
     player: ferPlayer,
     gradientFrom: "from-blue-900",
     gradientTo: "to-blue-600",
@@ -166,8 +165,7 @@ const getBannerCarousel = (
     ...(pichichis.length > 0
       ? [
           {
-            title: "Máximo Goleador",
-            subtitle: "Dominando las redes con estilo",
+            title: "El Pichichi",
             player: pichichis[0],
             gradientFrom: "from-green-900",
             gradientTo: "to-green-600",
