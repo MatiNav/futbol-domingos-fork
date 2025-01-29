@@ -111,8 +111,8 @@ export default function BannerCarousel({
                       {banner.showGoals && (
                         <div className="flex items-center space-x-2 mt-2">
                           <div className="px-3 py-1 rounded-full">
-                            <span className="text-sm md:text-base text-green-400 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-                              {banner.player.goals} goles
+                            <span className="text-2xl md:text-base text-green-400 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                              {banner.player.goals} ⚽️
                             </span>
                           </div>
                         </div>
