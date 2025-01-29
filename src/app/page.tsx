@@ -3,6 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 
+import { IconContext } from "react-icons";
+import { FaTable } from "react-icons/fa";
+import { IoMdFootball } from "react-icons/io";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+
 import PasswordModal from "./components/PasswordModal";
 
 export default function Home() {
@@ -25,22 +30,13 @@ export default function Home() {
               className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-green-500 p-3 rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
+                <IconContext.Provider
+                  value={{ color: "white", size: "1.4rem" }}
+                >
+                  <div className="bg-green-500 p-3 rounded-lg">
+                    <FaTable />
+                  </div>
+                </IconContext.Provider>
                 <div className="text-left">
                   <h2 className="text-xl font-semibold text-white">
                     Tabla de Posiciones
@@ -57,22 +53,13 @@ export default function Home() {
               className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-green-500 p-3 rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 8v8m-4-5v5M8 8v8m-4-5v5m0-5h18"
-                    />
-                  </svg>
-                </div>
+                <IconContext.Provider
+                  value={{ color: "white", size: "1.4rem" }}
+                >
+                  <div className="bg-green-500 p-3 rounded-lg">
+                    <IoMdFootball />
+                  </div>
+                </IconContext.Provider>
                 <div className="text-left">
                   <h2 className="text-xl font-semibold text-white">Partidos</h2>
                   <p className="text-green-100 text-sm">Consultar resultados</p>
@@ -85,22 +72,13 @@ export default function Home() {
               className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-green-500 p-3 rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                    />
-                  </svg>
-                </div>
+                <IconContext.Provider
+                  value={{ color: "white", size: "1.4rem" }}
+                >
+                  <div className="bg-green-500 p-3 rounded-lg">
+                    <MdOutlineAdminPanelSettings />
+                  </div>
+                </IconContext.Provider>
                 <div className="text-left">
                   <h2 className="text-xl font-semibold text-white">
                     Administración
