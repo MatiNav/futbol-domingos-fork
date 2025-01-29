@@ -6,3 +6,17 @@ export type DBPlayer = {
   image: string;
   favoriteTeam: string;
 };
+
+export type PlayerWithStats = {
+  _id: string;
+  name: string;
+  image: string;
+  favoriteTeam: string;
+  wins: number;
+  draws: number;
+  losses: number;
+  goals: number;
+  points: number;
+  percentage: number;
+  position: number;
+};
