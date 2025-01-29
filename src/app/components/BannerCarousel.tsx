@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { PlayerWithStats } from "../constants/types/db-models/Player";
 import Image from "next/image";
+import TEAMS_IMAGES from "../constants/images/teams";
 
 interface BannerData {
   title: string;
@@ -37,7 +38,7 @@ export default function BannerCarousel({
   }, [banners.length, autoPlayInterval]);
 
   return (
-    <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
+    <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
       {banners.map((banner, index) => (
         <div
           key={index}
@@ -47,13 +48,25 @@ export default function BannerCarousel({
           {/* Background Image */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-transparent z-10" />
           <div className="absolute inset-0 bg-[#0B2818]/40" />
-          {banner.image || banner.player.image ? (
+          {banner.image ||
+          banner.player.image ||
+          (banner.player.favoriteTeam &&
+            TEAMS_IMAGES[
+              `${banner.player.favoriteTeam}Background` as keyof typeof TEAMS_IMAGES
+            ]) ? (
             <div className="absolute inset-0">
               <Image
-                src={banner.image || banner.player.image}
+                src={
+                  banner.image ||
+                  banner.player.image ||
+                  TEAMS_IMAGES[
+                    `${banner.player.favoriteTeam}Background` as keyof typeof TEAMS_IMAGES
+                  ] ||
+                  ""
+                }
                 alt={banner.player.name}
                 fill
-                className="object-contain object-center"
+                className="object-cover object-top"
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
               />
