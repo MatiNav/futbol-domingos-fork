@@ -43,31 +43,3 @@ export const PUT = withApiAuthRequired(async function updateProfile(
     );
   }
 });
-
-export const GET = withApiAuthRequired(async function getProfile(
-  req: NextRequest
-) {
-  try {
-    const session = await getSession();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const usersCollection = db.collection("users");
-
-    const userProfile = await usersCollection.findOne({
-      auth0Id: session.user.sub,
-    });
-
-    return NextResponse.json(userProfile || {});
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-    return NextResponse.json(
-      { error: "Error fetching profile" },
-      { status: 500 }
-    );
-  }
-});
