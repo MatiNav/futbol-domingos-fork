@@ -1,6 +1,11 @@
 import Image from "next/image";
-import TEAMS_IMAGES from "../constants/images/teams";
-import { getPlayers, getPichichis } from "../utils/players";
+import {
+  TEAMS_IMAGES,
+  BACKGROUND_IMAGES,
+  RANDOM_IMAGES,
+} from "../constants/images/teams";
+import { getPlayers } from "../utils/server/players";
+import { getPichichis } from "../utils/players";
 
 // Cosas para hacer:
 // - Arreglar la logica de cuando ponemos el resultado del partido que la tabla de los jugadores quede bien
@@ -67,8 +72,8 @@ export default async function TablePage() {
                         pichichis.some((p) => p._id === player._id)
                           ? "bg-yellow-500"
                           : index === 0
-                            ? "bg-green-700"
-                            : ""
+                          ? "bg-green-700"
+                          : ""
                       }`}
                     >
                       {player.position}
@@ -89,7 +94,11 @@ export default async function TablePage() {
                             alt={player.name}
                             width={40}
                             height={40}
-                            className={`h-10 w-10 object-contain ${!player.image && player.favoriteTeam ? "" : "rounded-full"}`}
+                            className={`h-10 w-10 object-contain ${
+                              !player.image && player.favoriteTeam
+                                ? ""
+                                : "rounded-full"
+                            }`}
                           />
                         </div>
                         <div className="text-white">{player.name}</div>

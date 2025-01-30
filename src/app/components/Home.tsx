@@ -5,7 +5,7 @@ import { PlayerWithStats } from "../constants/types/db-models/Player";
 import { useState } from "react";
 import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";
-import TEAMS_IMAGES from "../constants/images/teams";
+import { RANDOM_IMAGES } from "../constants/images/teams";
 
 export default function HomePageContent({
   players,
@@ -148,7 +148,7 @@ const getBannerCarousel = (
     player: ferPlayer,
     gradientFrom: "from-blue-900",
     gradientTo: "to-blue-600",
-    image: TEAMS_IMAGES.ferCampeon,
+    image: RANDOM_IMAGES.ferCampeon,
     showGoals: false,
   };
 

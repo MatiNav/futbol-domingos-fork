@@ -6,6 +6,7 @@ const nextConfig = {
       "img.lovepik.com",
       "www.ringtina.com.ar",
       "i.postimg.cc",
+      "lh3.googleusercontent.com",
     ],
   },
   env: {

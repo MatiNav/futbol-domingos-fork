@@ -5,6 +5,7 @@ export type DBPlayer = {
   name: string;
   image: string;
   favoriteTeam: string;
+  email: string;
 };
 
 export type PlayerWithStats = {

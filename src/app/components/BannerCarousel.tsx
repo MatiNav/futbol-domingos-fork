@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { PlayerWithStats } from "../constants/types/db-models/Player";
 import Image from "next/image";
-import TEAMS_IMAGES from "../constants/images/teams";
+import { BACKGROUND_IMAGES } from "../constants/images/teams";
 
 interface BannerData {
   title: string;
@@ -51,16 +51,16 @@ export default function BannerCarousel({
           {banner.image ||
           banner.player.image ||
           (banner.player.favoriteTeam &&
-            TEAMS_IMAGES[
-              `${banner.player.favoriteTeam}Background` as keyof typeof TEAMS_IMAGES
+            BACKGROUND_IMAGES[
+              `${banner.player.favoriteTeam}Background` as keyof typeof BACKGROUND_IMAGES
             ]) ? (
             <div className="absolute inset-0">
               <Image
                 src={
                   banner.image ||
                   banner.player.image ||
-                  TEAMS_IMAGES[
-                    `${banner.player.favoriteTeam}Background` as keyof typeof TEAMS_IMAGES
+                  BACKGROUND_IMAGES[
+                    `${banner.player.favoriteTeam}Background` as keyof typeof BACKGROUND_IMAGES
                   ] ||
                   ""
                 }
@@ -85,14 +85,22 @@ export default function BannerCarousel({
                 <h2
                   className={`text-3xl md:text-5xl font-bold text-white mb-2 md:mb-4 transform transition-all duration-500
                   drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] text-shadow-lg
-                  ${isTransitioning ? "translate-y-10 opacity-0" : "translate-y-0 opacity-100"}`}
+                  ${
+                    isTransitioning
+                      ? "translate-y-10 opacity-0"
+                      : "translate-y-0 opacity-100"
+                  }`}
                 >
                   {banner.title}
                 </h2>
                 <p
                   className={`text-lg md:text-xl text-white mb-3 md:mb-6 transform transition-all duration-500 delay-100
                   drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]
-                  ${isTransitioning ? "translate-y-10 opacity-0" : "translate-y-0 opacity-100"}`}
+                  ${
+                    isTransitioning
+                      ? "translate-y-10 opacity-0"
+                      : "translate-y-0 opacity-100"
+                  }`}
                 >
                   {banner.subtitle}
                 </p>
@@ -101,7 +109,11 @@ export default function BannerCarousel({
                 {!banner.image ? (
                   <div
                     className={`transform transition-all duration-500 delay-200
-                  ${isTransitioning ? "translate-y-10 opacity-0" : "translate-y-0 opacity-100"}`}
+                  ${
+                    isTransitioning
+                      ? "translate-y-10 opacity-0"
+                      : "translate-y-0 opacity-100"
+                  }`}
                   >
                     <div className="flex flex-col">
                       <h3 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-[0_4px_8px_rgba(0,0,0,1)]">
