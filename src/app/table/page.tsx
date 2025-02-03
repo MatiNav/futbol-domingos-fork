@@ -1,17 +1,7 @@
 import Image from "next/image";
-import {
-  TEAMS_IMAGES,
-  BACKGROUND_IMAGES,
-  RANDOM_IMAGES,
-} from "../constants/images/teams";
-import { getPlayers } from "../utils/server/players";
+import { TEAMS_IMAGES } from "../constants/images/teams";
+import { getPlayersWithStats } from "../utils/server/players";
 import { getPichichis } from "../utils/players";
-
-// Cosas para hacer:
-// - Arreglar la logica de cuando ponemos el resultado del partido que la tabla de los jugadores quede bien
-// - Buscar un diseño mas parecido a promiedos
-// - Cambiar la foto al lado del nombre del jugador por la foto del jugador o el logo del club que es hincha
-// - Agregar alguna opción para cuando ingresas elegir entre la tabla de los jueves y la tabla de los domingos
 
 const DEFAULT_PLAYER_IMAGE_1 =
   "https://cdn-icons-png.flaticon.com/512/166/166344.png";
@@ -19,8 +9,8 @@ const DEFAULT_PLAYER_IMAGE_2 =
   "https://img.lovepik.com/element/40127/4259.png_1200.png";
 
 export default async function TablePage() {
-  const players = await getPlayers();
-  const pichichis = getPichichis(players);
+  const playersWithStats = await getPlayersWithStats();
+  const pichichis = getPichichis(playersWithStats);
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
@@ -60,7 +50,7 @@ export default async function TablePage() {
                 </tr>
               </thead>
               <tbody>
-                {players.map((player, index) => (
+                {playersWithStats.map((player, index) => (
                   <tr
                     key={player._id}
                     className={`border-b border-gray-700 text-white ${

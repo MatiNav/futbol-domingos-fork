@@ -42,11 +42,11 @@ export default function PlayersColumn({
       {isEditable ? (
         <select
           value={teamData.players[index]?._id.toString() || ""}
-          onChange={() => {
-            const playerId =
-              playersMap[teamData.players[index]?._id.toString()]?._id;
-            if (playerId) {
-              onUpdatePlayer?.(team, index, playerId);
+          onChange={(e) => {
+            const selectedPlayerId = e.target.value as unknown as ObjectId;
+            console.log(selectedPlayerId, "selectedPlayerId");
+            if (selectedPlayerId) {
+              onUpdatePlayer?.(team, index, selectedPlayerId);
             }
           }}
           className={`w-[115px] px-2 py-1 ${bgColor} border 
@@ -67,7 +67,7 @@ export default function PlayersColumn({
             return (
               <option
                 key={player._id.toString()}
-                value={player.name}
+                value={player._id.toString()}
                 disabled={!isAvailable}
                 className={isAvailable ? textColor : "text-gray-400"}
                 style={{

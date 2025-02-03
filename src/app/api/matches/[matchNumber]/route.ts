@@ -60,7 +60,7 @@ export async function PUT(
 
     await matchesCollection.updateOne(
       { matchNumber },
-      { $set: { oscuras, claras, winner: result } }
+      { $set: { oscuras, claras, winner: result.winner } }
     );
 
     return NextResponse.json({
@@ -84,9 +84,22 @@ function getMatchResult(oscuras: Team, claras: Team) {
     (acc: number, player: MatchPlayer) => acc + player.goals,
     0
   );
-  return oscurasGoals > clarasGoals
-    ? "oscuras"
-    : oscurasGoals < clarasGoals
+
+  if (oscurasGoals === 0 && clarasGoals === 0) {
+    return {
+      played: false,
+    };
+  }
+
+  const winner =
+    oscurasGoals > clarasGoals
+      ? "oscuras"
+      : oscurasGoals < clarasGoals
       ? "claras"
       : "draw";
+
+  return {
+    winner,
+    played: true,
+  };
 }

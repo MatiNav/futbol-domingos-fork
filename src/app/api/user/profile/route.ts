@@ -1,4 +1,4 @@
-import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
+import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/utils/server/users";

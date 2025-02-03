@@ -1,19 +1,16 @@
 import HomePageContent from "./components/Home";
 import { getPichichis } from "./utils/players";
-import { getPlayers } from "./utils/server/players";
-import { getAuthenticatedUser } from "./utils/server/users";
+import { getPlayersWithStats } from "./utils/server/players";
 
 export default async function HomePage() {
-  const players = await getPlayers();
-  const pichichis = getPichichis(players);
-  const topPlayer = players[0];
-  const user = await getAuthenticatedUser();
+  const playersWithStats = await getPlayersWithStats();
+  const pichichis = getPichichis(playersWithStats);
+  const topPlayer = playersWithStats[0];
 
-  console.log(user, "user");
   return (
     <div>
       <HomePageContent
-        players={players}
+        playersWithStats={playersWithStats}
         pichichis={pichichis}
         topPlayer={topPlayer}
       />

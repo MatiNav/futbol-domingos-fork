@@ -8,16 +8,16 @@ import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
 
 export default function HomePageContent({
-  players,
+  playersWithStats,
   pichichis,
   topPlayer,
 }: {
-  players: PlayerWithStats[];
+  playersWithStats: PlayerWithStats[];
   pichichis: PlayerWithStats[];
   topPlayer: PlayerWithStats;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const banners = getBannerCarousel(players, pichichis, topPlayer);
+  const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">

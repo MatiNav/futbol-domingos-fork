@@ -12,7 +12,7 @@ export type PlayerData = {
   player: DBPlayer;
 };
 
-export async function getPlayers(): Promise<PlayerWithStats[]> {
+export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
   const client = await clientPromise;
   const db = client.db("futbol");
   const matchesCollection = db.collection("matches");
@@ -21,7 +21,6 @@ export async function getPlayers(): Promise<PlayerWithStats[]> {
   const dbMatches = await matchesCollection.find<DBMatch>({}).toArray();
   const dbPlayers = await playersCollection.find<DBPlayer>({}).toArray();
 
-  //percentage will be calculated in the frontend
   const playersForTable = dbPlayers.map((player) => ({
     ...player,
     wins: 0,
@@ -48,12 +47,14 @@ export async function getPlayers(): Promise<PlayerWithStats[]> {
           throw new Error("Player not found");
         }
 
-        if (winner === team) {
-          playerData.wins += 1;
-        } else if (winner === "draw") {
-          playerData.draws += 1;
-        } else {
-          playerData.losses += 1;
+        if (winner) {
+          if (winner === team) {
+            playerData.wins += 1;
+          } else if (winner === "draw") {
+            playerData.draws += 1;
+          } else {
+            playerData.losses += 1;
+          }
         }
 
         playerData.goals += matchPlayer.goals;
