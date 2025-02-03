@@ -11,7 +11,8 @@ export type DBMatch = {
   oscuras: Team;
   claras: Team;
   winner?: MatchResult;
-  date: string;
+  date: Date;
+  playerOfTheMatchVotes?: MatchVote[];
 };
 
 export type MatchPlayer = {
@@ -22,3 +23,9 @@ export type MatchPlayer = {
 export type MatchResult = "oscuras" | "claras" | "draw";
 
 export type MatchTeam = "oscuras" | "claras";
+
+export type MatchVote = {
+  userId: string;
+  playerVotedFor: ObjectId;
+  userName: string;
+};

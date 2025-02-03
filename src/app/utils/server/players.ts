@@ -6,6 +6,7 @@ import {
 } from "@/app/constants/types/db-models/Player";
 import { DBMatch } from "@/app/constants/types/db-models/Match";
 import { Claims, getSession } from "@auth0/nextjs-auth0";
+import { getMostVotedPlayersOfTheMatch } from "../players";
 
 export type PlayerData = {
   auth0: Claims;
@@ -32,7 +33,11 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
     return [];
   }
 
-  dbMatches.forEach(({ oscuras, claras, winner }) => {
+  const mostVotedPlayersPerMatch: string[][] = [];
+  dbMatches.forEach((match) => {
+    const { oscuras, claras, winner } = match;
+    mostVotedPlayersPerMatch.push(getMostVotedPlayersOfTheMatch(match));
+
     [claras, oscuras].map(({ players, team }) => {
       if (!Array.isArray(players)) {
         return;
@@ -64,7 +69,10 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
 
   // Calculate stats and sort players
   const playersWithStats = playersForTable.map((player) => {
-    const points = player.wins * 3 + player.draws;
+    const amountOfMVP = mostVotedPlayersPerMatch.filter((players) =>
+      players.includes(player._id.toString())
+    ).length;
+    const points = player.wins * 3 + player.draws + amountOfMVP;
     const totalGames = player.wins + player.draws + player.losses;
     const maxPoints = totalGames * 3;
     const percentage = totalGames === 0 ? 0 : (points / maxPoints) * 100;

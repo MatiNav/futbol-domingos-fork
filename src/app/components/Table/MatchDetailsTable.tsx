@@ -2,6 +2,7 @@ import { DBMatch, MatchTeam } from "@/app/constants/types/db-models/Match";
 import { DBPlayer } from "@/app/constants/types/db-models/Player";
 import { ObjectId } from "mongodb";
 import TeamColumn from "../TeamColumn";
+import { getMostVotedPlayersOfTheMatch } from "@/app/utils/players";
 
 type MatchDetailsTableProps = {
   match: DBMatch;
@@ -26,6 +27,8 @@ export default function MatchDetailsTable({
   players = [],
   isPlayerAvailable,
 }: MatchDetailsTableProps) {
+  const mostVotedPlayersIds = getMostVotedPlayersOfTheMatch(match);
+
   return (
     <div className="overflow-x-auto mt-6 mb-6">
       <table className="min-w-full bg-[#1a472a]">
@@ -63,6 +66,7 @@ export default function MatchDetailsTable({
                 onUpdatePlayer={onUpdatePlayer}
                 players={players}
                 isPlayerAvailable={isPlayerAvailable}
+                mostVotedPlayersIds={mostVotedPlayersIds}
               />
               <TeamColumn
                 team="claras"
@@ -74,6 +78,7 @@ export default function MatchDetailsTable({
                 onUpdatePlayer={onUpdatePlayer}
                 players={players}
                 isPlayerAvailable={isPlayerAvailable}
+                mostVotedPlayersIds={mostVotedPlayersIds}
               />
             </tr>
           ))}

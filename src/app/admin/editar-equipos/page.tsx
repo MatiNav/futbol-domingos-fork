@@ -6,6 +6,7 @@ import { DBMatch } from "@/app/constants/types/db-models/Match";
 import { DBPlayer } from "@/app/constants/types/db-models/Player";
 import { ObjectId } from "mongodb";
 import { useState, useEffect } from "react";
+import { useMaxMatchNumber } from "@/app/hooks/useMaxMatchNumber";
 
 export default function EditarEquipos() {
   const [match, setMatch] = useState<DBMatch | null>(null);
@@ -15,6 +16,7 @@ export default function EditarEquipos() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const { maxMatchNumber } = useMaxMatchNumber();
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -173,7 +175,11 @@ export default function EditarEquipos() {
     <div className="min-h-screen bg-[#0B2818] py-8">
       <div className="max-w-7xl mx-auto px-4 ">
         <div className="bg-[#77777736] rounded-lg shadow-lg p-6">
-          <MatchSelector onMatchSelect={fetchMatch} isLoading={isLoading} />
+          <MatchSelector
+            onMatchSelect={fetchMatch}
+            isLoading={isLoading}
+            maxMatchNumber={maxMatchNumber}
+          />
 
           {error && (
             <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">

@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { DBPlayer } from "../constants/types/db-models/Player";
 import { DBMatch, MatchTeam } from "../constants/types/db-models/Match";
-import PlayerColumn from "./Table/PlayersColumn";
-import GoalsColumn from "./Table/GoalsColumn";
+import PlayersCell from "./Table/PlayersCell";
+import GoalsColumn from "./Table/GoalsCell";
 
 type TeamColumnProps = {
   team: MatchTeam;
@@ -18,6 +18,7 @@ type TeamColumnProps = {
     team: MatchTeam,
     currentIndex: number
   ) => boolean;
+  mostVotedPlayersIds: string[];
 };
 
 export default function TeamColumn({
@@ -30,6 +31,7 @@ export default function TeamColumn({
   onUpdatePlayer,
   players = [],
   isPlayerAvailable,
+  mostVotedPlayersIds,
 }: TeamColumnProps) {
   const goalsColumnComponent = (
     <GoalsColumn
@@ -42,7 +44,8 @@ export default function TeamColumn({
   );
 
   const playerColumnComponent = (
-    <PlayerColumn
+    <PlayersCell
+      mostVotedPlayersIds={mostVotedPlayersIds}
       team={team}
       index={index}
       match={match}

@@ -3,47 +3,34 @@ import { useState, useEffect } from "react";
 type MatchSelectorProps = {
   onMatchSelect: (matchNumber: string) => void;
   isLoading: boolean;
+  maxMatchNumber: number;
 };
 
 export default function MatchSelector({
   onMatchSelect,
   isLoading,
+  maxMatchNumber,
 }: MatchSelectorProps) {
-  const [matchNumber, setMatchNumber] = useState("1");
-  const [maxMatchNumber, setMaxMatchNumber] = useState(1);
+  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
 
   useEffect(() => {
-    const fetchMaxMatchNumber = async () => {
-      try {
-        const response = await fetch("/api/matches/latest");
-        const data = await response.json();
-        if (response.ok && data.maxMatchNumber) {
-          setMaxMatchNumber(data.maxMatchNumber);
-          setMatchNumber(data.maxMatchNumber.toString());
-          onMatchSelect(data.maxMatchNumber.toString());
-        }
-      } catch (error) {
-        console.error("Error fetching max match number:", error);
-      }
-    };
-
-    fetchMaxMatchNumber();
-  }, []);
+    setMatchNumber(maxMatchNumber);
+  }, [maxMatchNumber]);
 
   const handleNumberClick = (number: number) => {
-    setMatchNumber(number.toString());
+    setMatchNumber(number);
     onMatchSelect(number.toString());
   };
 
   const handlePrevious = () => {
-    const newNumber = Math.max(1, parseInt(matchNumber) - 1);
-    setMatchNumber(newNumber.toString());
+    const newNumber = Math.max(1, matchNumber - 1);
+    setMatchNumber(newNumber);
     onMatchSelect(newNumber.toString());
   };
 
   const handleNext = () => {
-    const newNumber = Math.min(maxMatchNumber, parseInt(matchNumber) + 1);
-    setMatchNumber(newNumber.toString());
+    const newNumber = Math.min(maxMatchNumber, matchNumber + 1);
+    setMatchNumber(newNumber);
     onMatchSelect(newNumber.toString());
   };
 
@@ -58,7 +45,7 @@ export default function MatchSelector({
               onClick={() => handleNumberClick(number)}
               className={`min-w-[28px] h-7 flex items-center justify-center text-base
               ${
-                number.toString() === matchNumber
+                number === matchNumber
                   ? "bg-[#018000] text-white"
                   : "bg-green-800 text-green-100 hover:bg-green-700"
               }
@@ -74,7 +61,7 @@ export default function MatchSelector({
       <div className="flex items-center justify-between bg-green-900 p-3">
         <button
           onClick={handlePrevious}
-          disabled={matchNumber === "1" || isLoading}
+          disabled={matchNumber === 1 || isLoading}
           className="bg-green-800 p-2 rounded disabled:opacity-50 
                    disabled:cursor-not-allowed hover:bg-green-700 transition-colors duration-200"
         >
@@ -96,7 +83,7 @@ export default function MatchSelector({
 
         <button
           onClick={handleNext}
-          disabled={parseInt(matchNumber) >= maxMatchNumber || isLoading}
+          disabled={matchNumber >= maxMatchNumber || isLoading}
           className="bg-green-800 p-2 rounded disabled:opacity-50 
                    disabled:cursor-not-allowed hover:bg-green-700 transition-colors duration-200"
         >

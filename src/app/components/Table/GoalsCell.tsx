@@ -1,6 +1,6 @@
 import { DBMatch } from "@/app/constants/types/db-models/Match";
 
-type GoalsColumnProps = {
+type GoalsCellProps = {
   team: "oscuras" | "claras";
   index: number;
   match: DBMatch;
@@ -12,13 +12,13 @@ type GoalsColumnProps = {
   ) => void;
 };
 
-export default function GoalsColumn({
+export default function GoalsCell({
   team,
   index,
   match,
   isEditable = false,
   onUpdatePlayerGoals,
-}: GoalsColumnProps) {
+}: GoalsCellProps) {
   const teamData = match[team];
 
   return (
