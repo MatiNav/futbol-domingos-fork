@@ -1,15 +1,14 @@
 import { DBMatch } from "../constants/types/db-models/Match";
 import { DBPlayer } from "../constants/types/db-models/Player";
 import React, { useEffect, useState } from "react";
-import { AuthenticatedUserData } from "../utils/server/users";
 import { getMostVotedPlayersOfTheMatch } from "../utils/players";
+import { useCustomUser } from "../hooks/useCustomUser";
 
 type PlayerOfTheMatchProps = {
   match: DBMatch;
   playersMap: { [key: string]: DBPlayer };
   isLatestMatch: boolean;
   onVoteSubmitted: () => void;
-  authenticatedUser: AuthenticatedUserData | null;
 };
 
 export default function PlayerOfTheMatch({
@@ -17,8 +16,9 @@ export default function PlayerOfTheMatch({
   playersMap,
   isLatestMatch,
   onVoteSubmitted,
-  authenticatedUser,
 }: PlayerOfTheMatchProps) {
+  const user = useCustomUser();
+
   const [selectedPlayer, setSelectedPlayer] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasUserPlayedMatch, setHasUserPlayedMatch] = useState(false);
@@ -26,26 +26,23 @@ export default function PlayerOfTheMatch({
   useEffect(() => {
     const alreadySelectedPlayer =
       match?.playerOfTheMatchVotes
-        ?.find(
-          (vote) => vote.userId === authenticatedUser?.dbData._id.toString()
-        )
+        ?.find((vote) => vote.userId === user?.playerId.toString())
         ?.playerVotedFor.toString() || "";
 
     const userPlayedMatchBoolean = [match.oscuras, match.claras].some((team) =>
       team.players.some(
-        (player) =>
-          player._id.toString() === authenticatedUser?.dbData._id.toString()
+        (player) => player._id.toString() === user?.playerId.toString()
       )
     );
 
     setSelectedPlayer(alreadySelectedPlayer);
     setHasUserPlayedMatch(userPlayedMatchBoolean);
-  }, [authenticatedUser, match]);
+  }, [user, match]);
 
   const allPlayers = [...match.oscuras.players, ...match.claras.players];
 
   const handleVoteSubmit = async () => {
-    if (!authenticatedUser || !selectedPlayer) return;
+    if (!user || !selectedPlayer) return;
 
     setIsSubmitting(true);
     try {
@@ -81,32 +78,36 @@ export default function PlayerOfTheMatch({
   const mostVotedPlayerIds = getMostVotedPlayersOfTheMatch(match);
 
   return (
-    <div className="mt-6 p-4 bg-[#1a472a] rounded-lg">
-      <h3 className="text-xl font-semibold text-white mb-4">
-        Jugador del Partido
-      </h3>
+    <div className="mt-6 p-4 bg-[#1a472a] rounded-lg space-y-6">
+      <h3 className="text-xl font-semibold text-white">Jugador del Partido</h3>
 
+      {/* Most voted players section */}
       {mostVotedPlayerIds.length > 0 && voteCounts && (
-        <div className="mb-4 space-y-2">
-          {mostVotedPlayerIds.map((playerId) => (
-            <div key={playerId} className="p-3 bg-green-800 rounded-lg">
-              <div className="flex items-center">
-                <span className="text-yellow-400 mr-2">⭐</span>
-                <span className="text-white">
-                  {playersMap[playerId]?.name} ({voteCounts[playerId]} votos)
-                </span>
+        <div className="p-4 bg-[#2a573a] rounded-lg">
+          <h4 className="text-lg font-medium text-white mb-3">Más Votados</h4>
+          <div className="space-y-2">
+            {mostVotedPlayerIds.map((playerId) => (
+              <div key={playerId} className="p-3 bg-[#1a472a] rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-yellow-400 mr-2">⭐</span>
+                  <span className="text-white">
+                    {playersMap[playerId]?.name} ({voteCounts[playerId]} votos)
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
+      {/* Voting section */}
       {isLatestMatch && hasUserPlayedMatch && (
-        <div className="mt-4">
+        <div className="p-4 bg-[#2a573a] rounded-lg">
+          <h4 className="text-lg font-medium text-white mb-3">Votar</h4>
           <select
             value={selectedPlayer}
             onChange={(e) => setSelectedPlayer(e.target.value)}
-            className="w-full p-2 bg-green-800 text-white rounded-lg mb-3"
+            className="w-full p-2 bg-[#1a472a] text-white rounded-lg mb-3"
           >
             <option value="">Seleccionar jugador</option>
             {allPlayers.map((player) => (
@@ -127,15 +128,22 @@ export default function PlayerOfTheMatch({
         </div>
       )}
 
-      <div className="mt-4">
-        <h4 className="text-white font-medium mb-2">Votos:</h4>
+      {/* Votes list section */}
+      <div className="p-4 bg-[#2a573a] rounded-lg">
+        <h4 className="text-lg font-medium text-white mb-3">Votos</h4>
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-green-100 font-medium">Usuario</div>
-          <div className="text-green-100 font-medium">Votó por</div>
+          <div className="text-green-100 font-medium pb-2 border-b border-[#1a472a]">
+            Usuario
+          </div>
+          <div className="text-green-100 font-medium pb-2 border-b border-[#1a472a]">
+            Votó por
+          </div>
           {match.playerOfTheMatchVotes?.map((vote, index) => (
             <React.Fragment key={index}>
-              <div className="text-green-200">{vote.userName}</div>
-              <div className="text-green-200">
+              <div className="text-green-200 py-2 border-b border-[#1a472a] last:border-b-0">
+                {vote.userName}
+              </div>
+              <div className="text-green-200 py-2 border-b border-[#1a472a] last:border-b-0">
                 {playersMap[vote.playerVotedFor.toString()]?.name}
               </div>
             </React.Fragment>

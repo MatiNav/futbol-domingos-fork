@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         playerId: player._id.toString(),
         displayName: player.name,
         favoriteTeam: player.favoriteTeam,
+        image: player.image,
       },
     });
   } catch (error) {

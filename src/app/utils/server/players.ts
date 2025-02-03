@@ -5,7 +5,7 @@ import {
   PlayerWithStats,
 } from "@/app/constants/types/db-models/Player";
 import { DBMatch } from "@/app/constants/types/db-models/Match";
-import { Claims, getSession } from "@auth0/nextjs-auth0";
+import { Claims } from "@auth0/nextjs-auth0";
 import { getMostVotedPlayersOfTheMatch } from "../players";
 
 export type PlayerData = {
@@ -97,32 +97,4 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
     _id: player._id.toString(), // Convert ObjectId to string
     position: index + 1,
   }));
-}
-
-export async function getAuthenticatedPlayer() {
-  const session = await getSession();
-  console.log(session, "session");
-
-  const user = session?.user;
-
-  if (!user) {
-    return null;
-  }
-
-  const client = await clientPromise;
-  const db = client.db("futbol");
-  const playersCollection = db.collection("players");
-
-  const player = await playersCollection.findOne<DBPlayer>({
-    emailAlias: user.alias,
-  });
-
-  if (!player) {
-    throw new Error("Player not found. Please contact support.");
-  }
-
-  return {
-    auth0: user,
-    dbData: player,
-  };
 }

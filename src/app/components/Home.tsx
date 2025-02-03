@@ -2,23 +2,27 @@
 
 import Link from "next/link";
 import { PlayerWithStats } from "../constants/types/db-models/Player";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
-import { AuthenticatedUserData } from "../utils/server/users";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 export default function HomePageContent({
   playersWithStats,
   pichichis,
   topPlayer,
-  authenticatedUser,
 }: {
   playersWithStats: PlayerWithStats[];
   pichichis: PlayerWithStats[];
   topPlayer: PlayerWithStats;
-  authenticatedUser: AuthenticatedUserData | null;
 }) {
+  const { user } = useUser();
+
+  useEffect(() => {
+    console.log("user", user);
+  }, [user]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
@@ -97,7 +101,7 @@ export default function HomePageContent({
               </div>
             </Link>
 
-            {authenticatedUser?.dbData?.role === "admin" && (
+            {user?.role === "admin" && (
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"

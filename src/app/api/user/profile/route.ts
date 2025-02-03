@@ -2,6 +2,7 @@ import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
+
 export const PUT = withApiAuthRequired(async function updateProfile(
   req: NextRequest
 ) {
@@ -9,7 +10,6 @@ export const PUT = withApiAuthRequired(async function updateProfile(
     const user = await getAuthenticatedUser();
     const { displayName, favoriteTeam } = await req.json();
 
-    console.log(displayName, favoriteTeam, "displayName, favoriteTeam");
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
