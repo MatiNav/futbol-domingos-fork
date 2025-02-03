@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { email } = await request.json();
+    const email = request.nextUrl.searchParams.get("email");
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
