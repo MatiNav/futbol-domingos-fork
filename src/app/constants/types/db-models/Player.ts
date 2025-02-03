@@ -6,6 +6,7 @@ export type DBPlayer = {
   image: string;
   favoriteTeam: string;
   email: string;
+  role?: "admin" | "user";
 };
 
 export type PlayerWithStats = {

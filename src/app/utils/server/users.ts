@@ -4,7 +4,7 @@ import { Claims, getSession } from "@auth0/nextjs-auth0";
 import { DBPlayer } from "@/app/constants/types/db-models/Player";
 import { redirect } from "next/navigation";
 
-export type UserData = {
+export type AuthenticatedUserData = {
   auth0: Claims;
   dbData: DBPlayer;
 };

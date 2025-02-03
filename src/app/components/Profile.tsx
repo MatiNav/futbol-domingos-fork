@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { UserData } from "../utils/server/users";
+import { AuthenticatedUserData } from "../utils/server/users";
 import { TEAMS_IMAGES } from "../constants/images/teams";
 import Image from "next/image";
 
 type TeamOption = keyof typeof TEAMS_IMAGES;
 
-export default function ProfileContent({ user }: { user: UserData }) {
+export default function ProfileContent({
+  user,
+}: {
+  user: AuthenticatedUserData;
+}) {
   const [displayName, setDisplayName] = useState(user.dbData.name || "");
   const [favoriteTeam, setFavoriteTeam] = useState<TeamOption | "">(
     user.dbData.favoriteTeam as TeamOption
