@@ -21,4 +21,5 @@ export type PlayerWithStats = {
   points: number;
   percentage: number;
   position: number;
+  mvp: number;
 };

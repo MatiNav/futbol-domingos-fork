@@ -79,6 +79,7 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
 
     return {
       ...player,
+      mvp: amountOfMVP,
       points,
       percentage: Math.round(percentage * 10) / 10, // Round to 1 decimal place
     };

@@ -30,6 +30,9 @@ export default async function TablePage() {
                     Pts
                   </th>
                   <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
+                    MVP ⭐
+                  </th>
+                  <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
                     GF
                   </th>
                   <th className="px-4 py-3 font-bold uppercase tracking-wider text-sm text-center">
@@ -96,6 +99,11 @@ export default async function TablePage() {
                     </td>
                     <td className="px-4 py-2 text-center font-bold whitespace-nowrap">
                       {player.points}
+                    </td>
+                    <td className="px-4 py-2 text-center whitespace-nowrap">
+                      <div className="flex items-center justify-center">
+                        <span className="ml-1">{player.mvp}</span>
+                      </div>
                     </td>
                     <td className="px-4 py-2 text-center whitespace-nowrap">
                       {player.goals}
