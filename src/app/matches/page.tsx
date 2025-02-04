@@ -7,12 +7,15 @@ import MatchDetailsTable from "../components/Table/MatchDetailsTable";
 import PlayerOfTheMatch from "../components/PlayerOfTheMatch";
 import { useMaxMatchNumber } from "../hooks/useMaxMatchNumber";
 import { useFetchPlayers } from "../hooks/useFetchPlayers";
+import MatchOpinions from "../components/MatchOpinions";
+import { useCustomUser } from "../hooks/useCustomUser";
 
 export default function Matches() {
   const [match, setMatch] = useState<DBMatch | null>(null);
   const { playersMap } = useFetchPlayers();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const user = useCustomUser();
 
   const { maxMatchNumber } = useMaxMatchNumber();
 
@@ -76,12 +79,27 @@ export default function Matches() {
             <MatchResultTable match={match} />
 
             {match.matchNumber >= 5 && (
-              <PlayerOfTheMatch
-                match={match}
-                playersMap={playersMap}
-                isLatestMatch={match.matchNumber === maxMatchNumber}
-                onVoteSubmitted={onVoteSubmitted}
-              />
+              <>
+                <PlayerOfTheMatch
+                  match={match}
+                  playersMap={playersMap}
+                  isLatestMatch={match.matchNumber === maxMatchNumber}
+                  onVoteSubmitted={onVoteSubmitted}
+                />
+                <MatchOpinions
+                  match={match}
+                  isLatestMatch={match.matchNumber === maxMatchNumber}
+                  hasUserPlayedMatch={[match.oscuras, match.claras].some(
+                    (team) =>
+                      team.players.some(
+                        (player) =>
+                          player._id.toString() === user?.playerId.toString()
+                      )
+                  )}
+                  // TODO: Add onOpinionSubmitted
+                  onOpinionSubmitted={onVoteSubmitted}
+                />
+              </>
             )}
           </>
         )}
