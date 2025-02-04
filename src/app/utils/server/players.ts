@@ -1,10 +1,6 @@
 import "server-only";
 import clientPromise from "@/lib/mongodb";
-import {
-  DBPlayer,
-  PlayerWithStats,
-} from "@/app/constants/types/db-models/Player";
-import { DBMatch } from "@/app/constants/types/db-models/Match";
+import { DBPlayer, PlayerWithStats, DBMatch } from "@/app/constants/types";
 import { Claims } from "@auth0/nextjs-auth0";
 import { getMostVotedPlayersOfTheMatch } from "../players";
 

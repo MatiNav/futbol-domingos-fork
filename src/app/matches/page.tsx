@@ -1,38 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
-import { DBMatch } from "@/app/constants/types/db-models/Match";
-import { DBPlayer } from "@/app/constants/types/db-models/Player";
+import { DBMatch } from "@/app/constants/types/Match";
 import MatchSelector from "../components/MatchSelector";
 import MatchResultTable from "../components/MatchResult";
 import MatchDetailsTable from "../components/Table/MatchDetailsTable";
 import PlayerOfTheMatch from "../components/PlayerOfTheMatch";
 import { useMaxMatchNumber } from "../hooks/useMaxMatchNumber";
+import { useFetchPlayers } from "../hooks/useFetchPlayers";
 
 export default function Matches() {
   const [match, setMatch] = useState<DBMatch | null>(null);
-  const [playersMap, setPlayersMap] = useState<{ [key: string]: DBPlayer }>({});
+  const { playersMap } = useFetchPlayers();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const { maxMatchNumber } = useMaxMatchNumber();
-
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      const response = await fetch("/api/players");
-      const data = await response.json();
-      setPlayersMap(
-        data.players.reduce(
-          (acc: { [key: string]: DBPlayer }, player: DBPlayer) => {
-            acc[player._id.toString()] = player;
-            return acc;
-          },
-          {} as { [key: string]: DBPlayer }
-        )
-      );
-    };
-
-    fetchPlayers();
-  }, []);
 
   const fetchMatch = async (number: string) => {
     setIsLoading(true);

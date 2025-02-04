@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
-import { MatchPlayer, Team } from "@/app/constants/types/db-models/Match";
+import { MatchPlayer, Team } from "@/app/constants/types";
 
 export async function GET(
   request: Request,

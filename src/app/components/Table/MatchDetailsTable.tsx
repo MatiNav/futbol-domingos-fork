@@ -1,5 +1,4 @@
-import { DBMatch, MatchTeam } from "@/app/constants/types/db-models/Match";
-import { DBPlayer } from "@/app/constants/types/db-models/Player";
+import { DBMatch, MatchTeam, DBPlayer } from "@/app/constants/types";
 import { ObjectId } from "mongodb";
 import TeamColumn from "../TeamColumn";
 import { getMostVotedPlayersOfTheMatch } from "@/app/utils/players";

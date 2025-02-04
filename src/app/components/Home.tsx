@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PlayerWithStats } from "../constants/types/db-models/Player";
+import { PlayerWithStats } from "../constants/types";
 import { useEffect, useState } from "react";
 import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";

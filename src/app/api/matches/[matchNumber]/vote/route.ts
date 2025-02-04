@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
-import { DBMatch } from "@/app/constants/types/db-models/Match";
+import { DBMatch } from "@/app/constants/types";
 
 export async function POST(
   request: NextRequest,

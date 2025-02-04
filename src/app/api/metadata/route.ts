@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
-import { DBPlayer } from "@/app/constants/types/db-models/Player";
+import { DBPlayer } from "@/app/constants/types";
 
 export async function GET(request: NextRequest) {
   try {

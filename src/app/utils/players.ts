@@ -1,5 +1,5 @@
-import { DBMatch } from "../constants/types/db-models/Match";
-import { PlayerWithStats } from "../constants/types/db-models/Player";
+import { DBMatch } from "../constants/types/Match";
+import { PlayerWithStats } from "../constants/types/Player";
 
 export function getPichichis(players: PlayerWithStats[]) {
   return players.reduce((pichichis, player) => {

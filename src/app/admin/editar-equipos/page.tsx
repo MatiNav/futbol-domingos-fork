@@ -2,46 +2,20 @@
 import MatchDetailsTable from "@/app/components/Table/MatchDetailsTable";
 import MatchResultTable from "@/app/components/MatchResult";
 import MatchSelector from "@/app/components/MatchSelector";
-import { DBMatch } from "@/app/constants/types/db-models/Match";
-import { DBPlayer } from "@/app/constants/types/db-models/Player";
+import { DBMatch } from "@/app/constants/types";
 import { ObjectId } from "mongodb";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMaxMatchNumber } from "@/app/hooks/useMaxMatchNumber";
+import { useFetchPlayers } from "@/app/hooks/useFetchPlayers";
 
 export default function EditarEquipos() {
   const [match, setMatch] = useState<DBMatch | null>(null);
-  const [players, setPlayers] = useState<DBPlayer[]>([]);
-  const [playersMap, setPlayersMap] = useState<{ [key: string]: DBPlayer }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const { maxMatchNumber } = useMaxMatchNumber();
-
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        const response = await fetch("/api/players");
-        const data = await response.json();
-        if (response.ok) {
-          setPlayers(data.players);
-          setPlayersMap(
-            data.players.reduce(
-              (acc: { [key: string]: DBPlayer }, player: DBPlayer) => {
-                acc[player._id.toString()] = player;
-                return acc;
-              },
-              {} as { [key: string]: DBPlayer }
-            )
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching players:", error);
-      }
-    };
-
-    fetchPlayers();
-  }, []);
+  const { players, playersMap } = useFetchPlayers();
 
   const fetchMatch = async (number: string) => {
     setIsLoading(true);

@@ -1,4 +1,4 @@
-import { DBMatch, Team } from "@/app/constants/types/db-models/Match";
+import { DBMatch, Team } from "@/app/constants/types";
 
 interface MatchResultTableProps {
   match: DBMatch;

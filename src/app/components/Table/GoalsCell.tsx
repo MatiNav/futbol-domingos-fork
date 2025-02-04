@@ -1,4 +1,4 @@
-import { DBMatch } from "@/app/constants/types/db-models/Match";
+import { DBMatch } from "@/app/constants/types";
 
 type GoalsCellProps = {
   team: "oscuras" | "claras";

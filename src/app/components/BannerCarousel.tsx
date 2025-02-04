@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlayerWithStats } from "../constants/types/db-models/Player";
+import { PlayerWithStats } from "../constants/types";
 import Image from "next/image";
 import { BACKGROUND_IMAGES } from "../constants/images/teams";
 

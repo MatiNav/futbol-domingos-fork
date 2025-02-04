@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { PlayerWithStats } from "../constants/types/db-models/Player";
+import { PlayerWithStats } from "../constants/types";
 
 interface BannerProps {
   title: string;

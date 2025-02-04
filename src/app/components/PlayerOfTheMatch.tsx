@@ -1,5 +1,5 @@
-import { DBMatch } from "../constants/types/db-models/Match";
-import { DBPlayer } from "../constants/types/db-models/Player";
+import { DBMatch } from "../constants/types/Match";
+import { DBPlayer } from "../constants/types/Player";
 import React, { useEffect, useState } from "react";
 import { getMostVotedPlayersOfTheMatch } from "../utils/players";
 import { useCustomUser } from "../hooks/useCustomUser";

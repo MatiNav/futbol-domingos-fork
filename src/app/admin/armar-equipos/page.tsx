@@ -1,19 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
-
-interface Player {
-  _id: string;
-  name: string;
-  image: string;
-  wins: number;
-  draws: number;
-  losses: number;
-  goals: number;
-}
+import { useFetchPlayers } from "@/app/hooks/useFetchPlayers";
+import { DBPlayer } from "@/app/constants/types/Player";
+import { useState } from "react";
 
 export default function ArmarEquipos() {
-  const [team1, setTeam1] = useState<(Player | null)[]>([]);
-  const [team2, setTeam2] = useState<(Player | null)[]>([]);
+  const [team1, setTeam1] = useState<(DBPlayer | null)[]>([]);
+  const [team2, setTeam2] = useState<(DBPlayer | null)[]>([]);
   const [searchTerms, setSearchTerms] = useState<{
     [key: number]: { team1: string; team2: string };
   }>(
@@ -24,29 +16,13 @@ export default function ArmarEquipos() {
         {}
       )
   );
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { players } = useFetchPlayers();
   const [isLoading, setIsLoading] = useState(false);
   //TODO: message should be an object with type and message
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        const response = await fetch("/api/players");
-        const data = await response.json();
-        if (response.ok) {
-          setPlayers(data.players);
-        }
-      } catch (error) {
-        console.error("Error fetching players:", error);
-      }
-    };
-
-    fetchPlayers();
-  }, []);
-
   const handlePlayerSelect = (
-    player: Player,
+    player: DBPlayer,
     team: "team1" | "team2",
     index: number
   ) => {
@@ -87,14 +63,12 @@ export default function ArmarEquipos() {
     // team: "team1" | "team2"
   ) => {
     // const otherTeam = team === "team1" ? team2 : team1;
-    return players
-      .filter(
-        (player) =>
-          player.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          !team1.some((p) => p?._id === player._id) &&
-          !team2.some((p) => p?._id === player._id)
-      )
-      .map((player) => player);
+    return players.filter(
+      (player) =>
+        player.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !team1.some((p) => p?._id === player._id) &&
+        !team2.some((p) => p?._id === player._id)
+    );
   };
 
   const handleSaveTeams = async () => {
@@ -223,7 +197,7 @@ export default function ArmarEquipos() {
                               // "team1"
                             ).map((player) => (
                               <div
-                                key={player._id}
+                                key={player._id.toString()}
                                 className="px-4 py-2 hover:bg-red-600 cursor-pointer text-white border-b border-red-600 last:border-b-0"
                                 onClick={() =>
                                   handlePlayerSelect(player, "team1", index)
@@ -278,7 +252,7 @@ export default function ArmarEquipos() {
                               // "team2"
                             ).map((player) => (
                               <div
-                                key={player._id}
+                                key={player._id.toString()}
                                 className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-800 border-b border-blue-200 last:border-b-0"
                                 onClick={() =>
                                   handlePlayerSelect(player, "team2", index)

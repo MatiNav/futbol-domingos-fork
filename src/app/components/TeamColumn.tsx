@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
-import { DBPlayer } from "../constants/types/db-models/Player";
-import { DBMatch, MatchTeam } from "../constants/types/db-models/Match";
+import { DBPlayer } from "../constants/types/Player";
+import { DBMatch, MatchTeam } from "../constants/types";
 import PlayersCell from "./Table/PlayersCell";
 import GoalsColumn from "./Table/GoalsCell";
 

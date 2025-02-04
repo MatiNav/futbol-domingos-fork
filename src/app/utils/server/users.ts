@@ -1,7 +1,7 @@
 import "server-only";
 import clientPromise from "@/lib/mongodb";
 import { Claims, getSession } from "@auth0/nextjs-auth0";
-import { DBPlayer } from "@/app/constants/types/db-models/Player";
+import { DBPlayer } from "@/app/constants/types";
 import { redirect } from "next/navigation";
 
 export type AuthenticatedUserData = {
