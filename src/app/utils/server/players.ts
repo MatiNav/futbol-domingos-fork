@@ -24,6 +24,7 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
     draws: 0,
     losses: 0,
     goals: 0,
+    assists: 0,
   }));
   if (!Array.isArray(dbMatches)) {
     return [];
@@ -59,6 +60,9 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
         }
 
         playerData.goals += matchPlayer.goals;
+        if (matchPlayer.assists) {
+          playerData.assists += matchPlayer.assists;
+        }
       });
     });
   });

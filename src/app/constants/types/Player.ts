@@ -18,6 +18,7 @@ export type PlayerWithStats = {
   draws: number;
   losses: number;
   goals: number;
+  assists: number;
   points: number;
   percentage: number;
   position: number;

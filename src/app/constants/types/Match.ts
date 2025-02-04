@@ -18,6 +18,7 @@ export type DBMatch = {
 export type MatchPlayer = {
   _id: ObjectId; // Player id
   goals: number;
+  assists?: number;
 };
 
 export type MatchResult = "oscuras" | "claras" | "draw";
