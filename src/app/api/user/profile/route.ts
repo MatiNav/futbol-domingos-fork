@@ -23,7 +23,7 @@ export const PUT = withApiAuthRequired(async function updateProfile(
     const playersCollection = db.collection("players");
 
     await playersCollection.updateOne(
-      { email: user.dbData.email },
+      { email: user.email },
       {
         $set: {
           displayName,

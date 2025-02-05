@@ -40,7 +40,7 @@ export async function PUT(
       {
         matchNumber,
         "opinions._id": new ObjectId(opinionId),
-        "opinions.userId": user.dbData._id.toString(),
+        "opinions.userId": user.playerId,
       },
       {
         $set: {
@@ -90,7 +90,7 @@ export async function DELETE(
         $pull: {
           opinions: {
             _id: new ObjectId(opinionId),
-            userId: user.dbData._id.toString(),
+            userId: user.playerId,
           },
         },
       }

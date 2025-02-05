@@ -7,6 +7,7 @@ import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import RealtimeStream from "./RealtimeStream";
 
 export default function HomePageContent({
   playersWithStats,
@@ -141,6 +142,7 @@ export default function HomePageContent({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+      <RealtimeStream />
     </div>
   );
 }

@@ -8,16 +8,11 @@ import { TeamOption } from "../constants/common";
 
 export default function ProfileContent() {
   const user = useCustomUser();
-  const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [favoriteTeam, setFavoriteTeam] = useState<TeamOption | "">(
     user?.favoriteTeam || ""
   );
   const [isUpdating, setIsUpdating] = useState(false);
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    setDisplayName(user?.displayName || "");
-  }, [user?.displayName]);
 
   useEffect(() => {
     setFavoriteTeam(user?.favoriteTeam as TeamOption);
@@ -37,7 +32,6 @@ export default function ProfileContent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          displayName,
           favoriteTeam,
         }),
       });
@@ -59,7 +53,7 @@ export default function ProfileContent() {
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
       <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Profile Settings</h1>
+        <h1 className="text-3xl font-bold text-white mb-8"> Perfil </h1>
 
         <div className="flex items-center mb-8">
           {user.image ? (
@@ -81,17 +75,13 @@ export default function ProfileContent() {
           <div>
             <label
               htmlFor="displayName"
-              className="block text-sm font-medium text-white mb-2"
+              className="block text-sm font-medium text-gray-400 mb-2 cursor-not-allowed"
             >
-              Display Name
+              Nombre
             </label>
-            <input
-              type="text"
-              id="displayName"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
+            <div className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-400 cursor-not-allowed select-none">
+              {user.displayName}
+            </div>
           </div>
 
           <div>

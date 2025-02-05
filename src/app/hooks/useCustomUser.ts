@@ -1,13 +1,5 @@
-import { UserProfile, useUser } from "@auth0/nextjs-auth0/client";
-import { TeamOption } from "../constants/common";
-
-type UserProfileWithPlayerId = UserProfile & {
-  displayName: string;
-  favoriteTeam: TeamOption;
-  playerId: string;
-  role: string;
-  image: string;
-};
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { UserProfileWithPlayerId } from "../constants/types";
 
 export function useCustomUser() {
   const { user } = useUser();

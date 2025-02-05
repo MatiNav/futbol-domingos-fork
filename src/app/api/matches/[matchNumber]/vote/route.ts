@@ -35,7 +35,7 @@ export async function POST(
       { matchNumber },
       {
         $pull: {
-          playerOfTheMatchVotes: { userId: user.dbData._id.toString() },
+          playerOfTheMatchVotes: { userId: user.playerId },
         },
       }
     );
@@ -45,9 +45,9 @@ export async function POST(
       {
         $push: {
           playerOfTheMatchVotes: {
-            userId: user.dbData._id.toString(),
+            userId: user.playerId,
             playerVotedFor: playerVotedFor,
-            userName: user.dbData.name,
+            userName: user.displayName,
           },
         },
       }

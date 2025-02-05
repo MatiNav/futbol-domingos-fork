@@ -1,18 +1,13 @@
 import "server-only";
 import clientPromise from "@/lib/mongodb";
-import { Claims, getSession } from "@auth0/nextjs-auth0";
-import { DBPlayer } from "@/app/constants/types";
+import { getSession } from "@auth0/nextjs-auth0";
+import { DBPlayer, UserProfileWithPlayerId } from "@/app/constants/types";
 import { redirect } from "next/navigation";
-
-export type AuthenticatedUserData = {
-  auth0: Claims;
-  dbData: DBPlayer;
-};
 
 export async function getAuthenticatedUser() {
   const session = await getSession();
 
-  const user = session?.user;
+  const user = session?.user as UserProfileWithPlayerId;
 
   if (!user) {
     return null;
@@ -30,8 +25,5 @@ export async function getAuthenticatedUser() {
     redirect("/confirmar-email");
   }
 
-  return {
-    auth0: user,
-    dbData: player,
-  };
+  return user;
 }

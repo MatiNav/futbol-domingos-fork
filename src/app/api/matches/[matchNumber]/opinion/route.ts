@@ -41,8 +41,8 @@ export async function POST(
         $push: {
           opinions: {
             _id: new ObjectId(),
-            userId: user.dbData._id.toString(),
-            userName: user.dbData.name,
+            userId: user.playerId,
+            userName: user.displayName,
             content: content.trim(),
             createdAt: new Date(),
           },
