@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { DBPlayer } from "@/app/constants/types";
 
+export const dynamic = "force-dynamic"; // Force this route to be dynamic
+
 export async function GET(request: NextRequest) {
   try {
     // Verify secret from Authorization header
     const secret = request.headers.get("Authorization");
 
-    //replace with process.env.AUTH0_ACTION_SECRET
+    // Replace with process.env.AUTH0_ACTION_SECRET
     if (secret !== "your-secure-random-string") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
