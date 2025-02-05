@@ -1,5 +1,8 @@
 import clientPromise from "@/lib/mongodb";
 
+// Force this route to be dynamic to avoid static generation timeouts
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const headers = new Headers({
     "Content-Type": "text/event-stream",
