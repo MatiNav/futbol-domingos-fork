@@ -99,7 +99,12 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
   }));
 }
 
-export const getPlayers = async (): Promise<FetchResponse<DBPlayer[]>> => {
+export type PlayersResponse = {
+  players: DBPlayer[];
+  playersMap: { [key: string]: DBPlayer };
+};
+
+export const getPlayers = async (): Promise<FetchResponse<PlayersResponse>> => {
   const client = await clientPromise;
   const db = client.db("futbol");
   const playersCollection = db.collection("players");
@@ -113,8 +118,19 @@ export const getPlayers = async (): Promise<FetchResponse<DBPlayer[]>> => {
     };
   }
 
+  const playersMap = players.reduce(
+    (acc: { [key: string]: DBPlayer }, player: DBPlayer) => {
+      acc[player._id.toString()] = player;
+      return acc;
+    },
+    {} as { [key: string]: DBPlayer }
+  );
+
   return {
-    data: players,
+    data: {
+      players,
+      playersMap,
+    },
     status: 200,
   };
 };

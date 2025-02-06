@@ -6,17 +6,18 @@ import MatchSelector from "../components/MatchSelector";
 import MatchResultTable from "../components/MatchResult";
 import MatchDetailsTable from "../components/Table/MatchDetailsTable";
 import PlayerOfTheMatch from "../components/PlayerOfTheMatch";
-import { useFetchPlayers } from "../hooks/useFetchPlayers";
 import MatchOpinions from "../components/MatchOpinions";
 import { useCustomUser } from "../hooks/useCustomUser";
+import { PlayersResponse } from "../utils/server/players";
 
 export default function Matches({
+  players: { playersMap },
   maxMatchNumber,
 }: {
+  players: PlayersResponse;
   maxMatchNumber: number;
 }) {
   const [match, setMatch] = useState<DBMatch | null>(null);
-  const { playersMap } = useFetchPlayers();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const user = useCustomUser();
