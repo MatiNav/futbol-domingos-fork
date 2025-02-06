@@ -1,5 +1,4 @@
-import { DBMatch } from "../constants/types/Match";
-import { PlayerWithStats } from "../constants/types/Player";
+import { DBMatch, PlayerWithStats } from "@/app/constants/types";
 
 export function getPichichis(players: PlayerWithStats[]) {
   return players.reduce((pichichis, player) => {
@@ -26,7 +25,10 @@ export function getMostVotedPlayersOfTheMatch(match: DBMatch): string[] {
   const maxVotes = Math.max(...Object.values(voteCounts));
 
   // Get all players with the maximum number of votes
-  return Object.entries(voteCounts)
-    .filter(([_, votes]) => votes === maxVotes)
-    .map(([playerId]) => playerId);
+  return (
+    Object.entries(voteCounts)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .filter(([_, votes]) => votes === maxVotes)
+      .map(([playerId]) => playerId)
+  );
 }

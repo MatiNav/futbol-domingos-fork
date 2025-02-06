@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DBMatch, UserProfileWithPlayerId } from "../constants/types";
+import { DBMatch, UserProfileWithPlayerId } from "@/app/constants/types";
 
 type MatchOpinionsProps = {
   match: DBMatch;

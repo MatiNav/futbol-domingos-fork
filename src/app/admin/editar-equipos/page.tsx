@@ -1,6 +1,6 @@
 import EditarEquipos from "@/app/components/EditarEquipos";
-import { getLatestMatchNumber } from "@/app/utils/server/matches";
-import { getPlayers } from "@/app/utils/server/players";
+import { getLatestMatchNumber } from "@/app/features/matches/utils/server";
+import { getPlayers } from "@/app/features/players/utils/server";
 
 export default async function EditarEquiposPage() {
   const maxMatchNumber = await getLatestMatchNumber();

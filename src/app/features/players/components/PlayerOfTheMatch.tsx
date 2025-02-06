@@ -1,6 +1,10 @@
-import { DBMatch, DBPlayer, UserProfileWithPlayerId } from "../constants/types";
+import {
+  DBMatch,
+  DBPlayer,
+  UserProfileWithPlayerId,
+} from "@/app/constants/types";
 import React, { useEffect, useState } from "react";
-import { getMostVotedPlayersOfTheMatch } from "../utils/players";
+import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 
 type PlayerOfTheMatchProps = {
   match: DBMatch;
@@ -25,7 +29,6 @@ export default function PlayerOfTheMatch({
   const [hasUserPlayedMatch, setHasUserPlayedMatch] = useState(false);
 
   useEffect(() => {
-    console.log("match", Boolean(match.winner));
     setHasMatchBeenPlayed(Boolean(match.winner));
   }, [match]);
 

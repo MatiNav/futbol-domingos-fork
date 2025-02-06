@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { DBMatch } from "@/app/constants/types/Match";
-import MatchSelector from "../components/MatchSelector";
-import MatchResultTable from "../components/MatchResult";
-import MatchDetailsTable from "../components/Table/MatchDetailsTable";
-import PlayerOfTheMatch from "../components/PlayerOfTheMatch";
-import MatchOpinions from "../components/MatchOpinions";
-import { PlayersResponse } from "../utils/server/players";
-import { UserProfileWithPlayerId } from "../constants/types";
+import MatchSelector from "./MatchSelector";
+import MatchResultTable from "./MatchResult";
+import MatchDetailsTable from "./MatchDetailsTable";
+import PlayerOfTheMatch from "@/app/features/players/components/PlayerOfTheMatch";
+import MatchOpinions from "./MatchOpinions";
+import { PlayersResponse } from "@/app/features/players/utils/server";
+import { UserProfileWithPlayerId } from "@/app/constants/types";
 
 export default function Matches({
   user,

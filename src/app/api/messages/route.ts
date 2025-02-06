@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pusher from "@/lib/pusher";
-import { getAuthenticatedUser } from "@/app/utils/server/users";
+import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { getCollection } from "@/app/utils/server/db";
 import { ObjectId } from "mongodb";

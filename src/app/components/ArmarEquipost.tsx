@@ -2,7 +2,7 @@
 
 import { DBPlayer } from "@/app/constants/types/Player";
 import { useState } from "react";
-import { PlayersResponse } from "@/app/utils/server/players";
+import { PlayersResponse } from "@/app/features/players/utils/server";
 
 export default function ArmarEquipos({
   players: { players },

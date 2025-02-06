@@ -1,8 +1,8 @@
 import { getSession } from "@auth0/nextjs-auth0";
-import Matches from "../components/Matches";
+import Matches from "../features/matches/components/Matches";
 import { UserProfileWithPlayerId } from "../constants/types";
-import { getLatestMatchNumber } from "../utils/server/matches";
-import { getPlayers } from "../utils/server/players";
+import { getLatestMatchNumber } from "@/app/features/matches/utils/server";
+import { getPlayers } from "@/app/features/players/utils/server";
 
 export default async function MatchesPage() {
   const session = await getSession();

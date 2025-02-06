@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
-import { DBPlayer } from "../constants/types/Player";
-import { DBMatch, MatchTeam } from "../constants/types/Match";
-import PlayersCell from "./Table/PlayersCell";
-import GoalsColumn from "./Table/GoalsCell";
+import { DBPlayer } from "@/app/constants/types/Player";
+import { DBMatch, MatchTeam } from "@/app/constants/types/Match";
+import PlayersCell from "@/app/features/players/components/PlayersCell";
+import GoalsColumn from "@/app/components/Table/GoalsCell";
 
 type TeamColumnProps = {
   team: MatchTeam;

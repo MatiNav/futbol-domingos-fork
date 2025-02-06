@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { TEAMS_IMAGES } from "../constants/images/teams";
-import { getPlayersWithStats } from "../utils/server/players";
-import { getPichichis } from "../utils/players";
+import { getPlayersWithStats } from "@/app/features/players/utils/server";
+import { getPichichis } from "@/app/features/players/utils";
 
 const DEFAULT_PLAYER_IMAGE_1 =
   "https://cdn-icons-png.flaticon.com/512/166/166344.png";

@@ -2,7 +2,7 @@ import "server-only";
 import { getSession } from "@auth0/nextjs-auth0";
 import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { redirect } from "next/navigation";
-import { getCollection } from "./db";
+import { getCollection } from "../../../utils/server/db";
 
 export async function getAuthenticatedUser() {
   const session = await getSession();

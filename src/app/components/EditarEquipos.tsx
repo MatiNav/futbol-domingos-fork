@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DBMatch } from "@/app/constants/types/Match";
 import { ObjectId } from "mongodb";
-import { PlayersResponse } from "@/app/utils/server/players";
-import MatchSelector from "./MatchSelector";
-import MatchDetailsTable from "./Table/MatchDetailsTable";
-import MatchResultTable from "./MatchResult";
+import { PlayersResponse } from "@/app/features/players/utils/server";
+import {
+  MatchDetailsTable,
+  MatchResultTable,
+  MatchSelector,
+} from "@/app/features/matches/components";
 
 export default function EditarEquipos({
   maxMatchNumber,
@@ -35,6 +37,8 @@ export default function EditarEquipos({
         throw new Error(data.error || "Error al buscar el partido");
       }
 
+      console.log("data", data);
+
       if (data.match) {
         setMatch(data.match);
       } else {
@@ -48,6 +52,13 @@ export default function EditarEquipos({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log(maxMatchNumber, "it changed");
+    if (maxMatchNumber) {
+      fetchMatch(maxMatchNumber.toString());
+    }
+  }, [maxMatchNumber]);
 
   const updatePlayerGoals = (
     team: "oscuras" | "claras",

@@ -1,4 +1,4 @@
-import { getCollection } from "./db";
+import { getCollection } from "@/app/utils/server/db";
 
 export async function getLatestMatchNumber() {
   const collection = await getCollection("matches");

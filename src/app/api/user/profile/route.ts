@@ -1,7 +1,7 @@
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
-import { getAuthenticatedUser } from "@/app/utils/server/users";
+import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 
 export const dynamic = "force-dynamic";
 
@@ -10,13 +10,13 @@ export const PUT = withApiAuthRequired(async function updateProfile(
 ) {
   try {
     const user = await getAuthenticatedUser();
-    const { displayName, favoriteTeam } = await req.json();
+    const { favoriteTeam } = await req.json();
 
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    if (!displayName || !favoriteTeam) {
+    if (!favoriteTeam) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
@@ -28,7 +28,6 @@ export const PUT = withApiAuthRequired(async function updateProfile(
       { email: user.email },
       {
         $set: {
-          displayName,
           favoriteTeam,
           updatedAt: new Date(),
         },
