@@ -3,19 +3,17 @@ import clientPromise from "@/lib/mongodb";
 import {
   DBPlayer,
   PlayerWithStats,
-  DBMatch,
   FetchResponse,
 } from "@/app/constants/types";
 import { getMostVotedPlayersOfTheMatch } from "../players";
+import { getCollection } from "./db";
 
 export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
-  const client = await clientPromise;
-  const db = client.db("futbol");
-  const matchesCollection = db.collection("matches");
-  const playersCollection = db.collection("players");
+  const matchesCollection = await getCollection("matches");
+  const playersCollection = await getCollection("players");
 
-  const dbMatches = await matchesCollection.find<DBMatch>({}).toArray();
-  const dbPlayers = await playersCollection.find<DBPlayer>({}).toArray();
+  const dbMatches = await matchesCollection.find({}).toArray();
+  const dbPlayers = await playersCollection.find({}).toArray();
 
   const playersForTable = dbPlayers.map((player) => ({
     ...player,

@@ -7,20 +7,21 @@ import MatchResultTable from "../components/MatchResult";
 import MatchDetailsTable from "../components/Table/MatchDetailsTable";
 import PlayerOfTheMatch from "../components/PlayerOfTheMatch";
 import MatchOpinions from "../components/MatchOpinions";
-import { useCustomUser } from "../hooks/useCustomUser";
 import { PlayersResponse } from "../utils/server/players";
+import { UserProfileWithPlayerId } from "../constants/types";
 
 export default function Matches({
+  user,
   players: { playersMap },
   maxMatchNumber,
 }: {
+  user: UserProfileWithPlayerId | null;
   players: PlayersResponse;
   maxMatchNumber: number;
 }) {
   const [match, setMatch] = useState<DBMatch | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const user = useCustomUser();
 
   const fetchMatch = async (number: string) => {
     setIsLoading(true);
@@ -88,6 +89,7 @@ export default function Matches({
                   playersMap={playersMap}
                   isLatestMatch={match.matchNumber === maxMatchNumber}
                   onVoteSubmitted={onVoteSubmitted}
+                  user={user}
                 />
                 <MatchOpinions
                   match={match}
@@ -101,6 +103,7 @@ export default function Matches({
                   )}
                   // TODO: Add onOpinionSubmitted
                   onOpinionSubmitted={onVoteSubmitted}
+                  user={user}
                 />
               </>
             )}

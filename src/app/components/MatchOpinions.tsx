@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { DBMatch } from "../constants/types/Match";
-import { useCustomUser } from "../hooks/useCustomUser";
+import { DBMatch, UserProfileWithPlayerId } from "../constants/types";
 
 type MatchOpinionsProps = {
   match: DBMatch;
   isLatestMatch: boolean;
   hasUserPlayedMatch: boolean;
   onOpinionSubmitted: () => void;
+  user: UserProfileWithPlayerId | null;
 };
 
 export default function MatchOpinions({
@@ -14,8 +14,8 @@ export default function MatchOpinions({
   isLatestMatch,
   hasUserPlayedMatch,
   onOpinionSubmitted,
+  user,
 }: MatchOpinionsProps) {
-  const user = useCustomUser();
   const [opinion, setOpinion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");

@@ -1,14 +1,13 @@
-import { DBMatch } from "../constants/types/Match";
-import { DBPlayer } from "../constants/types/Player";
+import { DBMatch, DBPlayer, UserProfileWithPlayerId } from "../constants/types";
 import React, { useEffect, useState } from "react";
 import { getMostVotedPlayersOfTheMatch } from "../utils/players";
-import { useCustomUser } from "../hooks/useCustomUser";
 
 type PlayerOfTheMatchProps = {
   match: DBMatch;
   playersMap: { [key: string]: DBPlayer };
   isLatestMatch: boolean;
   onVoteSubmitted: () => void;
+  user: UserProfileWithPlayerId | null;
 };
 
 export default function PlayerOfTheMatch({
@@ -16,12 +15,19 @@ export default function PlayerOfTheMatch({
   playersMap,
   isLatestMatch,
   onVoteSubmitted,
+  user,
 }: PlayerOfTheMatchProps) {
-  const user = useCustomUser();
-
+  const [hasMatchBeenPlayed, setHasMatchBeenPlayed] = useState(
+    Boolean(match.winner)
+  );
   const [selectedPlayer, setSelectedPlayer] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasUserPlayedMatch, setHasUserPlayedMatch] = useState(false);
+
+  useEffect(() => {
+    console.log("match", Boolean(match.winner));
+    setHasMatchBeenPlayed(Boolean(match.winner));
+  }, [match]);
 
   useEffect(() => {
     const alreadySelectedPlayer =
@@ -79,7 +85,16 @@ export default function PlayerOfTheMatch({
 
   return (
     <div className="mt-6 p-4 bg-[#1a472a] rounded-lg space-y-6">
-      <h3 className="text-xl font-semibold text-white">Jugador del Partido</h3>
+      <div className="flex items-center">
+        <h3 className="text-xl font-semibold text-white">
+          Jugador del Partido
+        </h3>
+        {hasMatchBeenPlayed === false && (
+          <span className="ml-2 text-sm text-gray-300">
+            ( se podra elegir una vez finalizado el partido )
+          </span>
+        )}
+      </div>
 
       {/* Most voted players section */}
       {mostVotedPlayerIds.length > 0 && voteCounts && (
@@ -101,7 +116,7 @@ export default function PlayerOfTheMatch({
       )}
 
       {/* Voting section */}
-      {isLatestMatch && hasUserPlayedMatch && (
+      {isLatestMatch && hasUserPlayedMatch && hasMatchBeenPlayed && (
         <div className="p-4 bg-[#2a573a] rounded-lg">
           <h4 className="text-lg font-medium text-white mb-3">Votar</h4>
           <select
