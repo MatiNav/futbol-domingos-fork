@@ -29,7 +29,7 @@ export default function HomePageContent({
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
   return (
-    <div className="min-h-screen bg-[#0B2818] p-4">
+    <div className="min-h-screen bg-[#0B2818] px-4 py-2 sm:py-4">
       <div className="max-w-7xl mx-auto rounded-lg p-1">
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-8">
