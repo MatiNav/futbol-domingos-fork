@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getLatestMatchNumber } from "@/app/utils/server/matches";
+import { getLatestMatchNumber } from "@/app/features/matches/utils/server";
 
 export const dynamic = "force-dynamic";
 

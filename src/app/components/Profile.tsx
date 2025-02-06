@@ -94,10 +94,24 @@ export default function ProfileContent({
               onChange={(e) => setFavoriteTeam(e.target.value as TeamOption)}
               className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
-              <option value="">Select a team</option>
+              <option value="" className="bg-[#0B2818] text-white">
+                Select a team
+              </option>
               {Object.entries(TEAMS_IMAGES).map(([key]) => (
-                <option key={key} value={key}>
-                  {key.replace(/([A-Z])/g, " $1").trim()}
+                <option
+                  key={key}
+                  value={key}
+                  className="bg-[#0B2818] text-white"
+                >
+                  {key
+                    .replace(/([A-Z])/g, " $1")
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase() +
+                    key
+                      .replace(/([A-Z])/g, " $1")
+                      .trim()
+                      .slice(1)}
                 </option>
               ))}
             </select>

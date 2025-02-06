@@ -66,7 +66,7 @@ export default function Forum({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-[#1B472C] min-h-screen p-4">
+    <div className="max-w-4xl mx-auto bg-[#1B472C] min-h-screen p-4 rounded-lg">
       <div className="text-sm text-white mb-4 flex items-center">
         {connectionStatus}
         {connectionStatus === "Conectado" && (
@@ -122,7 +122,10 @@ export default function Forum({
                       {message.userName}
                     </span>
                     <span className="text-sm text-gray-500">
-                      {new Date(message.timestamp).toLocaleTimeString()}
+                      {new Date(message.timestamp).toLocaleTimeString("es-ES", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                   </div>
                   <p className="text-black">{message.content}</p>
