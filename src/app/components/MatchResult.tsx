@@ -27,10 +27,10 @@ export default function MatchResultTable({ match }: MatchResultTableProps) {
         </thead>
         <tbody>
           <tr>
-            <td className="px-4 py-3 text-center bg-[#8B0000] text-white text-xl font-semibold whitespace-nowrap w-1/2 border-r border-green-700">
+            <td className="px-4 py-3 text-center bg-gray-600 text-white text-xl font-semibold whitespace-nowrap w-1/2 border-r border-green-700">
               {oscurasTotal}
             </td>
-            <td className="px-4 py-3 text-center bg-[#93C5FD] text-gray-700 text-xl font-semibold whitespace-nowrap w-1/2">
+            <td className="px-4 py-3 text-center bg-white text-gray-600 text-xl font-semibold whitespace-nowrap w-1/2">
               {clarasTotal}
             </td>
           </tr>

@@ -31,10 +31,10 @@ export default function PlayersCell({
   const isOscuras = team === "oscuras";
 
   // Darker maroon for Oscuras, lighter blue for Claras
-  const bgColor = isOscuras ? "bg-[#8B0000]" : "bg-[#93C5FD]";
+  const bgColor = isOscuras ? "bg-gray-600" : "bg-white";
   const borderColor = isOscuras ? "border-[#6B0000]" : "border-[#60A5FA]";
   const optionBgColor = isOscuras ? "#8B0000" : "#93C5FD";
-  const textColor = isOscuras ? "text-white" : "text-gray-700";
+  const textColor = isOscuras ? "text-white" : "text-gray-600";
   const isMvp = mostVotedPlayersIds.includes(
     teamData.players[index]?._id.toString()
   );

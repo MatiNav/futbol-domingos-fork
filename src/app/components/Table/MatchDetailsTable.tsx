@@ -36,10 +36,10 @@ export default function MatchDetailsTable({
             <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center border-r border-green-700">
               Goles
             </th>
-            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-[#8B0000] border-r border-green-700">
+            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-gray-600 border-r border-green-700">
               Oscuras
             </th>
-            <th className="px-4 py-2 text-gray-700 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-[#93C5FD] border-r border-green-700">
+            <th className="px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-white border-r border-green-700">
               Claras
             </th>
             <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center">
