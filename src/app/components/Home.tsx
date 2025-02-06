@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { DBMessage, PlayerWithStats } from "../constants/types";
-import { useEffect, useState } from "react";
+import {
+  DBMessage,
+  PlayerWithStats,
+  UserProfileWithPlayerId,
+} from "../constants/types";
+import { useState } from "react";
 import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import Forum from "./Forum";
 
 export default function HomePageContent({
@@ -14,18 +17,14 @@ export default function HomePageContent({
   pichichis,
   topPlayer,
   initialMessages,
+  user,
 }: {
   playersWithStats: PlayerWithStats[];
   pichichis: PlayerWithStats[];
   topPlayer: PlayerWithStats;
   initialMessages: DBMessage[];
+  user: UserProfileWithPlayerId | null;
 }) {
-  const { user } = useUser();
-
-  useEffect(() => {
-    console.log("user", user);
-  }, [user]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
@@ -144,7 +143,7 @@ export default function HomePageContent({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      <Forum initialMessages={initialMessages} />
+      <Forum initialMessages={initialMessages} user={user} />
     </div>
   );
 }

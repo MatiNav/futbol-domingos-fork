@@ -1,17 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { DBMessage } from "@/app/constants/types/Message";
 import Image from "next/image";
 import Pusher from "pusher-js";
 import { TEAMS_IMAGES } from "../constants/images/teams";
+import { UserProfileWithPlayerId } from "../constants/types";
 
 export default function Forum({
+  user,
   initialMessages,
 }: {
+  user: UserProfileWithPlayerId | null;
   initialMessages: DBMessage[];
 }) {
-  const { user } = useUser();
   const [messages, setMessages] = useState<DBMessage[]>(initialMessages);
   const [connectionStatus, setConnectionStatus] = useState("Conectando...");
   const [newMessage, setNewMessage] = useState("");
@@ -45,7 +46,10 @@ export default function Forum({
       setMessages((prev) => [newMessageData, ...prev]);
     });
 
-    setConnectionStatus("Conectado");
+    const connectionStatus = user
+      ? "Conectado"
+      : "Inicia sesión para enviar mensajes";
+    setConnectionStatus(connectionStatus);
 
     return () => {
       channel.unbind_all();
