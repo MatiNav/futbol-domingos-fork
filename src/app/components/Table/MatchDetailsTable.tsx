@@ -1,7 +1,7 @@
 import { DBMatch, MatchTeam, DBPlayer } from "@/app/constants/types";
 import { ObjectId } from "mongodb";
-import TeamColumn from "../TeamColumn";
 import { getMostVotedPlayersOfTheMatch } from "@/app/utils/players";
+import TeamColumn from "../TeamColumn";
 
 type MatchDetailsTableProps = {
   match: DBMatch;
