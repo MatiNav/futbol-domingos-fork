@@ -1,20 +1,24 @@
-"use client";
 import MatchDetailsTable from "@/app/components/Table/MatchDetailsTable";
 import MatchResultTable from "@/app/components/MatchResult";
 import MatchSelector from "@/app/components/MatchSelector";
 import { DBMatch } from "@/app/constants/types";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
-import { useMaxMatchNumber } from "@/app/hooks/useMaxMatchNumber";
 import { useFetchPlayers } from "@/app/hooks/useFetchPlayers";
+import { getLatestMatchNumber } from "@/app/utils/server/matches";
 
-export default function EditarEquipos() {
+export default async function EditarEquiposPage() {
+  const maxMatchNumber = await getLatestMatchNumber();
+
+  return <EditarEquipos maxMatchNumber={maxMatchNumber} />;
+}
+
+function EditarEquipos({ maxMatchNumber }: { maxMatchNumber: number }) {
   const [match, setMatch] = useState<DBMatch | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const { maxMatchNumber } = useMaxMatchNumber();
   const { players, playersMap } = useFetchPlayers();
 
   const fetchMatch = async (number: string) => {

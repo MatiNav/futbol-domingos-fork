@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
-import { MatchPlayer, Team } from "@/app/constants/types";
+import { MatchPlayer, MatchResult, Team } from "@/app/constants/types";
+import { getCollection } from "@/app/utils/server/db";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +19,7 @@ export async function GET(
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const collection = db.collection("matches");
+    const collection = await getCollection("matches");
 
     const match = await collection.findOne({ matchNumber: matchNum });
 
@@ -54,9 +52,7 @@ export async function PUT(
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const matchesCollection = db.collection("matches");
+    const matchesCollection = await getCollection("matches");
 
     const result = getMatchResult(oscuras, claras);
 
@@ -77,7 +73,13 @@ export async function PUT(
   }
 }
 
-function getMatchResult(oscuras: Team, claras: Team) {
+function getMatchResult(
+  oscuras: Team,
+  claras: Team
+): {
+  winner?: MatchResult;
+  played: boolean;
+} {
   const oscurasGoals = oscuras.players.reduce(
     (acc: number, player: MatchPlayer) => acc + player.goals,
     0
@@ -95,10 +97,10 @@ function getMatchResult(oscuras: Team, claras: Team) {
 
   const winner =
     oscurasGoals > clarasGoals
-      ? "oscuras"
+      ? MatchResult.OSCURAS
       : oscurasGoals < clarasGoals
-      ? "claras"
-      : "draw";
+      ? MatchResult.CLARAS
+      : MatchResult.DRAW;
 
   return {
     winner,

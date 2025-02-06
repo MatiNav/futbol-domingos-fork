@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { TEAMS_IMAGES } from "../constants/images/teams";
 import Image from "next/image";
 import { useCustomUser } from "../hooks/useCustomUser";
-import { TeamOption } from "../constants/common";
+import { TeamOption } from "../constants/types/Common";
 
 export default function ProfileContent() {
   const user = useCustomUser();

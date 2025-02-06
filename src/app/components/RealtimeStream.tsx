@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Message } from "@/app/constants/types/Message";
+import { DBMessage } from "@/app/constants/types/Message";
 import Image from "next/image";
 import Pusher from "pusher-js";
 import { TEAMS_IMAGES } from "../constants/images/teams";
 
 export default function RealtimeStream() {
   const { user } = useUser();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<DBMessage[]>([]);
   const [connectionStatus, setConnectionStatus] = useState("Conectando...");
   const [newMessage, setNewMessage] = useState("");
 
@@ -37,7 +37,7 @@ export default function RealtimeStream() {
 
     const channel = pusher.subscribe("messages-channel");
 
-    channel.bind("new-message", (newMessageData: Message) => {
+    channel.bind("new-message", (newMessageData: DBMessage) => {
       setMessages((prev) => [newMessageData, ...prev]);
     });
 

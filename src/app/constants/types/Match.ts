@@ -22,7 +22,11 @@ export type MatchPlayer = {
   assists?: number;
 };
 
-export type MatchResult = "oscuras" | "claras" | "draw";
+export enum MatchResult {
+  OSCURAS = "oscuras",
+  CLARAS = "claras",
+  DRAW = "draw",
+}
 
 export type MatchTeam = "oscuras" | "claras";
 

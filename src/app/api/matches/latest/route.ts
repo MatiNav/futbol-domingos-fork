@@ -1,22 +1,11 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import { getLatestMatchNumber } from "@/app/utils/server/matches";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const collection = db.collection("matches");
-
-    const lastMatch = await collection
-      .find({})
-      .sort({ matchNumber: -1 })
-      .limit(1)
-      .toArray();
-
-    const maxMatchNumber = lastMatch.length > 0 ? lastMatch[0].matchNumber : 1;
-
+    const maxMatchNumber = await getLatestMatchNumber();
     return NextResponse.json({ maxMatchNumber });
   } catch (error) {
     console.error("Error fetching max match number:", error);

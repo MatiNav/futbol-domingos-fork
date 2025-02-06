@@ -1,5 +1,5 @@
 import { UserProfile } from "@auth0/nextjs-auth0/client";
-import { TeamOption } from "../common";
+import { TeamOption } from "./Common";
 
 export type UserProfileWithPlayerId = UserProfile & {
   displayName: string; // name in our db

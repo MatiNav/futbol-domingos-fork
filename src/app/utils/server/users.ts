@@ -1,8 +1,8 @@
 import "server-only";
-import clientPromise from "@/lib/mongodb";
 import { getSession } from "@auth0/nextjs-auth0";
-import { DBPlayer, UserProfileWithPlayerId } from "@/app/constants/types";
+import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { redirect } from "next/navigation";
+import { getCollection } from "./db";
 
 export async function getAuthenticatedUser() {
   const session = await getSession();
@@ -13,11 +13,13 @@ export async function getAuthenticatedUser() {
     return null;
   }
 
-  const client = await clientPromise;
-  const db = client.db("futbol");
-  const playersCollection = db.collection("players");
+  if (!user.email) {
+    redirect("/confirmar-email");
+  }
 
-  const player = await playersCollection.findOne<DBPlayer>({
+  const playersCollection = await getCollection("players");
+
+  const player = await playersCollection.findOne({
     email: user.email,
   });
 

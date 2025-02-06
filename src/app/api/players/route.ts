@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import { getPlayers } from "@/app/utils/server/players";
+import { getCollection } from "@/app/utils/server/db";
+import { ObjectId } from "mongodb";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const { playerName, playerImage, playerFavoriteTeam } =
+    const { playerName, playerImage, playerFavoriteTeam, playerEmail } =
       await request.json();
 
     if (!playerName) {
@@ -15,15 +17,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const collection = db.collection("players");
+    const collection = await getCollection("players");
 
     const result = await collection.insertOne({
+      _id: new ObjectId(),
       name: playerName,
       image: playerImage || "",
       favoriteTeam: playerFavoriteTeam,
-      createdAt: new Date(),
+      email: playerEmail,
     });
 
     return NextResponse.json({
@@ -41,13 +42,16 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const collection = db.collection("players");
+    const playersResponse = await getPlayers();
 
-    const players = await collection.find({}).toArray();
+    if ("error" in playersResponse) {
+      return NextResponse.json(
+        { error: playersResponse.error },
+        { status: playersResponse.status }
+      );
+    }
 
-    return NextResponse.json({ players });
+    return NextResponse.json({ players: playersResponse.data });
   } catch (error) {
     console.error("Error fetching players:", error);
     return NextResponse.json(

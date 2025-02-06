@@ -3,6 +3,8 @@ import clientPromise from "@/lib/mongodb";
 import pusher from "@/lib/pusher";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { getCollection } from "@/app/utils/server/db";
+import { ObjectId } from "mongodb";
 
 export const dynamic = "force-dynamic";
 
@@ -47,11 +49,10 @@ export const POST = withApiAuthRequired(async function POST(
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const messagesCollection = db.collection("messages");
+    const messagesCollection = await getCollection("messages");
 
     const message = {
+      _id: new ObjectId(),
       userId: user.playerId,
       userName: user.displayName,
       content: content.trim(),

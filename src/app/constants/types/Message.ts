@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import { TEAMS_IMAGES } from "../images/teams";
+import { TEAMS_IMAGES } from "@/app/constants/images/teams";
 
-export type Message = {
+export type DBMessage = {
   _id: ObjectId;
   userId: string;
   userName: string;

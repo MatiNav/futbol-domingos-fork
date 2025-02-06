@@ -1,13 +1,12 @@
 import "server-only";
 import clientPromise from "@/lib/mongodb";
-import { DBPlayer, PlayerWithStats, DBMatch } from "@/app/constants/types";
-import { Claims } from "@auth0/nextjs-auth0";
+import {
+  DBPlayer,
+  PlayerWithStats,
+  DBMatch,
+  FetchResponse,
+} from "@/app/constants/types";
 import { getMostVotedPlayersOfTheMatch } from "../players";
-
-export type PlayerData = {
-  auth0: Claims;
-  player: DBPlayer;
-};
 
 export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
   const client = await clientPromise;
@@ -99,3 +98,23 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
     position: index + 1,
   }));
 }
+
+export const getPlayers = async (): Promise<FetchResponse<DBPlayer[]>> => {
+  const client = await clientPromise;
+  const db = client.db("futbol");
+  const playersCollection = db.collection("players");
+  const players = await playersCollection.find<DBPlayer>({}).toArray();
+
+  if (!players || players.length === 0) {
+    return {
+      error: "No players found",
+      message: "No players found",
+      status: 404,
+    };
+  }
+
+  return {
+    data: players,
+    status: 200,
+  };
+};
