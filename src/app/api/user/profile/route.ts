@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
 
+export const dynamic = "force-dynamic";
+
 export const PUT = withApiAuthRequired(async function updateProfile(
   req: NextRequest
 ) {

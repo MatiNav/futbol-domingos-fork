@@ -4,6 +4,8 @@ import pusher from "@/lib/pusher";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async () => {
   try {
     const client = await clientPromise;

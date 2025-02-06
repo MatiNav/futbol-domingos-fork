@@ -3,6 +3,8 @@ import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
 import { DBMatch } from "@/app/constants/types";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { matchNumber: string } }
