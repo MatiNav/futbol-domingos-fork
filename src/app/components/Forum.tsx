@@ -6,9 +6,13 @@ import Image from "next/image";
 import Pusher from "pusher-js";
 import { TEAMS_IMAGES } from "../constants/images/teams";
 
-export default function RealtimeStream() {
+export default function Forum({
+  initialMessages,
+}: {
+  initialMessages: DBMessage[];
+}) {
   const { user } = useUser();
-  const [messages, setMessages] = useState<DBMessage[]>([]);
+  const [messages, setMessages] = useState<DBMessage[]>(initialMessages);
   const [connectionStatus, setConnectionStatus] = useState("Conectando...");
   const [newMessage, setNewMessage] = useState("");
 

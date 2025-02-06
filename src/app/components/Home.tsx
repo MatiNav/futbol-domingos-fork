@@ -1,22 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { PlayerWithStats } from "../constants/types";
+import { DBMessage, PlayerWithStats } from "../constants/types";
 import { useEffect, useState } from "react";
 import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import RealtimeStream from "./RealtimeStream";
+import Forum from "./Forum";
 
 export default function HomePageContent({
   playersWithStats,
   pichichis,
   topPlayer,
+  initialMessages,
 }: {
   playersWithStats: PlayerWithStats[];
   pichichis: PlayerWithStats[];
   topPlayer: PlayerWithStats;
+  initialMessages: DBMessage[];
 }) {
   const { user } = useUser();
 
@@ -142,7 +144,7 @@ export default function HomePageContent({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      <RealtimeStream />
+      <Forum initialMessages={initialMessages} />
     </div>
   );
 }

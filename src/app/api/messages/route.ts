@@ -1,27 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import pusher from "@/lib/pusher";
 import { getAuthenticatedUser } from "@/app/utils/server/users";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { getCollection } from "@/app/utils/server/db";
 import { ObjectId } from "mongodb";
+import { getMessages } from "@/app/utils/server/messages";
 
 export const dynamic = "force-dynamic";
 
 export const GET = async () => {
   try {
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const messagesCollection = db.collection("messages");
+    const messages = await getMessages();
 
-    // Fetch the last 50 messages (sorted by timestamp ascending).
-    const messages = await messagesCollection
-      .find({})
-      .sort({ timestamp: 1 })
-      .limit(50)
-      .toArray();
-
-    return NextResponse.json(messages.reverse());
+    return NextResponse.json(messages);
   } catch (error) {
     console.error("Error fetching messages:", error);
     return NextResponse.json(
