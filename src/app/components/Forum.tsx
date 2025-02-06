@@ -18,23 +18,6 @@ export default function Forum({
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    // Fetch initial messages via API
-    async function fetchMessages() {
-      try {
-        const response = await fetch("/api/messages");
-        if (response.ok) {
-          const data = await response.json();
-          setMessages(data);
-        } else {
-          console.error("Failed to fetch messages");
-        }
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    }
-
-    fetchMessages();
-
     // Initialize Pusher and subscribe to channel
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER as string,
@@ -56,7 +39,7 @@ export default function Forum({
       channel.unsubscribe();
       pusher.disconnect();
     };
-  }, []);
+  }, [user]);
 
   const handleSubmit = async () => {
     if (!newMessage.trim() || !user) return;
@@ -92,20 +75,23 @@ export default function Forum({
       </div>
 
       {/* Message Input */}
-      <div className="flex gap-2 mb-4 items-center">
+      <div className="flex flex-col sm:flex-row gap-2 mb-4">
         {user && (
           <>
-            <input
-              type="text"
+            <textarea
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={(e) =>
+                e.key === "Enter" && !e.shiftKey && handleSubmit()
+              }
               placeholder="Escribe tu mensaje..."
-              className="flex-1 p-3 rounded-md bg-[#e6e7eb] text-gray-800 placeholder-gray-500 text-lg focus:outline-none"
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+              className="flex-1 p-3 rounded-md bg-[#e6e7eb] text-gray-800 placeholder-gray-500 text-lg focus:outline-none
+                min-h-[100px] sm:min-h-[50px] resize-y sm:resize-none"
             />
             <button
               onClick={handleSubmit}
-              className="px-6 py-3 bg-[#6B8E4E] hover:bg-[#587940] text-white rounded-md text-lg font-bold uppercase tracking-wide shadow-lg"
+              className="px-6 py-3 bg-[#6B8E4E] hover:bg-[#587940] text-white rounded-md text-lg font-bold uppercase tracking-wide shadow-lg
+                sm:h-auto h-12 self-end"
             >
               Enviar
             </button>
