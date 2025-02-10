@@ -8,6 +8,8 @@ import {
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 import { getCollection } from "@/app/utils/server/db";
 
+export const dynamic = "force-dynamic";
+
 export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
   const matchesCollection = await getCollection("matches");
   const playersCollection = await getCollection("players");
