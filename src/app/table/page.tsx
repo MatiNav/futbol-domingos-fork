@@ -3,6 +3,8 @@ import { TEAMS_IMAGES } from "../constants/images/teams";
 import { getPlayersWithStats } from "@/app/features/players/utils/server";
 import { getPichichis } from "@/app/features/players/utils";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULT_PLAYER_IMAGE_1 =
   "https://cdn-icons-png.flaticon.com/512/166/166344.png";
 const DEFAULT_PLAYER_IMAGE_2 =
