@@ -4,7 +4,7 @@ import {
   UserProfileWithPlayerId,
 } from "@/app/constants/types";
 import React, { useEffect, useState } from "react";
-import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
+import { getVotedPlayers } from "../utils";
 
 type PlayerOfTheMatchProps = {
   match: DBMatch;
@@ -84,7 +84,7 @@ export default function PlayerOfTheMatch({
     return acc;
   }, {} as { [key: string]: number });
 
-  const mostVotedPlayerIds = getMostVotedPlayersOfTheMatch(match);
+  const votedPlayers = Object.keys(getVotedPlayers(match));
 
   return (
     <div className="mt-6 p-4 bg-[#1a472a] rounded-lg space-y-6">
@@ -100,16 +100,19 @@ export default function PlayerOfTheMatch({
       </div>
 
       {/* Most voted players section */}
-      {mostVotedPlayerIds.length > 0 && voteCounts && (
+      {votedPlayers.length > 0 && voteCounts && (
         <div className="p-4 bg-[#2a573a] rounded-lg">
           <h4 className="text-lg font-medium text-white mb-3">Más Votados</h4>
           <div className="space-y-2">
-            {mostVotedPlayerIds.map((playerId) => (
+            {votedPlayers.map((playerId, index) => (
               <div key={playerId} className="p-3 bg-[#1a472a] rounded-lg">
                 <div className="flex items-center">
-                  <span className="text-yellow-400 mr-2">⭐</span>
+                  {index === 0 && (
+                    <span className="text-yellow-400 mr-2">⭐</span>
+                  )}
                   <span className="text-white">
-                    {playersMap[playerId]?.name} ({voteCounts[playerId]} votos)
+                    {playersMap[playerId]?.name} ({voteCounts[playerId]}{" "}
+                    {voteCounts[playerId] === 1 ? "voto" : "votos"})
                   </span>
                 </div>
               </div>

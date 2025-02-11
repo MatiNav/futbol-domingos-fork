@@ -11,15 +11,8 @@ export function getPichichis(players: PlayerWithStats[]) {
   }, [] as PlayerWithStats[]);
 }
 
-export function getMostVotedPlayersOfTheMatch(match: DBMatch): string[] {
-  if (!match.playerOfTheMatchVotes?.length) return [];
-
-  // Count votes for each player
-  const voteCounts = match.playerOfTheMatchVotes.reduce((result, vote) => {
-    const playerId = vote.playerVotedFor.toString();
-    result[playerId] = (result[playerId] || 0) + 1;
-    return result;
-  }, {} as { [key: string]: number });
+export function getMostVotedPlayersOfTheMatch(match: DBMatch) {
+  const voteCounts = getVotedPlayers(match);
 
   // Find the maximum number of votes
   const maxVotes = Math.max(...Object.values(voteCounts));
@@ -31,4 +24,17 @@ export function getMostVotedPlayersOfTheMatch(match: DBMatch): string[] {
       .filter(([_, votes]) => votes === maxVotes)
       .map(([playerId]) => playerId)
   );
+}
+
+export function getVotedPlayers(match: DBMatch) {
+  if (!match.playerOfTheMatchVotes?.length) return {};
+
+  // Count votes for each player
+  const voteCounts = match.playerOfTheMatchVotes.reduce((result, vote) => {
+    const playerId = vote.playerVotedFor.toString();
+    result[playerId] = (result[playerId] || 0) + 1;
+    return result;
+  }, {} as { [key: string]: number });
+
+  return voteCounts;
 }
