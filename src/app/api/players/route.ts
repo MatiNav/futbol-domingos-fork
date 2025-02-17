@@ -1,5 +1,7 @@
-import { createPlayerHandler } from "@/app/features/players/api";
-import { getPlayers } from "@/app/features/players/utils/server";
+import {
+  createPlayerHandler,
+  getPlayersHandler,
+} from "@/app/features/players/api";
 
-export const GET = getPlayers;
+export const GET = getPlayersHandler;
 export const POST = createPlayerHandler;
