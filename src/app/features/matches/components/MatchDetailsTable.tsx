@@ -20,7 +20,7 @@ type MatchDetailsTableProps = {
     team: MatchTeam,
     currentIndex: number
   ) => boolean;
-  teamPercentages: { oscuras: number; claras: number };
+  teamPercentages?: { oscuras: number; claras: number };
 };
 
 export default function MatchDetailsTable({
@@ -47,18 +47,24 @@ export default function MatchDetailsTable({
             <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-gray-600 border-r border-green-700">
               Oscuras
             </th>
-            {playersWithStats && (
+            {playersWithStats && teamPercentages && (
               <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
-                {(teamPercentages.oscuras / 8).toFixed(1)} %
+                {teamPercentages.oscuras
+                  ? (teamPercentages.oscuras / 8).toFixed(1)
+                  : "-"}
+                %
               </th>
             )}
             <th className="px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-white border-r border-green-700">
               Claras
             </th>
 
-            {playersWithStats && (
+            {playersWithStats && teamPercentages && (
               <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
-                {(teamPercentages.claras / 8).toFixed(1)} %
+                {teamPercentages.claras
+                  ? (teamPercentages.claras / 8).toFixed(1)
+                  : "-"}
+                %
               </th>
             )}
             <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center">

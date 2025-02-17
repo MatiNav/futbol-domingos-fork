@@ -8,6 +8,7 @@ import {
 } from "@/app/constants/types";
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 import { getCollection } from "@/app/utils/server/db";
+import { serializeMatch } from "@/app/features/matches/utils/server";
 
 export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
   const matchesCollection = await getCollection("matches");
@@ -24,12 +25,14 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
     goals: 0,
     assists: 0,
   }));
+
   if (!Array.isArray(dbMatches)) {
     return [];
   }
+  const serializedMatches = dbMatches.map(serializeMatch);
 
   const mostVotedPlayersPerMatch: string[][] = [];
-  dbMatches.forEach((match) => {
+  serializedMatches.forEach((match) => {
     const { oscuras, claras, winner } = match;
     mostVotedPlayersPerMatch.push(getMostVotedPlayersOfTheMatch(match));
 

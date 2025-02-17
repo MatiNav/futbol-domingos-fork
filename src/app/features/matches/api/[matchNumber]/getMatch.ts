@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
-import { DBMatch } from "@/app/constants/types";
+import { serializeMatch } from "../../utils/server";
 
 export async function getMatchHandler(
   request: Request,
@@ -35,24 +35,4 @@ export async function getMatchHandler(
       { status: 500 }
     );
   }
-}
-
-function serializeMatch(match: DBMatch) {
-  return {
-    ...match,
-    oscuras: {
-      ...match.oscuras,
-      players: match.oscuras.players.map((player) => ({
-        ...player,
-        _id: player._id.toString(),
-      })),
-    },
-    claras: {
-      ...match.claras,
-      players: match.claras.players.map((player) => ({
-        ...player,
-        _id: player._id.toString(),
-      })),
-    },
-  };
 }
