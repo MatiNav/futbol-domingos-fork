@@ -21,6 +21,9 @@ type MatchDetailsTableProps = {
     currentIndex: number
   ) => boolean;
   teamPercentages?: { oscuras: number; claras: number };
+  untilMatchTeamPercentages?: { oscuras: number; claras: number };
+  playersWithStatsUntilMatchNumber?: PlayerWithStats[];
+  showOnlyMatchPercentage?: boolean;
 };
 
 export default function MatchDetailsTable({
@@ -33,6 +36,9 @@ export default function MatchDetailsTable({
   players = [],
   isPlayerAvailable,
   teamPercentages,
+  untilMatchTeamPercentages,
+  playersWithStatsUntilMatchNumber,
+  showOnlyMatchPercentage = false,
 }: MatchDetailsTableProps) {
   const mostVotedPlayersIds = getMostVotedPlayersOfTheMatch(match);
 
@@ -47,26 +53,63 @@ export default function MatchDetailsTable({
             <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-gray-600 border-r border-green-700">
               Oscuras
             </th>
-            {playersWithStats && teamPercentages && (
-              <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
-                {teamPercentages.oscuras
-                  ? (teamPercentages.oscuras / 8).toFixed(1)
-                  : "-"}
-                %
-              </th>
-            )}
+            {playersWithStats &&
+              teamPercentages &&
+              untilMatchTeamPercentages && (
+                <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
+                  <div className="flex flex-col gap-2">
+                    <div className="text-lg font-bold">
+                      <div className="text-yellow-400">
+                        {showOnlyMatchPercentage
+                          ? `F ${match.matchNumber}: `
+                          : `Actual `}
+                      </div>
+                      <div>
+                        {showOnlyMatchPercentage ? (
+                          <span>
+                            {(untilMatchTeamPercentages.oscuras / 8).toFixed(1)}
+                            %
+                          </span>
+                        ) : (
+                          <span>
+                            {(teamPercentages.oscuras / 8).toFixed(1)}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </th>
+              )}
             <th className="px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-white border-r border-green-700">
               Claras
             </th>
 
-            {playersWithStats && teamPercentages && (
-              <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
-                {teamPercentages.claras
-                  ? (teamPercentages.claras / 8).toFixed(1)
-                  : "-"}
-                %
-              </th>
-            )}
+            {playersWithStats &&
+              teamPercentages &&
+              untilMatchTeamPercentages && (
+                <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
+                  <div className="flex flex-col gap-2">
+                    <div className="text-lg font-bold">
+                      <div className="text-yellow-400">
+                        {showOnlyMatchPercentage
+                          ? `F ${match.matchNumber}: `
+                          : `Actual`}
+                      </div>
+                      <div>
+                        {showOnlyMatchPercentage ? (
+                          <span>
+                            {(untilMatchTeamPercentages.claras / 8).toFixed(1)}%
+                          </span>
+                        ) : (
+                          <span>
+                            {(teamPercentages.claras / 8).toFixed(1)}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </th>
+              )}
             <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center">
               Goles
             </th>
@@ -92,6 +135,10 @@ export default function MatchDetailsTable({
                 playersWithStats={playersWithStats}
                 isPlayerAvailable={isPlayerAvailable}
                 mostVotedPlayersIds={mostVotedPlayersIds}
+                playersWithStatsUntilMatchNumber={
+                  playersWithStatsUntilMatchNumber
+                }
+                showOnlyMatchPercentage={showOnlyMatchPercentage}
               />
               <TeamColumn
                 team="claras"
@@ -105,6 +152,10 @@ export default function MatchDetailsTable({
                 playersWithStats={playersWithStats}
                 isPlayerAvailable={isPlayerAvailable}
                 mostVotedPlayersIds={mostVotedPlayersIds}
+                playersWithStatsUntilMatchNumber={
+                  playersWithStatsUntilMatchNumber
+                }
+                showOnlyMatchPercentage={showOnlyMatchPercentage}
               />
             </tr>
           ))}

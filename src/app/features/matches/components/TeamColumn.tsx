@@ -13,6 +13,7 @@ type TeamColumnProps = {
   match: SerializedMatch;
   playersMap: { [key: string]: SerializedPlayer };
   playersWithStats?: PlayerWithStats[];
+  playersWithStatsUntilMatchNumber?: PlayerWithStats[];
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
@@ -24,6 +25,7 @@ type TeamColumnProps = {
   ) => boolean;
   mostVotedPlayersIds: string[];
   onPercentageCalculated?: (team: MatchTeam, percentage: number) => void;
+  showOnlyMatchPercentage?: boolean;
 };
 
 export default function TeamColumn({
@@ -32,12 +34,14 @@ export default function TeamColumn({
   match,
   playersMap,
   playersWithStats,
+  playersWithStatsUntilMatchNumber,
   isEditable = false,
   onUpdatePlayerGoals,
   onUpdatePlayer,
   players = [],
   isPlayerAvailable,
   mostVotedPlayersIds,
+  showOnlyMatchPercentage = false,
 }: TeamColumnProps) {
   const goalsColumnComponent = (
     <GoalsColumn
@@ -67,6 +71,8 @@ export default function TeamColumn({
     <PercentageCell
       playerId={match[team].players[index]?._id.toString()}
       playersWithStats={playersWithStats}
+      playersWithStatsUntilMatchNumber={playersWithStatsUntilMatchNumber}
+      showOnlyMatchPercentage={showOnlyMatchPercentage}
     />
   );
 
