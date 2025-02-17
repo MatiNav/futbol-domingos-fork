@@ -2,22 +2,32 @@
 
 import { useEffect, useState } from "react";
 import { SerializedMatch } from "@/app/constants/types/Match";
-import { ObjectId } from "mongodb";
-import { PlayersResponse } from "@/app/features/players/utils/server";
 import {
   MatchDetailsTable,
   MatchResultTable,
   MatchSelector,
 } from "@/app/features/matches/components";
+import {
+  PlayerWithStats,
+  SerializedPlayer,
+} from "@/app/constants/types/Player";
 
-export default function EditarEquipos({
+export default function EditTeams({
   maxMatchNumber,
-  players: { players, playersMap },
+  players,
+  playersMap,
+  playersWithStats,
 }: {
   maxMatchNumber: number;
-  players: PlayersResponse;
+  players: SerializedPlayer[];
+  playersMap: { [key: string]: SerializedPlayer };
+  playersWithStats: PlayerWithStats[];
 }) {
   const [match, setMatch] = useState<SerializedMatch | null>(null);
+  const [teamPercentages, setTeamPercentages] = useState({
+    oscuras: 0,
+    claras: 0,
+  });
   const [isRemoving, setIsRemoving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,8 +48,6 @@ export default function EditarEquipos({
         throw new Error(data.error || "Error al buscar el partido");
       }
 
-      console.log("data", data);
-
       if (data.match) {
         setMatch(data.match);
       } else {
@@ -59,6 +67,16 @@ export default function EditarEquipos({
       fetchMatch(maxMatchNumber.toString());
     }
   }, [maxMatchNumber]);
+
+  useEffect(() => {
+    if (match && playersWithStats) {
+      const teamPercentages = getSumOfPercentageColumnByTeam(
+        playersWithStats,
+        match
+      );
+      setTeamPercentages(teamPercentages);
+    }
+  }, [match, playersWithStats]);
 
   const updatePlayerGoals = (
     team: "oscuras" | "claras",
@@ -103,6 +121,12 @@ export default function EditarEquipos({
       },
     };
 
+    const teamPercentages = getSumOfPercentageColumnByTeam(
+      playersWithStats,
+      updatedMatch
+    );
+
+    setTeamPercentages(teamPercentages);
     setMatch(updatedMatch);
   };
 
@@ -218,11 +242,14 @@ export default function EditarEquipos({
             <>
               <MatchDetailsTable
                 match={match}
+                players={players}
                 playersMap={playersMap}
+                playersWithStats={playersWithStats}
                 onUpdatePlayerGoals={updatePlayerGoals}
                 isPlayerAvailable={isPlayerAvailable}
                 onUpdatePlayer={updatePlayer}
                 isEditable
+                teamPercentages={teamPercentages}
               />
 
               <MatchResultTable match={match} />
@@ -342,4 +369,23 @@ export default function EditarEquipos({
       </div>
     </div>
   );
+}
+
+function getSumOfPercentageColumnByTeam(
+  playersWithStats: PlayerWithStats[],
+  match: SerializedMatch
+) {
+  console.log("playersWithStats", playersWithStats);
+
+  const oscurasPercentage = match.oscuras.players.reduce((acc, player) => {
+    const playerStats = playersWithStats.find((p) => p._id === player._id);
+    return acc + (playerStats?.percentage || 0);
+  }, 0);
+
+  const clarasPercentage = match.claras.players.reduce((acc, player) => {
+    const playerStats = playersWithStats.find((p) => p._id === player._id);
+    return acc + (playerStats?.percentage || 0);
+  }, 0);
+
+  return { oscuras: oscurasPercentage, claras: clarasPercentage };
 }

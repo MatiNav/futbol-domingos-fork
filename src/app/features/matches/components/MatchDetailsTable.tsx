@@ -1,5 +1,6 @@
 import {
   MatchTeam,
+  PlayerWithStats,
   SerializedMatch,
   SerializedPlayer,
 } from "@/app/constants/types";
@@ -9,6 +10,7 @@ import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 type MatchDetailsTableProps = {
   match: SerializedMatch;
   playersMap: { [key: string]: SerializedPlayer };
+  playersWithStats?: PlayerWithStats[];
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
@@ -18,16 +20,19 @@ type MatchDetailsTableProps = {
     team: MatchTeam,
     currentIndex: number
   ) => boolean;
+  teamPercentages: { oscuras: number; claras: number };
 };
 
 export default function MatchDetailsTable({
   match,
   playersMap,
+  playersWithStats,
   isEditable = false,
   onUpdatePlayerGoals,
   onUpdatePlayer,
   players = [],
   isPlayerAvailable,
+  teamPercentages,
 }: MatchDetailsTableProps) {
   const mostVotedPlayersIds = getMostVotedPlayersOfTheMatch(match);
 
@@ -36,16 +41,27 @@ export default function MatchDetailsTable({
       <table className="min-w-full bg-[#1a472a]">
         <thead>
           <tr>
-            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center border-r border-green-700">
+            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
               Goles
             </th>
-            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-gray-600 border-r border-green-700">
+            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-gray-600 border-r border-green-700">
               Oscuras
             </th>
-            <th className="px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/4 text-center bg-white border-r border-green-700">
+            {playersWithStats && (
+              <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
+                {(teamPercentages.oscuras / 8).toFixed(1)} %
+              </th>
+            )}
+            <th className="px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-white border-r border-green-700">
               Claras
             </th>
-            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/4 text-center">
+
+            {playersWithStats && (
+              <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
+                {(teamPercentages.claras / 8).toFixed(1)} %
+              </th>
+            )}
+            <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center">
               Goles
             </th>
           </tr>
@@ -67,6 +83,7 @@ export default function MatchDetailsTable({
                 onUpdatePlayerGoals={onUpdatePlayerGoals}
                 onUpdatePlayer={onUpdatePlayer}
                 players={players}
+                playersWithStats={playersWithStats}
                 isPlayerAvailable={isPlayerAvailable}
                 mostVotedPlayersIds={mostVotedPlayersIds}
               />
@@ -79,6 +96,7 @@ export default function MatchDetailsTable({
                 onUpdatePlayerGoals={onUpdatePlayerGoals}
                 onUpdatePlayer={onUpdatePlayer}
                 players={players}
+                playersWithStats={playersWithStats}
                 isPlayerAvailable={isPlayerAvailable}
                 mostVotedPlayersIds={mostVotedPlayersIds}
               />

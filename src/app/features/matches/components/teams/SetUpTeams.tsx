@@ -1,16 +1,20 @@
 "use client";
 
-import { DBPlayer } from "@/app/constants/types/Player";
-import { useState } from "react";
-import { PlayersResponse } from "@/app/features/players/utils/server";
+import { PlayerWithStats } from "@/app/constants/types/Player";
+import { useEffect, useState } from "react";
+import PercentageCell from "@/app/components/Table/PercentageCell";
 
-export default function ArmarEquipos({
-  players: { players },
+export default function SetupTeams({
+  playersWithStats,
 }: {
-  players: PlayersResponse;
+  playersWithStats: PlayerWithStats[];
 }) {
-  const [team1, setTeam1] = useState<(DBPlayer | null)[]>([]);
-  const [team2, setTeam2] = useState<(DBPlayer | null)[]>([]);
+  const [team1, setTeam1] = useState<(PlayerWithStats | null)[]>([]);
+  const [team2, setTeam2] = useState<(PlayerWithStats | null)[]>([]);
+  const [teamPercentages, setTeamPercentages] = useState({
+    oscuras: 0,
+    claras: 0,
+  });
   const [searchTerms, setSearchTerms] = useState<{
     [key: number]: { team1: string; team2: string };
   }>(
@@ -26,7 +30,7 @@ export default function ArmarEquipos({
   const [message, setMessage] = useState("");
 
   const handlePlayerSelect = (
-    player: DBPlayer,
+    player: PlayerWithStats,
     team: "team1" | "team2",
     index: number
   ) => {
@@ -49,6 +53,20 @@ export default function ArmarEquipos({
     }
   };
 
+  useEffect(() => {
+    const oscurasPercentage = team1.reduce((acc, player) => {
+      return acc + (player?.percentage || 0);
+    }, 0);
+    const clarasPercentage = team2.reduce((acc, player) => {
+      return acc + (player?.percentage || 0);
+    }, 0);
+
+    setTeamPercentages({
+      oscuras: oscurasPercentage,
+      claras: clarasPercentage,
+    });
+  }, [team1, team2]);
+
   const clearSelection = (index: number, team: "team1" | "team2") => {
     if (team === "team1") {
       const newTeam1 = [...team1];
@@ -67,7 +85,7 @@ export default function ArmarEquipos({
     // team: "team1" | "team2"
   ) => {
     // const otherTeam = team === "team1" ? team2 : team1;
-    return players.filter(
+    return playersWithStats.filter(
       (player) =>
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !team1.some((p) => p?._id === player._id) &&
@@ -150,7 +168,13 @@ export default function ArmarEquipos({
                   Oscuras
                 </th>
                 <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
+                  {(teamPercentages.oscuras / (team1.length || 1)).toFixed(1)}%
+                </th>
+                <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
                   Claras
+                </th>
+                <th className="px-4 py-3 text-gray-800 font-bold uppercase tracking-wider text-sm">
+                  {(teamPercentages.claras / (team2.length || 1)).toFixed(1)}%
                 </th>
               </tr>
             </thead>
@@ -214,6 +238,14 @@ export default function ArmarEquipos({
                         )}
                       </div>
                     </td>
+                    <td className="px-4 py-2 bg-red-800">
+                      {team1[index] && (
+                        <PercentageCell
+                          playerId={team1[index]?._id.toString() || ""}
+                          playersWithStats={playersWithStats}
+                        />
+                      )}
+                    </td>
                     <td className="px-4 py-2 bg-blue-100">
                       <div className="relative">
                         <input
@@ -268,6 +300,14 @@ export default function ArmarEquipos({
                           </div>
                         )}
                       </div>
+                    </td>
+                    <td className="px-4 py-2 bg-blue-100">
+                      {team2[index] && (
+                        <PercentageCell
+                          playerId={team2[index]?._id || ""}
+                          playersWithStats={playersWithStats}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))}
