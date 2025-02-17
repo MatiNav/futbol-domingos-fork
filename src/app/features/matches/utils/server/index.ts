@@ -4,7 +4,9 @@ export async function getLatestMatchNumber() {
   const collection = await getCollection("matches");
 
   const lastMatch = await collection
-    .find({})
+    .find({
+      deletedAt: { $exists: false },
+    })
     .sort({ matchNumber: -1 })
     .limit(1)
     .toArray();

@@ -4,6 +4,10 @@ import { getCollection } from "@/app/utils/server/db";
 
 export const dynamic = "force-dynamic";
 
+type MatchParams = {
+  matchNumber: string;
+};
+
 export async function GET(
   request: Request,
   { params }: { params: { matchNumber: string } }
@@ -21,7 +25,10 @@ export async function GET(
 
     const collection = await getCollection("matches");
 
-    const match = await collection.findOne({ matchNumber: matchNum });
+    const match = await collection.findOne({
+      matchNumber: matchNum,
+      deletedAt: { $exists: false },
+    });
 
     if (!match) {
       return NextResponse.json({ error: "Match not found" }, { status: 404 });
@@ -57,7 +64,7 @@ export async function PUT(
     const result = getMatchResult(oscuras, claras);
 
     await matchesCollection.updateOne(
-      { matchNumber },
+      { matchNumber, deletedAt: { $exists: false } },
       { $set: { oscuras, claras, winner: result.winner } }
     );
 
@@ -68,6 +75,32 @@ export async function PUT(
     console.error("Error updating match:", error);
     return NextResponse.json(
       { error: "Error updating match" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: MatchParams }
+) {
+  try {
+    const matchNumber = parseInt(params.matchNumber);
+
+    const matchesCollection = await getCollection("matches");
+
+    await matchesCollection.updateOne(
+      { matchNumber, deletedAt: { $exists: false } },
+      { $set: { deletedAt: new Date() } }
+    );
+
+    return NextResponse.json({
+      message: "Match removed successfully",
+    });
+  } catch (error) {
+    console.error("Error removing match:", error);
+    return NextResponse.json(
+      { error: "Error removing match" },
       { status: 500 }
     );
   }

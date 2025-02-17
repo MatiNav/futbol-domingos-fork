@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
-import { DBMatch } from "@/app/constants/types";
-import clientPromise from "@/lib/mongodb";
+import { UserProfileWithPlayerId } from "@/app/constants/types";
+import { getCollection } from "@/app/utils/server/db";
+
+type MatchParams = {
+  matchNumber: string;
+};
 
 export async function createVoteHandler(
   request: NextRequest,
-  { params }: { params: { matchNumber: string } }
+  { params }: { params: MatchParams }
 ) {
   try {
     const user = await getAuthenticatedUser();
@@ -13,42 +17,13 @@ export async function createVoteHandler(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const matchNumber = parseInt(params.matchNumber);
-    const { playerVotedFor } = await request.json();
-
-    if (!playerVotedFor) {
-      return NextResponse.json(
-        { error: "Player vote is required" },
-        { status: 400 }
-      );
-    }
-
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const matchesCollection = db.collection<DBMatch>("matches");
-
-    // Add or update the vote
-    await matchesCollection.updateOne(
-      { matchNumber },
-      {
-        $pull: {
-          playerOfTheMatchVotes: { userId: user.playerId },
-        },
-      }
+    const { matchNumber, playerVotedFor } = await getMatchParams(
+      params,
+      request
     );
 
-    await matchesCollection.updateOne(
-      { matchNumber },
-      {
-        $push: {
-          playerOfTheMatchVotes: {
-            userId: user.playerId,
-            playerVotedFor: playerVotedFor,
-            userName: user.displayName,
-          },
-        },
-      }
-    );
+    await removeVoteFromPlayer(user.playerId, matchNumber);
+    await addVoteToPlayer(user, matchNumber, playerVotedFor);
 
     return NextResponse.json({ message: "Vote registered successfully" });
   } catch (error) {
@@ -57,5 +32,65 @@ export async function createVoteHandler(
       { error: "Error registering vote" },
       { status: 500 }
     );
+  }
+}
+
+async function getMatchParams(params: MatchParams, request: NextRequest) {
+  const matchNumber = parseInt(params.matchNumber);
+  const { playerVotedFor } = await request.json();
+
+  if (!playerVotedFor) {
+    throw new Error("Player vote is required");
+  }
+
+  return { matchNumber, playerVotedFor };
+}
+
+async function removeVoteFromPlayer(playerId: string, matchNumber: number) {
+  const matchesCollection = await getCollection("matches");
+
+  try {
+    // Add or update the vote
+    await matchesCollection.updateOne(
+      { matchNumber, deletedAt: { $exists: false } },
+      {
+        $pull: {
+          playerOfTheMatchVotes: { userId: playerId },
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error removing vote from player:", error);
+    throw error;
+  }
+}
+
+async function addVoteToPlayer(
+  { playerId, displayName }: UserProfileWithPlayerId,
+  matchNumber: number,
+  playerVotedFor: string
+) {
+  const matchesCollection = await getCollection("matches");
+
+  try {
+    const updatedMatch = await matchesCollection.updateOne(
+      { matchNumber, deletedAt: { $exists: false } },
+      {
+        $push: {
+          playerOfTheMatchVotes: {
+            userId: playerId,
+            playerVotedFor: playerVotedFor,
+            userName: displayName,
+          },
+        },
+      }
+    );
+
+    if (!updatedMatch) {
+      throw new Error("Match not found");
+    }
+  } catch (error) {
+    console.error("Error adding vote to player:", error);
+    throw error;
   }
 }

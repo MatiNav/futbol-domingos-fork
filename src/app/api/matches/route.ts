@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import { DBPlayer } from "@/app/constants/types";
 import { ObjectId } from "mongodb";
+import { getCollection } from "@/app/utils/server/db";
 
 export const dynamic = "force-dynamic";
 
@@ -20,9 +20,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const matchesCollection = db.collection("matches");
+    const matchesCollection = await getCollection("matches");
 
     // Get the last match to determine the next match number
     const lastMatch = await matchesCollection
@@ -51,6 +49,7 @@ export async function POST(request: Request) {
     };
 
     const result = await matchesCollection.insertOne({
+      _id: new ObjectId(),
       oscuras: oscurasDoc,
       claras: clarasDoc,
       date,

@@ -14,6 +14,9 @@ export type DBMatch = {
   date: Date;
   playerOfTheMatchVotes?: MatchVote[];
   opinions?: MatchOpinion[];
+  createdAt: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 };
 
 export type MatchPlayer = {
@@ -32,7 +35,7 @@ export type MatchTeam = "oscuras" | "claras";
 
 export type MatchVote = {
   userId: string;
-  playerVotedFor: ObjectId;
+  playerVotedFor: string;
   userName: string;
 };
 
