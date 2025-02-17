@@ -1,4 +1,4 @@
-import { createOpinionHandler } from "@/app/features/matches/api/[matchNumber]";
+import { createOpinionHandler } from "@/app/features/matches/api";
 
 export const dynamic = "force-dynamic";
 

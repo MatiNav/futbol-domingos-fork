@@ -7,7 +7,7 @@ type PlayerWithGoals = DBPlayer & {
   goals: number;
 };
 
-export async function POST(request: Request) {
+export async function createMatchHandler(request: Request) {
   try {
     const { oscuras, claras, date } = await request.json();
 
