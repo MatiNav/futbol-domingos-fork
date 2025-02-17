@@ -1,9 +1,9 @@
-import { DBMatch } from "@/app/constants/types";
+import { SerializedMatch } from "@/app/constants/types";
 
 type GoalsCellProps = {
   team: "oscuras" | "claras";
   index: number;
-  match: DBMatch;
+  match: SerializedMatch;
   isEditable?: boolean;
   onUpdatePlayerGoals?: (
     team: "oscuras" | "claras",

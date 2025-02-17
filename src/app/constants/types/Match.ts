@@ -5,6 +5,10 @@ export type Team = {
   team: MatchTeam;
 };
 
+export type SerializedTeam = Omit<Team, "players"> & {
+  players: SerializedMatchPlayer[];
+};
+
 export type DBMatch = {
   _id: ObjectId;
   matchNumber: number;
@@ -23,6 +27,16 @@ export type MatchPlayer = {
   _id: ObjectId; // Player id
   goals: number;
   assists?: number;
+};
+
+export type SerializedMatchPlayer = Omit<MatchPlayer, "_id"> & {
+  _id: string;
+};
+
+export type SerializedMatch = Omit<DBMatch, "_id" | "oscuras" | "claras"> & {
+  _id: string;
+  oscuras: SerializedTeam;
+  claras: SerializedTeam;
 };
 
 export enum MatchResult {

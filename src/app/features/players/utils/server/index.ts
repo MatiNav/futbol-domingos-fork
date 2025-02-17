@@ -4,6 +4,7 @@ import {
   DBPlayer,
   PlayerWithStats,
   FetchResponse,
+  SerializedPlayer,
 } from "@/app/constants/types";
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 import { getCollection } from "@/app/utils/server/db";
@@ -98,8 +99,8 @@ export async function getPlayersWithStats(): Promise<PlayerWithStats[]> {
 }
 
 export type PlayersResponse = {
-  players: DBPlayer[];
-  playersMap: { [key: string]: DBPlayer };
+  players: SerializedPlayer[];
+  playersMap: { [key: string]: SerializedPlayer };
 };
 
 export const getPlayers = async (): Promise<FetchResponse<PlayersResponse>> => {
@@ -116,19 +117,28 @@ export const getPlayers = async (): Promise<FetchResponse<PlayersResponse>> => {
     };
   }
 
-  const playersMap = players.reduce(
-    (acc: { [key: string]: DBPlayer }, player: DBPlayer) => {
-      acc[player._id.toString()] = player;
+  const serializedPlayers = serializePlayers(players);
+
+  const playersMap = serializedPlayers.reduce(
+    (acc: { [key: string]: SerializedPlayer }, player: SerializedPlayer) => {
+      acc[player._id] = player;
       return acc;
     },
-    {} as { [key: string]: DBPlayer }
+    {} as { [key: string]: SerializedPlayer }
   );
 
   return {
     data: {
-      players,
+      players: serializedPlayers,
       playersMap,
     },
     status: 200,
   };
 };
+
+function serializePlayers(players: DBPlayer[]) {
+  return players.map((player) => ({
+    ...player,
+    _id: player._id.toString(),
+  }));
+}

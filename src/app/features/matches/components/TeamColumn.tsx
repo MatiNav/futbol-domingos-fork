@@ -1,20 +1,19 @@
-import { ObjectId } from "mongodb";
-import { DBPlayer } from "@/app/constants/types/Player";
-import { DBMatch, MatchTeam } from "@/app/constants/types/Match";
+import { SerializedPlayer } from "@/app/constants/types/Player";
+import { MatchTeam, SerializedMatch } from "@/app/constants/types/Match";
 import PlayersCell from "@/app/features/players/components/PlayersCell";
 import GoalsColumn from "@/app/components/Table/GoalsCell";
 
 type TeamColumnProps = {
   team: MatchTeam;
   index: number;
-  match: DBMatch;
-  playersMap: { [key: string]: DBPlayer };
+  match: SerializedMatch;
+  playersMap: { [key: string]: SerializedPlayer };
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
-  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: ObjectId) => void;
-  players?: DBPlayer[];
+  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
+  players?: SerializedPlayer[];
   isPlayerAvailable?: (
-    playerId: ObjectId,
+    playerId: string,
     team: MatchTeam,
     currentIndex: number
   ) => boolean;

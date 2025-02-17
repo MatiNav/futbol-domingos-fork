@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NavBar from "./components/NavBar";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
+import AuthProvider from "./providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   icons: {
     apple: "/icon512_maskable.png",
   },
+};
+
+export const viewport: Viewport = {
   themeColor: "#000000",
 };
 
@@ -20,12 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <UserProvider>
+      <AuthProvider>
         <body className={`antialiased`}>
           <NavBar />
           {children}
         </body>
-      </UserProvider>
+      </AuthProvider>
     </html>
   );
 }

@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { DBMatch, UserProfileWithPlayerId } from "@/app/constants/types";
+import {
+  SerializedMatch,
+  UserProfileWithPlayerId,
+} from "@/app/constants/types";
 
 type MatchOpinionsProps = {
-  match: DBMatch;
+  match: SerializedMatch;
   isLatestMatch: boolean;
   hasUserPlayedMatch: boolean;
   onOpinionSubmitted: () => void;

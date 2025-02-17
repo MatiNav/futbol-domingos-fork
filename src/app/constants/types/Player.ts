@@ -9,6 +9,10 @@ export type DBPlayer = {
   role?: "admin" | "user";
 };
 
+export type SerializedPlayer = Omit<DBPlayer, "_id"> & {
+  _id: string;
+};
+
 export type PlayerWithStats = {
   _id: string;
   name: string;

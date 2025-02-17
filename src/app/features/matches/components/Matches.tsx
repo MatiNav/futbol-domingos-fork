@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { DBMatch } from "@/app/constants/types/Match";
 import MatchSelector from "./MatchSelector";
 import MatchResultTable from "./MatchResult";
 import MatchDetailsTable from "./MatchDetailsTable";
 import PlayerOfTheMatch from "@/app/features/players/components/PlayerOfTheMatch";
 import MatchOpinions from "./MatchOpinions";
 import { PlayersResponse } from "@/app/features/players/utils/server";
-import { UserProfileWithPlayerId } from "@/app/constants/types";
+import {
+  UserProfileWithPlayerId,
+  SerializedMatch,
+} from "@/app/constants/types";
 
 export default function Matches({
   user,
@@ -19,7 +21,7 @@ export default function Matches({
   players: PlayersResponse;
   maxMatchNumber: number;
 }) {
-  const [match, setMatch] = useState<DBMatch | null>(null);
+  const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -51,7 +53,6 @@ export default function Matches({
   };
 
   useEffect(() => {
-    console.log(maxMatchNumber, "it changed");
     if (maxMatchNumber) {
       fetchMatch(maxMatchNumber.toString());
     }

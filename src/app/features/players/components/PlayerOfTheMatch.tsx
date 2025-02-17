@@ -1,14 +1,14 @@
 import {
-  DBMatch,
-  DBPlayer,
+  SerializedMatch,
+  SerializedPlayer,
   UserProfileWithPlayerId,
 } from "@/app/constants/types";
 import React, { useEffect, useState } from "react";
 import { getVotedPlayers } from "../utils";
 
 type PlayerOfTheMatchProps = {
-  match: DBMatch;
-  playersMap: { [key: string]: DBPlayer };
+  match: SerializedMatch;
+  playersMap: { [key: string]: SerializedPlayer };
   isLatestMatch: boolean;
   onVoteSubmitted: () => void;
   user: UserProfileWithPlayerId | null;

@@ -1,16 +1,19 @@
-import { DBMatch, MatchTeam, DBPlayer } from "@/app/constants/types";
-import { ObjectId } from "mongodb";
+import {
+  MatchTeam,
+  SerializedMatch,
+  SerializedPlayer,
+} from "@/app/constants/types";
 
 type PlayersCellProps = {
   team: MatchTeam;
   index: number;
-  match: DBMatch;
-  playersMap: { [key: string]: DBPlayer };
-  players: DBPlayer[];
+  match: SerializedMatch;
+  playersMap: { [key: string]: SerializedPlayer };
+  players: SerializedPlayer[];
   isEditable: boolean;
-  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: ObjectId) => void;
+  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
   isPlayerAvailable?: (
-    playerId: ObjectId,
+    playerId: string,
     team: MatchTeam,
     currentIndex: number
   ) => boolean;
@@ -49,7 +52,7 @@ export default function PlayersCell({
           <select
             value={teamData.players[index]?._id.toString() || ""}
             onChange={(e) => {
-              const selectedPlayerId = e.target.value as unknown as ObjectId;
+              const selectedPlayerId = e.target.value as unknown as string;
               console.log(selectedPlayerId, "selectedPlayerId");
               if (selectedPlayerId) {
                 onUpdatePlayer?.(team, index, selectedPlayerId);

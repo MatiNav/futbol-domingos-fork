@@ -1,17 +1,20 @@
-import { DBMatch, MatchTeam, DBPlayer } from "@/app/constants/types";
-import { ObjectId } from "mongodb";
+import {
+  MatchTeam,
+  SerializedMatch,
+  SerializedPlayer,
+} from "@/app/constants/types";
 import TeamColumn from "@/app/features/matches/components/TeamColumn";
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 
 type MatchDetailsTableProps = {
-  match: DBMatch;
-  playersMap: { [key: string]: DBPlayer };
+  match: SerializedMatch;
+  playersMap: { [key: string]: SerializedPlayer };
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
-  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: ObjectId) => void;
-  players?: DBPlayer[];
+  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
+  players?: SerializedPlayer[];
   isPlayerAvailable?: (
-    playerId: ObjectId,
+    playerId: string,
     team: MatchTeam,
     currentIndex: number
   ) => boolean;

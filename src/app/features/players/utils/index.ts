@@ -1,4 +1,4 @@
-import { DBMatch, PlayerWithStats } from "@/app/constants/types";
+import { PlayerWithStats, SerializedMatch } from "@/app/constants/types";
 
 export function getPichichis(players: PlayerWithStats[]) {
   return players.reduce((pichichis, player) => {
@@ -11,7 +11,7 @@ export function getPichichis(players: PlayerWithStats[]) {
   }, [] as PlayerWithStats[]);
 }
 
-export function getMostVotedPlayersOfTheMatch(match: DBMatch) {
+export function getMostVotedPlayersOfTheMatch(match: SerializedMatch) {
   const voteCounts = getVotedPlayers(match);
 
   // Find the maximum number of votes
@@ -26,7 +26,7 @@ export function getMostVotedPlayersOfTheMatch(match: DBMatch) {
   );
 }
 
-export function getVotedPlayers(match: DBMatch) {
+export function getVotedPlayers(match: SerializedMatch) {
   if (!match.playerOfTheMatchVotes?.length) return {};
 
   // Count votes for each player

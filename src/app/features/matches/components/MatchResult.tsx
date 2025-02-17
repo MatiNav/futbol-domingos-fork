@@ -1,10 +1,10 @@
-import { DBMatch, Team } from "@/app/constants/types";
+import { SerializedTeam, SerializedMatch } from "@/app/constants/types";
 
-interface MatchResultTableProps {
-  match: DBMatch;
-}
+type MatchResultTableProps = {
+  match: SerializedMatch;
+};
 
-function calculateTotalGoals(team: Team) {
+function calculateTotalGoals(team: SerializedTeam) {
   return team.players.reduce((sum, player) => sum + (player.goals || 0), 0);
 }
 

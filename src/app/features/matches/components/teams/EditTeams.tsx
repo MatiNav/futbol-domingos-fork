@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DBMatch } from "@/app/constants/types/Match";
+import { SerializedMatch } from "@/app/constants/types/Match";
 import { ObjectId } from "mongodb";
 import { PlayersResponse } from "@/app/features/players/utils/server";
 import {
@@ -17,7 +17,7 @@ export default function EditarEquipos({
   maxMatchNumber: number;
   players: PlayersResponse;
 }) {
-  const [match, setMatch] = useState<DBMatch | null>(null);
+  const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -55,7 +55,6 @@ export default function EditarEquipos({
   };
 
   useEffect(() => {
-    console.log(maxMatchNumber, "it changed");
     if (maxMatchNumber) {
       fetchMatch(maxMatchNumber.toString());
     }
@@ -86,7 +85,7 @@ export default function EditarEquipos({
   const updatePlayer = (
     team: "oscuras" | "claras",
     index: number,
-    playerId: ObjectId
+    playerId: string
   ) => {
     if (!match) return;
 
@@ -175,7 +174,7 @@ export default function EditarEquipos({
   };
 
   const isPlayerAvailable = (
-    playerId: ObjectId,
+    playerId: string,
     team: "oscuras" | "claras",
     currentIndex: number
   ) => {
