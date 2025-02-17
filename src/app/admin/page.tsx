@@ -1,6 +1,13 @@
 import Link from "next/link";
+import { getAuthenticatedUser } from "../features/auth/utils";
 
-export default function AdminMenu() {
+export default async function AdminMenu() {
+  const user = await getAuthenticatedUser();
+
+  if (user?.role !== "admin") {
+    return <div>No tienes permisos para acceder a esta página</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-600 to-green-800">
       <main className="p-6">

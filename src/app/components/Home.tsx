@@ -6,8 +6,6 @@ import {
   SerializedMessage,
   UserProfileWithPlayerId,
 } from "../constants/types";
-import { useState } from "react";
-import PasswordModal from "./PasswordModal";
 import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
 import Forum from "./Forum";
@@ -25,7 +23,6 @@ export default function HomePageContent({
   initialMessages: SerializedMessage[];
   user: UserProfileWithPlayerId | null;
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
   return (
@@ -104,8 +101,8 @@ export default function HomePageContent({
             </Link>
 
             {user?.role === "admin" && (
-              <button
-                onClick={() => setIsModalOpen(true)}
+              <Link
+                href="/admin"
                 className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
               >
                 <div className="flex items-center space-x-4">
@@ -134,15 +131,11 @@ export default function HomePageContent({
                     </p>
                   </div>
                 </div>
-              </button>
+              </Link>
             )}
           </div>
         </div>
       </div>
-      <PasswordModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
       <Forum initialMessages={initialMessages} user={user} />
     </div>
   );
