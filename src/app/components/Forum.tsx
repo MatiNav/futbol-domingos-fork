@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { DBMessage } from "@/app/constants/types/Message";
+import { SerializedMessage } from "@/app/constants/types";
 import Image from "next/image";
 import Pusher from "pusher-js";
 import { TEAMS_IMAGES } from "../constants/images/teams";
@@ -11,9 +11,10 @@ export default function Forum({
   initialMessages,
 }: {
   user: UserProfileWithPlayerId | null;
-  initialMessages: DBMessage[];
+  initialMessages: SerializedMessage[];
 }) {
-  const [messages, setMessages] = useState<DBMessage[]>(initialMessages);
+  const [messages, setMessages] =
+    useState<SerializedMessage[]>(initialMessages);
   const [connectionStatus, setConnectionStatus] = useState("Conectando...");
   const [newMessage, setNewMessage] = useState("");
 
@@ -25,7 +26,7 @@ export default function Forum({
 
     const channel = pusher.subscribe("messages-channel");
 
-    channel.bind("new-message", (newMessageData: DBMessage) => {
+    channel.bind("new-message", (newMessageData: SerializedMessage) => {
       setMessages((prev) => [newMessageData, ...prev]);
     });
 

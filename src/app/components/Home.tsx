@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import {
-  DBMessage,
   PlayerWithStats,
+  SerializedMessage,
   UserProfileWithPlayerId,
 } from "../constants/types";
 import { useState } from "react";
@@ -22,7 +22,7 @@ export default function HomePageContent({
   playersWithStats: PlayerWithStats[];
   pichichis: PlayerWithStats[];
   topPlayer: PlayerWithStats;
-  initialMessages: DBMessage[];
+  initialMessages: SerializedMessage[];
   user: UserProfileWithPlayerId | null;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);

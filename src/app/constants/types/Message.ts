@@ -11,3 +11,12 @@ export type DBMessage = {
   likes: number;
   dislikes: number;
 };
+
+export type SerializedMessage = Omit<
+  DBMessage,
+  "_id" | "likes" | "dislikes"
+> & {
+  _id: string;
+  likes: string;
+  dislikes: string;
+};
