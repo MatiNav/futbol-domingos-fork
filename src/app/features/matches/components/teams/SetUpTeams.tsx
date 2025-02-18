@@ -2,7 +2,7 @@
 
 import { PlayerWithStats } from "@/app/constants/types/Player";
 import { useEffect, useState } from "react";
-import PercentageCell from "@/app/components/Table/PercentageCell";
+import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
 
 export default function SetupTeams({
   playersWithStats,

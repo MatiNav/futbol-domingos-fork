@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SerializedMatch } from "@/app/constants/types/Match";
 import {
   MatchDetailsTable,
-  MatchResultTable,
+  MatchResult,
   MatchSelector,
 } from "@/app/features/matches/components";
 import {
@@ -313,7 +313,7 @@ export default function EditTeams({
                 showOnlyMatchPercentage={showOnlyMatchPercentage}
               />
 
-              <MatchResultTable match={match} />
+              <MatchResult match={match} />
 
               <div className="flex justify-center mb-6">
                 <button

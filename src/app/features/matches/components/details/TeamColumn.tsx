@@ -4,8 +4,8 @@ import {
 } from "@/app/constants/types/Player";
 import { MatchTeam, SerializedMatch } from "@/app/constants/types/Match";
 import PlayersCell from "@/app/features/players/components/PlayersCell";
-import GoalsColumn from "@/app/components/Table/GoalsCell";
-import PercentageCell from "@/app/components/Table/PercentageCell";
+import GoalsColumn from "@/app/features/matches/components/details/GoalsCell";
+import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
 
 type TeamColumnProps = {
   team: MatchTeam;

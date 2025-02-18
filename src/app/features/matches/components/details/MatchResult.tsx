@@ -1,6 +1,6 @@
 import { SerializedTeam, SerializedMatch } from "@/app/constants/types";
 
-type MatchResultTableProps = {
+type MatchResultProps = {
   match: SerializedMatch;
 };
 
@@ -8,7 +8,7 @@ function calculateTotalGoals(team: SerializedTeam) {
   return team.players.reduce((sum, player) => sum + (player.goals || 0), 0);
 }
 
-export default function MatchResultTable({ match }: MatchResultTableProps) {
+export default function MatchResult({ match }: MatchResultProps) {
   const oscurasTotal = calculateTotalGoals(match.oscuras);
   const clarasTotal = calculateTotalGoals(match.claras);
 

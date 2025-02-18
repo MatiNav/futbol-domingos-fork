@@ -4,7 +4,7 @@ import {
   SerializedMatch,
   SerializedPlayer,
 } from "@/app/constants/types";
-import TeamColumn from "@/app/features/matches/components/TeamColumn";
+import { TeamColumn } from "@/app/features/matches/components/details";
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 
 type MatchDetailsTableProps = {

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import MatchSelector from "./MatchSelector";
-import MatchResultTable from "./MatchResult";
-import MatchDetailsTable from "./MatchDetailsTable";
+import MatchResultTable from "./details/MatchResult";
+import MatchDetailsTable from "./details/MatchDetailsTable";
 import PlayerOfTheMatch from "@/app/features/players/components/PlayerOfTheMatch";
 import MatchOpinions from "./MatchOpinions";
 import { PlayersResponse } from "@/app/features/players/utils/server";
