@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 type MatchSelectorProps = {
-  onMatchSelect: (matchNumber: string) => void;
+  onMatchSelect: (matchNumber: number) => void;
   isLoading: boolean;
   maxMatchNumber: number;
 };
@@ -21,42 +21,44 @@ export default function MatchSelector({
 
   const handleNumberClick = (number: number) => {
     setMatchNumber(number);
-    onMatchSelect(number.toString());
+    onMatchSelect(number);
   };
 
   const handlePrevious = () => {
     const newNumber = Math.max(1, matchNumber - 1);
     setMatchNumber(newNumber);
-    onMatchSelect(newNumber.toString());
+    onMatchSelect(newNumber);
   };
 
   const handleNext = () => {
     const newNumber = Math.min(maxMatchNumber, matchNumber + 1);
     setMatchNumber(newNumber);
-    onMatchSelect(newNumber.toString());
+    onMatchSelect(newNumber);
   };
 
   return (
     <div className="flex flex-col space-y-1">
-      {/* Numbers row */}
-      <div className="flex items-center justify-start space-x-2 bg-green-900 p-2">
-        {Array.from({ length: maxMatchNumber }, (_, i) => i + 1).map(
-          (number) => (
-            <button
-              key={number}
-              onClick={() => handleNumberClick(number)}
-              className={`min-w-[28px] h-7 flex items-center justify-center text-base
-              ${
-                number === matchNumber
-                  ? "bg-[#018000] text-white"
-                  : "bg-green-800 text-green-100 hover:bg-green-700"
-              }
-              font-normal transition-colors duration-200`}
-            >
-              {number}
-            </button>
-          )
-        )}
+      {/* Numbers row with horizontal scroll */}
+      <div className="flex items-center bg-green-900 p-2 overflow-x-auto">
+        <div className="flex items-center justify-start gap-1 flex-wrap">
+          {Array.from({ length: maxMatchNumber }, (_, i) => i + 1).map(
+            (number) => (
+              <button
+                key={number}
+                onClick={() => handleNumberClick(number)}
+                className={`min-w-[28px] h-7 flex items-center justify-center text-base
+                ${
+                  number === matchNumber
+                    ? "bg-[#018000] text-white"
+                    : "bg-green-800 text-green-100 hover:bg-green-700"
+                }
+                font-normal transition-colors duration-200`}
+              >
+                {number}
+              </button>
+            )
+          )}
+        </div>
       </div>
 
       {/* Navigation section */}
@@ -80,7 +82,9 @@ export default function MatchSelector({
           <span className="text-green-100 text-lg font-medium">
             Torneo Clausura 2025
           </span>
-          <span className="text-green-200 text-md">Fecha {matchNumber}</span>
+          <span className="text-green-200 text-md">
+            Fecha {matchNumber} de {maxMatchNumber}
+          </span>
         </div>
 
         <button

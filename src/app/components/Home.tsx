@@ -9,6 +9,7 @@ import {
   MatchesLink,
   TableLink,
 } from "../features/home/components/links";
+import { useTournament } from "../contexts/TournamentContext";
 
 export default function HomePageContent({
   playersWithStats,
@@ -21,6 +22,7 @@ export default function HomePageContent({
   topPlayer: PlayerWithStats;
   initialMessages: SerializedMessage[];
 }) {
+  const { selectedTournament } = useTournament();
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
   return (
@@ -28,7 +30,7 @@ export default function HomePageContent({
       <div className="max-w-7xl mx-auto rounded-lg p-1">
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-8">
-            Torneo Clausura 2025
+            {selectedTournament?.name}
           </h1>
 
           {/* Banner Carousel */}

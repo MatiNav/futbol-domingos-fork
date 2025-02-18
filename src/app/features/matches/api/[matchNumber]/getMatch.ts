@@ -2,41 +2,29 @@ import { NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
 import {
   getMatchParams,
-  getMatchQuery,
+  getMatchNumberQuery,
   serializeMatch,
 } from "../../utils/server";
+import { NotFoundError } from "@/app/utils/server/errors";
+
 export async function getMatchHandler(
   request: Request,
   { params }: { params: { matchNumber: string } }
 ) {
-  try {
-    const { matchNumber, tournamentId } = getMatchParams(request, params);
+  const { matchNumber, tournamentId } = getMatchParams(request, params);
 
-    if (isNaN(matchNumber)) {
-      return NextResponse.json(
-        { error: "Invalid match number" },
-        { status: 400 }
-      );
-    }
+  const collection = await getCollection("matches");
 
-    const collection = await getCollection("matches");
+  const query = getMatchNumberQuery(matchNumber, tournamentId);
+  console.log(query, "query");
+  const match = await collection.findOne(query);
 
-    const match = await collection.findOne(
-      getMatchQuery(matchNumber, tournamentId)
-    );
-
-    if (!match) {
-      return NextResponse.json({ error: "Match not found" }, { status: 404 });
-    }
-
-    const serializedMatch = serializeMatch(match);
-
-    return NextResponse.json({ match: serializedMatch });
-  } catch (error) {
-    console.error("Error fetching match:", error);
-    return NextResponse.json(
-      { error: "Error fetching match" },
-      { status: 500 }
-    );
+  console.log(match, "match");
+  if (!match) {
+    throw new NotFoundError("Match not found");
   }
+
+  const serializedMatch = serializeMatch(match);
+
+  return NextResponse.json({ match: serializedMatch });
 }

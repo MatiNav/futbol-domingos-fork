@@ -1,59 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { ObjectId } from "mongodb";
-import { DBMatch } from "@/app/constants/types";
 import {
+  getMatchNumberQuery,
   getMatchParams,
-  getMatchQuery,
 } from "@/app/features/matches/utils/server";
+import { getCollection } from "@/app/utils/server/db";
+import { NotFoundError } from "@/app/utils/server/errors";
 
 export async function deleteOpinionHandler(
   request: NextRequest,
   { params }: { params: { matchNumber: string; opinionId: string } }
 ) {
-  try {
-    const user = await getAuthenticatedUser();
-    if (!user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
+  const user = await getAuthenticatedUser();
 
-    const { matchNumber, tournamentId } = getMatchParams(request, params);
-    const opinionId = params.opinionId;
+  const { matchNumber, tournamentId } = getMatchParams(request, params);
+  const opinionId = params.opinionId;
 
-    const client = await clientPromise;
-    const db = client.db("futbol");
-    const matchesCollection = db.collection<DBMatch>("matches");
+  const matchesCollection = await getCollection("matches");
 
-    const result = await matchesCollection.updateOne(
-      {
-        ...getMatchQuery(matchNumber, tournamentId),
-        "opinions._id": new ObjectId(opinionId),
-        "opinions.userId": user.playerId,
-      },
-      {
-        $pull: {
-          opinions: {
-            _id: new ObjectId(opinionId),
-            userId: user.playerId,
-          },
+  const result = await matchesCollection.updateOne(
+    {
+      ...getMatchNumberQuery(matchNumber, tournamentId),
+      "opinions._id": new ObjectId(opinionId),
+      "opinions.userId": user.playerId,
+    },
+    {
+      $pull: {
+        opinions: {
+          _id: new ObjectId(opinionId),
+          userId: user.playerId,
         },
-      }
-    );
-
-    if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { error: "Opinion not found or not authorized" },
-        { status: 404 }
-      );
+      },
     }
+  );
 
-    return NextResponse.json({ message: "Opinion deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting opinion:", error);
-    return NextResponse.json(
-      { error: "Error deleting opinion" },
-      { status: 500 }
-    );
+  if (result.matchedCount === 0) {
+    throw new NotFoundError("Opinion not found or not authorized");
   }
+
+  return NextResponse.json({ message: "Opinion deleted successfully" });
 }

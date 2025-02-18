@@ -24,6 +24,7 @@ export default function EditTeams({
   playersMap: { [key: string]: SerializedPlayer };
   playersWithStats: PlayerWithStats[];
 }) {
+  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
   const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [currentTeamPercentages, setCurrentTeamPercentages] = useState({
     oscuras: 0,
@@ -46,6 +47,26 @@ export default function EditTeams({
 
   const { selectedTournament } = useTournament();
 
+  const getSumOfPercentageColumnByTeamUntilMatch = useCallback(
+    async (match: SerializedMatch) => {
+      try {
+        const response = await fetch(
+          `/api/players/withStats?matchNumber=${match.matchNumber}&tournamentId=${selectedTournament?._id}`
+        );
+        const data = await response.json();
+
+        setPlayersWithStatsUntilMatchNumber(data);
+        setUntilMatchTeamPercentages(
+          getSumOfPercentageColumnByTeam(data, match)
+        );
+      } catch (error: unknown) {
+        console.error("Error fetching players:", error);
+        setError("Error fetching players");
+      }
+    },
+    [selectedTournament?._id]
+  );
+
   const fetchMatch = useCallback(
     async (number: string) => {
       setIsLoading(true);
@@ -65,6 +86,14 @@ export default function EditTeams({
 
         if (data.match) {
           setMatch(data.match);
+          getSumOfPercentageColumnByTeamUntilMatch(data.match);
+
+          const teamPercentages = getSumOfPercentageColumnByTeam(
+            playersWithStats,
+            data.match
+          );
+
+          setCurrentTeamPercentages(teamPercentages);
         } else {
           setError("Partido no encontrado");
         }
@@ -76,44 +105,19 @@ export default function EditTeams({
         setIsLoading(false);
       }
     },
-    [selectedTournament?._id]
+    [
+      selectedTournament?._id,
+      getSumOfPercentageColumnByTeamUntilMatch,
+      playersWithStats,
+    ]
   );
 
   useEffect(() => {
-    if (maxMatchNumber) {
-      fetchMatch(maxMatchNumber.toString());
+    if (matchNumber) {
+      fetchMatch(matchNumber.toString());
     }
-  }, [maxMatchNumber, fetchMatch]);
-
-  useEffect(() => {
-    if (match && playersWithStats) {
-      getSumOfPercentageColumnByTeamUntilMatch(match);
-
-      const teamPercentages = getSumOfPercentageColumnByTeam(
-        playersWithStats,
-        match
-      );
-
-      setCurrentTeamPercentages(teamPercentages);
-    }
-  }, [match, playersWithStats]);
-
-  const getSumOfPercentageColumnByTeamUntilMatch = async (
-    match: SerializedMatch
-  ) => {
-    try {
-      const response = await fetch(
-        `/api/players/withStats?matchNumber=${match.matchNumber}&tournamentId=${selectedTournament?._id}`
-      );
-      const data = await response.json();
-
-      setPlayersWithStatsUntilMatchNumber(data);
-      setUntilMatchTeamPercentages(getSumOfPercentageColumnByTeam(data, match));
-    } catch (error: unknown) {
-      console.error("Error fetching players:", error);
-      setError("Error fetching players");
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchNumber]);
 
   const updatePlayerGoals = (
     team: "oscuras" | "claras",
@@ -264,7 +268,7 @@ export default function EditTeams({
       <div className="max-w-7xl mx-auto px-4 ">
         <div className="bg-[#77777736] rounded-lg shadow-lg p-6">
           <MatchSelector
-            onMatchSelect={fetchMatch}
+            onMatchSelect={setMatchNumber}
             isLoading={isLoading}
             maxMatchNumber={maxMatchNumber}
           />

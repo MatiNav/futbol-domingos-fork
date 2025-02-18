@@ -29,8 +29,16 @@ export const TournamentProvider = ({
     throw new Error("Tournaments are required");
   }
 
+  const initialTournament = (() => {
+    const tournamentId = searchParams.get("tournamentId");
+    if (tournamentId) {
+      return tournaments.find((t) => t._id === tournamentId) || null;
+    }
+    return tournaments[tournaments.length - 1];
+  })();
+
   const [selectedTournament, setSelectedTournament] =
-    useState<SerializedTournament | null>(tournaments[tournaments.length - 1]);
+    useState<SerializedTournament | null>(initialTournament);
 
   useEffect(() => {
     const tournamentId = searchParams.get("tournamentId");
@@ -47,6 +55,7 @@ export const TournamentProvider = ({
 
   const handleSetSelectedTournament = (tournament: SerializedTournament) => {
     setSelectedTournament(tournament);
+    console.log("tournament", tournament);
     const url = new URL(window.location.href);
     url.searchParams.set("tournamentId", tournament._id);
     router.push(url.toString());

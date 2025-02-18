@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
-import { getMatchQuery } from "@/app/features/matches/utils/server";
-
+import { getMatchNumberQuery } from "@/app/features/matches/utils/server";
+import { BadRequestError, NotFoundError } from "@/app/utils/server/errors";
 type MatchParams = {
   matchNumber: string;
 };
@@ -12,26 +12,15 @@ export async function createVoteHandler(
   request: NextRequest,
   { params }: { params: MatchParams }
 ) {
-  try {
-    const user = await getAuthenticatedUser();
-    if (!user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
+  const user = await getAuthenticatedUser();
 
-    const { matchNumber, playerVotedFor, tournamentId } =
-      await getMatchParamsFromJson(request, params);
+  const { matchNumber, playerVotedFor, tournamentId } =
+    await getMatchParamsFromJson(request, params);
 
-    await removeVoteFromPlayer(user.playerId, matchNumber, tournamentId);
-    await addVoteToPlayer(user, matchNumber, playerVotedFor, tournamentId);
+  await removeVoteFromPlayer(user.playerId, matchNumber, tournamentId);
+  await addVoteToPlayer(user, matchNumber, playerVotedFor, tournamentId);
 
-    return NextResponse.json({ message: "Vote registered successfully" });
-  } catch (error) {
-    console.error("Error registering vote:", error);
-    return NextResponse.json(
-      { error: "Error registering vote" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ message: "Vote registered successfully" });
 }
 
 async function getMatchParamsFromJson(
@@ -42,11 +31,11 @@ async function getMatchParamsFromJson(
   const { playerVotedFor, tournamentId } = await request.json();
 
   if (!playerVotedFor) {
-    throw new Error("Player vote is required");
+    throw new BadRequestError("Player vote is required");
   }
 
   if (!tournamentId) {
-    throw new Error("Tournament ID is required");
+    throw new BadRequestError("Tournament ID is required");
   }
 
   return { matchNumber, playerVotedFor, tournamentId };
@@ -62,7 +51,7 @@ async function removeVoteFromPlayer(
   try {
     // Add or update the vote
     await matchesCollection.updateOne(
-      getMatchQuery(matchNumber, tournamentId),
+      getMatchNumberQuery(matchNumber, tournamentId),
       {
         $pull: {
           playerOfTheMatchVotes: { userId: playerId },
@@ -85,7 +74,7 @@ async function addVoteToPlayer(
 
   try {
     const updatedMatch = await matchesCollection.updateOne(
-      getMatchQuery(matchNumber, tournamentId),
+      getMatchNumberQuery(matchNumber, tournamentId),
       {
         $push: {
           playerOfTheMatchVotes: {
@@ -98,7 +87,7 @@ async function addVoteToPlayer(
     );
 
     if (!updatedMatch) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match not found");
     }
   } catch (error) {
     console.error("Error adding vote to player:", error);

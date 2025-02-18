@@ -1,35 +1,27 @@
 import { NextResponse } from "next/server";
 import { MatchPlayer, MatchResult, Team } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
-import { getMatchQuery } from "@/app/features/matches/utils/server";
+import { getMatchNumberQuery } from "@/app/features/matches/utils/server";
 
 export async function updateMatchHandler(
   request: Request,
   { params }: { params: { matchNumber: string } }
 ) {
-  try {
-    const matchesCollection = await getCollection("matches");
+  const matchesCollection = await getCollection("matches");
 
-    const { matchNumber, oscuras, claras, tournamentId } =
-      await getMatchParamsFromJson(request, params);
+  const { matchNumber, oscuras, claras, tournamentId } =
+    await getMatchParamsFromJson(request, params);
 
-    const result = getMatchResult(oscuras, claras);
+  const result = getMatchResult(oscuras, claras);
 
-    await matchesCollection.updateOne(
-      getMatchQuery(matchNumber, tournamentId),
-      { $set: { oscuras, claras, winner: result.winner } }
-    );
+  await matchesCollection.updateOne(
+    getMatchNumberQuery(matchNumber, tournamentId),
+    { $set: { oscuras, claras, winner: result.winner } }
+  );
 
-    return NextResponse.json({
-      message: "Match and player statistics updated successfully",
-    });
-  } catch (error) {
-    console.error("Error updating match:", error);
-    return NextResponse.json(
-      { error: "Error updating match" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    message: "Match and player statistics updated successfully",
+  });
 }
 
 async function getMatchParamsFromJson(

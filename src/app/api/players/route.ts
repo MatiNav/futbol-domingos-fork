@@ -2,6 +2,7 @@ import {
   createPlayerHandler,
   getPlayersHandler,
 } from "@/app/features/players/api";
+import { withErrorHandler } from "@/app/utils/server/withErrorHandler";
 
-export const GET = getPlayersHandler;
-export const POST = createPlayerHandler;
+export const GET = withErrorHandler(getPlayersHandler);
+export const POST = withErrorHandler(createPlayerHandler);

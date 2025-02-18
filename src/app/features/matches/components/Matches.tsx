@@ -25,7 +25,7 @@ export default function Matches({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { selectedTournament } = useTournament();
-
+  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
   const fetchMatch = useCallback(
     async (number: string) => {
       setIsLoading(true);
@@ -59,20 +59,20 @@ export default function Matches({
   );
 
   useEffect(() => {
-    if (maxMatchNumber) {
-      fetchMatch(maxMatchNumber.toString());
+    if (matchNumber) {
+      fetchMatch(matchNumber.toString());
     }
-  }, [maxMatchNumber, fetchMatch]);
+  }, [matchNumber, fetchMatch]);
 
   const onVoteSubmitted = () => {
-    fetchMatch(maxMatchNumber.toString());
+    fetchMatch(matchNumber.toString());
   };
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
       <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
         <MatchSelector
-          onMatchSelect={fetchMatch}
+          onMatchSelect={setMatchNumber}
           isLoading={isLoading}
           maxMatchNumber={maxMatchNumber}
         />

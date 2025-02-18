@@ -1,5 +1,9 @@
 import { createVoteHandler } from "@/app/features/matches/api/";
+import { withErrorHandler } from "@/app/utils/server/withErrorHandler";
+import { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export const POST = createVoteHandler;
+export const POST = withErrorHandler((req, context) =>
+  createVoteHandler(req as NextRequest, context)
+);

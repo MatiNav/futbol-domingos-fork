@@ -1,3 +1,4 @@
+import { BadRequestError } from "@/app/utils/server/errors";
 import { DBMatch, SerializedMatch } from "@/app/constants/types/Match";
 import { getCollection } from "@/app/utils/server/db";
 import { ObjectId } from "mongodb";
@@ -11,20 +12,24 @@ export function getMatchParams(
   const { searchParams } = new URL(request.url);
   const tournamentId = searchParams.get("tournamentId");
 
+  if (isNaN(matchNum)) {
+    throw new BadRequestError("Match number is required and must be a number");
+  }
+
   if (!tournamentId) {
-    throw new Error("Tournament ID is required");
+    throw new BadRequestError("Tournament ID is required");
   }
 
   return { matchNumber: matchNum, tournamentId };
 }
 
-export function getMatchQuery(
+export function getMatchNumberQuery(
   matchNumber: number,
   tournamentId: string,
   deleted = false
 ) {
   if (!tournamentId || typeof tournamentId !== "string") {
-    throw new Error("Tournament ID is required and must be a string");
+    throw new BadRequestError("Tournament ID is required and must be a string");
   }
 
   return {
