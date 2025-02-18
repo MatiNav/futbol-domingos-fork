@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
-import { serializeMatch } from "../../utils/server";
-
+import {
+  getMatchParams,
+  getMatchQuery,
+  serializeMatch,
+} from "../../utils/server";
 export async function getMatchHandler(
   request: Request,
   { params }: { params: { matchNumber: string } }
 ) {
   try {
-    const { matchNumber } = await params;
-    const matchNum = parseInt(matchNumber);
+    const { matchNumber, tournamentId } = getMatchParams(request, params);
 
-    if (isNaN(matchNum)) {
+    if (isNaN(matchNumber)) {
       return NextResponse.json(
         { error: "Invalid match number" },
         { status: 400 }
@@ -19,7 +21,9 @@ export async function getMatchHandler(
 
     const collection = await getCollection("matches");
 
-    const match = await collection.findOne({ matchNumber: matchNum });
+    const match = await collection.findOne(
+      getMatchQuery(matchNumber, tournamentId)
+    );
 
     if (!match) {
       return NextResponse.json({ error: "Match not found" }, { status: 404 });

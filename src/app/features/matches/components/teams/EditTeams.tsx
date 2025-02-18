@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SerializedMatch } from "@/app/constants/types/Match";
 import {
   MatchDetailsTable,
@@ -11,6 +11,7 @@ import {
   PlayerWithStats,
   SerializedPlayer,
 } from "@/app/constants/types/Player";
+import { useTournament } from "@/app/contexts/TournamentContext";
 
 export default function EditTeams({
   maxMatchNumber,
@@ -43,39 +44,46 @@ export default function EditTeams({
   ] = useState<PlayerWithStats[]>([]);
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
 
-  const fetchMatch = async (number: string) => {
-    setIsLoading(true);
-    setError("");
-    setMatch(null);
-    setSuccessMessage("");
+  const { selectedTournament } = useTournament();
 
-    try {
-      const response = await fetch(`/api/matches/${number}`);
-      const data = await response.json();
+  const fetchMatch = useCallback(
+    async (number: string) => {
+      setIsLoading(true);
+      setError("");
+      setMatch(null);
+      setSuccessMessage("");
 
-      if (!response.ok) {
-        setError(data.error || "Error al buscar el partido");
+      try {
+        const response = await fetch(
+          `/api/matches/${number}?tournamentId=${selectedTournament?._id}`
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(data.error || "Error al buscar el partido");
+        }
+
+        if (data.match) {
+          setMatch(data.match);
+        } else {
+          setError("Partido no encontrado");
+        }
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Error al buscar el partido"
+        );
+      } finally {
+        setIsLoading(false);
       }
-
-      if (data.match) {
-        setMatch(data.match);
-      } else {
-        setError("Partido no encontrado");
-      }
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Error al buscar el partido"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [selectedTournament?._id]
+  );
 
   useEffect(() => {
     if (maxMatchNumber) {
       fetchMatch(maxMatchNumber.toString());
     }
-  }, [maxMatchNumber]);
+  }, [maxMatchNumber, fetchMatch]);
 
   useEffect(() => {
     if (match && playersWithStats) {
@@ -95,7 +103,7 @@ export default function EditTeams({
   ) => {
     try {
       const response = await fetch(
-        `/api/players/withStats?matchNumber=${match.matchNumber}`
+        `/api/players/withStats?matchNumber=${match.matchNumber}&tournamentId=${selectedTournament?._id}`
       );
       const data = await response.json();
 
@@ -181,9 +189,12 @@ export default function EditTeams({
       }
     }
 
-    const response = await fetch(`/api/matches/${match.matchNumber}`, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      `/api/matches/${match.matchNumber}?tournamentId=${selectedTournament?._id}`,
+      {
+        method: "DELETE",
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al eliminar el partido");
@@ -207,6 +218,7 @@ export default function EditTeams({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          tournamentId: selectedTournament?._id,
           oscuras: { team: "oscuras", players: match.oscuras.players },
           claras: { team: "claras", players: match.claras.players },
         }),

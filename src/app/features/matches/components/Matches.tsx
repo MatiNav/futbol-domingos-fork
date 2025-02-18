@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MatchSelector from "./MatchSelector";
 import MatchResultTable from "./details/MatchResult";
 import MatchDetailsTable from "./details/MatchDetailsTable";
@@ -11,7 +11,7 @@ import {
   UserProfileWithPlayerId,
   SerializedMatch,
 } from "@/app/constants/types";
-
+import { useTournament } from "@/app/contexts/TournamentContext";
 export default function Matches({
   user,
   players: { playersMap },
@@ -24,39 +24,45 @@ export default function Matches({
   const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { selectedTournament } = useTournament();
 
-  const fetchMatch = async (number: string) => {
-    setIsLoading(true);
-    setError("");
-    setMatch(null);
+  const fetchMatch = useCallback(
+    async (number: string) => {
+      setIsLoading(true);
+      setError("");
+      setMatch(null);
 
-    try {
-      const response = await fetch(`/api/matches/${number}`);
-      const data = await response.json();
+      try {
+        const response = await fetch(
+          `/api/matches/${number}?tournamentId=${selectedTournament?._id}`
+        );
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Error al buscar el partido");
+        if (!response.ok) {
+          throw new Error(data.error || "Error al buscar el partido");
+        }
+
+        if (data.match) {
+          setMatch(data.match);
+        } else {
+          setError("Partido no encontrado");
+        }
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Error al buscar el partido"
+        );
+      } finally {
+        setIsLoading(false);
       }
-
-      if (data.match) {
-        setMatch(data.match);
-      } else {
-        setError("Partido no encontrado");
-      }
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Error al buscar el partido"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [selectedTournament?._id]
+  );
 
   useEffect(() => {
     if (maxMatchNumber) {
       fetchMatch(maxMatchNumber.toString());
     }
-  }, [maxMatchNumber]);
+  }, [maxMatchNumber, fetchMatch]);
 
   const onVoteSubmitted = () => {
     fetchMatch(maxMatchNumber.toString());

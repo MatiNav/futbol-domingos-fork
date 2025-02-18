@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
+import {
+  getMatchParams,
+  getMatchQuery,
+} from "@/app/features/matches/utils/server";
 
 type MatchParams = {
   matchNumber: string;
@@ -10,12 +14,19 @@ export async function deleteMatchHandler(
   { params }: { params: MatchParams }
 ) {
   try {
-    const matchNumber = parseInt(params.matchNumber);
+    const { matchNumber, tournamentId } = getMatchParams(request, params);
+
+    if (!tournamentId) {
+      return NextResponse.json(
+        { error: "Tournament ID is required" },
+        { status: 400 }
+      );
+    }
 
     const matchesCollection = await getCollection("matches");
 
     await matchesCollection.updateOne(
-      { matchNumber, deletedAt: { $exists: false } },
+      getMatchQuery(matchNumber, tournamentId),
       { $set: { deletedAt: new Date() } }
     );
 

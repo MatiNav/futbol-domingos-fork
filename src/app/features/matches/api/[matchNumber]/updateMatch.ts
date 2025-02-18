@@ -1,28 +1,22 @@
 import { NextResponse } from "next/server";
 import { MatchPlayer, MatchResult, Team } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
+import { getMatchQuery } from "@/app/features/matches/utils/server";
 
 export async function updateMatchHandler(
   request: Request,
   { params }: { params: { matchNumber: string } }
 ) {
   try {
-    const matchNumber = parseInt(params.matchNumber);
-    const { oscuras, claras } = await request.json();
-
-    if (isNaN(matchNumber)) {
-      return NextResponse.json(
-        { error: "Invalid match number" },
-        { status: 400 }
-      );
-    }
-
     const matchesCollection = await getCollection("matches");
+
+    const { matchNumber, oscuras, claras, tournamentId } =
+      await getMatchParamsFromJson(request, params);
 
     const result = getMatchResult(oscuras, claras);
 
     await matchesCollection.updateOne(
-      { matchNumber },
+      getMatchQuery(matchNumber, tournamentId),
       { $set: { oscuras, claras, winner: result.winner } }
     );
 
@@ -36,6 +30,24 @@ export async function updateMatchHandler(
       { status: 500 }
     );
   }
+}
+
+async function getMatchParamsFromJson(
+  request: Request,
+  params: { matchNumber: string }
+) {
+  const matchNumber = parseInt(params.matchNumber);
+  const { oscuras, claras, tournamentId } = await request.json();
+
+  if (isNaN(matchNumber)) {
+    throw new Error("Invalid match number");
+  }
+
+  if (!tournamentId) {
+    throw new Error("Tournament ID is required");
+  }
+
+  return { matchNumber, oscuras, claras, tournamentId };
 }
 
 function getMatchResult(

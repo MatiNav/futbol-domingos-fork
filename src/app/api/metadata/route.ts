@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
 
-    console.log("player", player);
     // Return the metadata that Auth0 should store
     return NextResponse.json({
       metadata: {

@@ -3,12 +3,14 @@
 import { PlayerWithStats } from "@/app/constants/types/Player";
 import { useEffect, useState } from "react";
 import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
+import { useTournament } from "@/app/contexts/TournamentContext";
 
 export default function SetupTeams({
   playersWithStats,
 }: {
   playersWithStats: PlayerWithStats[];
 }) {
+  const { selectedTournament } = useTournament();
   const [team1, setTeam1] = useState<(PlayerWithStats | null)[]>([]);
   const [team2, setTeam2] = useState<(PlayerWithStats | null)[]>([]);
   const [teamPercentages, setTeamPercentages] = useState({
@@ -109,6 +111,7 @@ export default function SetupTeams({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          tournamentId: selectedTournament?._id,
           oscuras: {
             team: "oscuras",
             players: team1.map((player) => ({

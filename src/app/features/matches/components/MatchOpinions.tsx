@@ -109,7 +109,7 @@ export default function MatchOpinions({
 
     try {
       const response = await fetch(
-        `/api/matches/${match.matchNumber}/opinion/${opinionId}`,
+        `/api/matches/${match.matchNumber}/opinion/${opinionId}?tournamentId=${match.tournamentId}`,
         {
           method: "DELETE",
         }

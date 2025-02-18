@@ -9,7 +9,14 @@ type PlayerWithGoals = DBPlayer & {
 
 export async function createMatchHandler(request: Request) {
   try {
-    const { oscuras, claras, date } = await request.json();
+    const { oscuras, claras, date, tournamentId } = await request.json();
+
+    if (!tournamentId) {
+      return NextResponse.json(
+        { error: "Tournament ID is required" },
+        { status: 400 }
+      );
+    }
 
     if (!oscuras?.players?.length || !claras?.players?.length) {
       return NextResponse.json(
@@ -24,7 +31,10 @@ export async function createMatchHandler(request: Request) {
 
     // Get the last match to determine the next match number
     const lastMatch = await matchesCollection
-      .find({})
+      .find({
+        tournamentId: new ObjectId(String(tournamentId)),
+        deletedAt: { $exists: false },
+      })
       .sort({ matchNumber: -1 })
       .limit(1)
       .toArray();
@@ -54,6 +64,7 @@ export async function createMatchHandler(request: Request) {
       date,
       matchNumber: nextMatchNumber,
       createdAt: new Date(),
+      tournamentId: new ObjectId(String(tournamentId)),
     });
 
     return NextResponse.json({

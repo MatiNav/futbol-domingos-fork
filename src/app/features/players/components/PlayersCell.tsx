@@ -53,7 +53,6 @@ export default function PlayersCell({
             value={teamData.players[index]?._id.toString() || ""}
             onChange={(e) => {
               const selectedPlayerId = e.target.value as unknown as string;
-              console.log(selectedPlayerId, "selectedPlayerId");
               if (selectedPlayerId) {
                 onUpdatePlayer?.(team, index, selectedPlayerId);
               }

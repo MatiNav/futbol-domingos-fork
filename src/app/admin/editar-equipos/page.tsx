@@ -7,11 +7,15 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function EditTeamsPage() {
+export default async function EditTeamsPage({
+  searchParams,
+}: {
+  searchParams: { tournamentId: string };
+}) {
   const [maxMatchNumber, players, playersWithStats] = await Promise.all([
-    getLatestMatchNumber(),
+    getLatestMatchNumber(searchParams.tournamentId),
     getPlayers(),
-    getPlayersWithStats(),
+    getPlayersWithStats(searchParams.tournamentId),
   ]);
 
   if ("error" in players) {

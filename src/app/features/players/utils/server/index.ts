@@ -9,14 +9,22 @@ import {
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 import { getCollection } from "@/app/utils/server/db";
 import { serializeMatch } from "@/app/features/matches/utils/server";
+import { ObjectId } from "mongodb";
 
 export async function getPlayersWithStats(
+  tournamentId: string,
   untilMatchNumber?: number
 ): Promise<PlayerWithStats[]> {
   const matchesCollection = await getCollection("matches");
   const playersCollection = await getCollection("players");
 
-  const dbMatches = await matchesCollection.find({}).toArray();
+  const dbMatches = await matchesCollection
+    .find({
+      tournamentId: new ObjectId(tournamentId),
+      deletedAt: { $exists: false },
+    })
+    .toArray();
+
   const dbPlayers = await playersCollection.find({}).toArray();
 
   const playersForTable = dbPlayers.map((player) => ({

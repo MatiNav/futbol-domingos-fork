@@ -2,7 +2,7 @@ import Image from "next/image";
 import { TEAMS_IMAGES } from "../constants/images/teams";
 import { getPlayersWithStats } from "@/app/features/players/utils/server";
 import { getPichichis } from "@/app/features/players/utils";
-
+import { ParsedUrlQuery } from "querystring";
 export const dynamic = "force-dynamic";
 
 const DEFAULT_PLAYER_IMAGE_1 =
@@ -10,8 +10,14 @@ const DEFAULT_PLAYER_IMAGE_1 =
 const DEFAULT_PLAYER_IMAGE_2 =
   "https://img.lovepik.com/element/40127/4259.png_1200.png";
 
-export default async function TablePage() {
-  const playersWithStats = await getPlayersWithStats();
+export default async function TablePage({
+  searchParams,
+}: {
+  searchParams: ParsedUrlQuery;
+}) {
+  const tournamentId = searchParams.tournamentId as string;
+  const playersWithStats = await getPlayersWithStats(tournamentId);
+
   const pichichis = getPichichis(playersWithStats);
 
   return (

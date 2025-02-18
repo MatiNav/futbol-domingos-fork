@@ -3,7 +3,7 @@ import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { ObjectId } from "mongodb";
 import { DBMatch } from "@/app/constants/types";
 import clientPromise from "@/lib/mongodb";
-
+import { getMatchQuery } from "@/app/features/matches/utils/server";
 export async function updateOpinionHandler(
   request: NextRequest,
   { params }: { params: { matchNumber: string; opinionId: string } }
@@ -14,9 +14,17 @@ export async function updateOpinionHandler(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { content } = await request.json();
+    const { content, tournamentId } = await request.json();
+
     const matchNumber = parseInt(params.matchNumber);
     const opinionId = params.opinionId;
+
+    if (!tournamentId) {
+      return NextResponse.json(
+        { error: "Tournament ID is required" },
+        { status: 400 }
+      );
+    }
 
     if (!content?.trim()) {
       return NextResponse.json(
@@ -38,7 +46,7 @@ export async function updateOpinionHandler(
 
     const result = await matchesCollection.updateOne(
       {
-        matchNumber,
+        ...getMatchQuery(matchNumber, tournamentId),
         "opinions._id": new ObjectId(opinionId),
         "opinions.userId": user.playerId,
       },

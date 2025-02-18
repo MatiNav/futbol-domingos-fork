@@ -3,6 +3,10 @@ import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { ObjectId } from "mongodb";
 import { DBMatch } from "@/app/constants/types";
+import {
+  getMatchParams,
+  getMatchQuery,
+} from "@/app/features/matches/utils/server";
 
 export async function deleteOpinionHandler(
   request: NextRequest,
@@ -14,7 +18,7 @@ export async function deleteOpinionHandler(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const matchNumber = parseInt(params.matchNumber);
+    const { matchNumber, tournamentId } = getMatchParams(request, params);
     const opinionId = params.opinionId;
 
     const client = await clientPromise;
@@ -22,7 +26,11 @@ export async function deleteOpinionHandler(
     const matchesCollection = db.collection<DBMatch>("matches");
 
     const result = await matchesCollection.updateOne(
-      { matchNumber },
+      {
+        ...getMatchQuery(matchNumber, tournamentId),
+        "opinions._id": new ObjectId(opinionId),
+        "opinions.userId": user.playerId,
+      },
       {
         $pull: {
           opinions: {

@@ -3,6 +3,7 @@ import clientPromise from "@/lib/mongodb";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { ObjectId } from "mongodb";
 import { DBMatch } from "@/app/constants/types";
+import { getMatchQuery } from "@/app/features/matches/utils/server";
 
 export async function createOpinionHandler(
   request: NextRequest,
@@ -16,6 +17,15 @@ export async function createOpinionHandler(
 
     const matchNumber = parseInt(params.matchNumber);
     const { content } = await request.json();
+
+    const { tournamentId } = await request.json();
+
+    if (!tournamentId) {
+      return NextResponse.json(
+        { error: "Tournament ID is required" },
+        { status: 400 }
+      );
+    }
 
     if (!content?.trim()) {
       return NextResponse.json(
@@ -36,7 +46,9 @@ export async function createOpinionHandler(
     const matchesCollection = db.collection<DBMatch>("matches");
 
     await matchesCollection.updateOne(
-      { matchNumber },
+      {
+        ...getMatchQuery(matchNumber, tournamentId),
+      },
       {
         $push: {
           opinions: {

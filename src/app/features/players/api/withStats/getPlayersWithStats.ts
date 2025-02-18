@@ -4,12 +4,23 @@ import { NextResponse } from "next/server";
 export async function getPlayersWithStatsHandler(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+    const tournamentIdParam = searchParams.get("tournamentId");
     const matchNumberParam = searchParams.get("matchNumber");
+
+    if (!tournamentIdParam) {
+      return NextResponse.json(
+        { error: "Tournament ID is required" },
+        { status: 400 }
+      );
+    }
 
     const matchNumber =
       matchNumberParam === null ? undefined : parseInt(matchNumberParam);
 
-    const playersWithStats = await getPlayersWithStats(matchNumber);
+    const playersWithStats = await getPlayersWithStats(
+      tournamentIdParam,
+      matchNumber
+    );
 
     if ("error" in playersWithStats) {
       return NextResponse.json({ error: playersWithStats.error });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
+import { getMatchQuery } from "@/app/features/matches/utils/server";
 
 type MatchParams = {
   matchNumber: string;
@@ -17,13 +18,11 @@ export async function createVoteHandler(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { matchNumber, playerVotedFor } = await getMatchParams(
-      params,
-      request
-    );
+    const { matchNumber, playerVotedFor, tournamentId } =
+      await getMatchParamsFromJson(request, params);
 
-    await removeVoteFromPlayer(user.playerId, matchNumber);
-    await addVoteToPlayer(user, matchNumber, playerVotedFor);
+    await removeVoteFromPlayer(user.playerId, matchNumber, tournamentId);
+    await addVoteToPlayer(user, matchNumber, playerVotedFor, tournamentId);
 
     return NextResponse.json({ message: "Vote registered successfully" });
   } catch (error) {
@@ -35,24 +34,35 @@ export async function createVoteHandler(
   }
 }
 
-async function getMatchParams(params: MatchParams, request: NextRequest) {
+async function getMatchParamsFromJson(
+  request: NextRequest,
+  params: MatchParams
+) {
   const matchNumber = parseInt(params.matchNumber);
-  const { playerVotedFor } = await request.json();
+  const { playerVotedFor, tournamentId } = await request.json();
 
   if (!playerVotedFor) {
     throw new Error("Player vote is required");
   }
 
-  return { matchNumber, playerVotedFor };
+  if (!tournamentId) {
+    throw new Error("Tournament ID is required");
+  }
+
+  return { matchNumber, playerVotedFor, tournamentId };
 }
 
-async function removeVoteFromPlayer(playerId: string, matchNumber: number) {
+async function removeVoteFromPlayer(
+  playerId: string,
+  matchNumber: number,
+  tournamentId: string
+) {
   const matchesCollection = await getCollection("matches");
 
   try {
     // Add or update the vote
     await matchesCollection.updateOne(
-      { matchNumber, deletedAt: { $exists: false } },
+      getMatchQuery(matchNumber, tournamentId),
       {
         $pull: {
           playerOfTheMatchVotes: { userId: playerId },
@@ -68,13 +78,14 @@ async function removeVoteFromPlayer(playerId: string, matchNumber: number) {
 async function addVoteToPlayer(
   { playerId, displayName }: UserProfileWithPlayerId,
   matchNumber: number,
-  playerVotedFor: string
+  playerVotedFor: string,
+  tournamentId: string
 ) {
   const matchesCollection = await getCollection("matches");
 
   try {
     const updatedMatch = await matchesCollection.updateOne(
-      { matchNumber, deletedAt: { $exists: false } },
+      getMatchQuery(matchNumber, tournamentId),
       {
         $push: {
           playerOfTheMatchVotes: {

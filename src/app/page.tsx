@@ -1,4 +1,5 @@
 import HomePageContent from "./components/Home";
+import { getTournaments } from "./features/tournaments/utils/server";
 import { getPichichis } from "./features/players/utils";
 import { getPlayersWithStats } from "./features/players/utils/server";
 import { getMessages } from "./utils/server/messages";
@@ -22,9 +23,10 @@ import { getMessages } from "./utils/server/messages";
  */
 
 export default async function HomePage() {
+  const tournaments = await getTournaments();
   const [initialMessages, playersWithStats] = await Promise.all([
     getMessages(),
-    getPlayersWithStats(),
+    getPlayersWithStats(tournaments[tournaments.length - 1]._id),
   ]);
 
   const pichichis = getPichichis(playersWithStats);
