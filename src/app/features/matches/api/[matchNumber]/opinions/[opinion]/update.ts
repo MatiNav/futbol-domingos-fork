@@ -24,7 +24,7 @@ export async function updateOpinionHandler(
     {
       ...getMatchNumberQuery(matchNumber, tournamentId),
       "opinions._id": new ObjectId(opinionId),
-      "opinions.userId": user.playerId,
+      "opinions.userId": user?.playerId,
     },
     {
       $set: {

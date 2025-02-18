@@ -23,13 +23,13 @@ export async function deleteOpinionHandler(
     {
       ...getMatchNumberQuery(matchNumber, tournamentId),
       "opinions._id": new ObjectId(opinionId),
-      "opinions.userId": user.playerId,
+      "opinions.userId": user?.playerId,
     },
     {
       $pull: {
         opinions: {
           _id: new ObjectId(opinionId),
-          userId: user.playerId,
+          userId: user?.playerId,
         },
       },
     }

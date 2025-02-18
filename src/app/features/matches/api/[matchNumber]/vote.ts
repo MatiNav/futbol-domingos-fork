@@ -3,7 +3,11 @@ import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
 import { getMatchNumberQuery } from "@/app/features/matches/utils/server";
-import { BadRequestError, NotFoundError } from "@/app/utils/server/errors";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@/app/utils/server/errors";
 type MatchParams = {
   matchNumber: string;
 };
@@ -17,7 +21,11 @@ export async function createVoteHandler(
   const { matchNumber, playerVotedFor, tournamentId } =
     await getMatchParamsFromJson(request, params);
 
-  await removeVoteFromPlayer(user.playerId, matchNumber, tournamentId);
+  if (!user) {
+    throw new UnauthorizedError("User not authenticated");
+  }
+
+  await removeVoteFromPlayer(user?.playerId, matchNumber, tournamentId);
   await addVoteToPlayer(user, matchNumber, playerVotedFor, tournamentId);
 
   return NextResponse.json({ message: "Vote registered successfully" });
