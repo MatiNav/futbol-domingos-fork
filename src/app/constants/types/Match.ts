@@ -11,6 +11,7 @@ export type SerializedTeam = Omit<Team, "players"> & {
 
 export type DBMatch = {
   _id: ObjectId;
+  tournamentId: ObjectId;
   matchNumber: number;
   oscuras: Team;
   claras: Team;

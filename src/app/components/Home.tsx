@@ -9,6 +9,7 @@ import {
 import BannerCarousel from "./BannerCarousel";
 import { RANDOM_IMAGES } from "../constants/images/teams";
 import Forum from "./Forum";
+import { isAdmin } from "../features/auth/utils/roles";
 
 export default function HomePageContent({
   playersWithStats,
@@ -100,7 +101,7 @@ export default function HomePageContent({
               </div>
             </Link>
 
-            {user?.role === "admin" && (
+            {isAdmin(user) && (
               <Link
                 href="/admin"
                 className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"

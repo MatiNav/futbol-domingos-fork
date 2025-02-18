@@ -1,4 +1,5 @@
 import "server-only";
+
 import { getSession } from "@auth0/nextjs-auth0";
 import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { redirect } from "next/navigation";

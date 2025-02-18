@@ -1,9 +1,11 @@
 import { ObjectId } from "mongodb";
-import { DBMatch } from "./Match";
 
-export type Tournament = {
+export type DBTournament = {
   _id: ObjectId;
   name: string;
   info: string;
-  matches: DBMatch[];
+};
+
+export type SerializedTournament = Omit<DBTournament, "_id"> & {
+  _id: string;
 };

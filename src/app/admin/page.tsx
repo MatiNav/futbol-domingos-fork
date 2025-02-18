@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { getAuthenticatedUser } from "../features/auth/utils";
+import { getAuthenticatedUser, isAdmin } from "../features/auth/utils";
 
 export default async function AdminMenu() {
   const user = await getAuthenticatedUser();
 
-  if (user?.role !== "admin") {
+  if (!isAdmin(user)) {
     return <div>No tienes permisos para acceder a esta página</div>;
   }
 

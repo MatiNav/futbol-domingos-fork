@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import AuthProvider from "./providers/AuthProvider";
+import { TournamentProvider } from "./contexts/TournamentContext";
+import { getTournaments } from "./features/tournaments/utils/server";
+import TournamentSelector from "@/components/TournamentSelector";
+import { getAuthenticatedUser, isAdmin } from "./features/auth/utils";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -16,18 +20,24 @@ export const viewport: Viewport = {
   themeColor: "#000000",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getAuthenticatedUser();
+  const tournaments = await getTournaments();
+
   return (
     <html lang="es">
       <AuthProvider>
-        <body className={`antialiased`}>
-          <NavBar />
-          {children}
-        </body>
+        <TournamentProvider tournaments={tournaments}>
+          <body className={`antialiased`}>
+            <NavBar />
+            {isAdmin(user) && <TournamentSelector />}
+            {children}
+          </body>
+        </TournamentProvider>
       </AuthProvider>
     </html>
   );
