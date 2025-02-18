@@ -11,7 +11,7 @@ export async function getAuthenticatedUser() {
   const user = session?.user as UserProfileWithPlayerId;
 
   if (!user) {
-    throw new Error("Not authenticated");
+    return null;
   }
 
   if (!user.email) {

@@ -1,4 +1,6 @@
 "use client";
+import { TEAMS_IMAGES } from "@/app/constants/images/teams";
+import { TeamOption } from "@/app/constants/types";
 import { useState } from "react";
 
 export default function AgregarJugador() {
@@ -74,7 +76,7 @@ export default function AgregarJugador() {
               id="playerName"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white text-gray-800 placeholder-gray-400"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-300 bg-white text-gray-800 placeholder-gray-400"
               placeholder="Ingresa el nombre del jugador"
               required
               disabled={isLoading}
@@ -87,15 +89,35 @@ export default function AgregarJugador() {
             >
               Equipo Favorito
             </label>
-            <input
-              type="text"
+            <select
               id="playerFavoriteTeam"
               value={playerFavoriteTeam}
-              onChange={(e) => setPlayerFavoriteTeam(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white text-gray-800 placeholder-gray-400"
-              placeholder="Club de futbol"
-              disabled={isLoading}
-            />
+              onChange={(e) =>
+                setPlayerFavoriteTeam(e.target.value as TeamOption)
+              }
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-300 bg-white text-gray-800 placeholder-gray-400"
+            >
+              <option value="" className="bg-[#0B2818] text-white">
+                Select a team
+              </option>
+              {Object.entries(TEAMS_IMAGES).map(([key]) => (
+                <option
+                  key={key}
+                  value={key}
+                  className="bg-[#0B2818] text-white"
+                >
+                  {key
+                    .replace(/([A-Z])/g, " $1")
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase() +
+                    key
+                      .replace(/([A-Z])/g, " $1")
+                      .trim()
+                      .slice(1)}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label
@@ -109,7 +131,7 @@ export default function AgregarJugador() {
               id="playerImage"
               value={playerImage}
               onChange={(e) => setPlayerImage(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white text-gray-800 placeholder-gray-400"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-300 bg-white text-gray-800 placeholder-gray-400"
               placeholder="https://ejemplo.com/imagen.jpg"
               disabled={isLoading}
             />
