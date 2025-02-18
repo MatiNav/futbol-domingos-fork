@@ -1,6 +1,4 @@
-import { getSession } from "@auth0/nextjs-auth0";
 import HomePageContent from "./components/Home";
-import { UserProfileWithPlayerId } from "./constants/types";
 import { getPichichis } from "./features/players/utils";
 import { getPlayersWithStats } from "./features/players/utils/server";
 import { getMessages } from "./utils/server/messages";
@@ -24,13 +22,11 @@ import { getMessages } from "./utils/server/messages";
  */
 
 export default async function HomePage() {
-  const [session, initialMessages, playersWithStats] = await Promise.all([
-    getSession(),
+  const [initialMessages, playersWithStats] = await Promise.all([
     getMessages(),
     getPlayersWithStats(),
   ]);
 
-  const user = session?.user as UserProfileWithPlayerId;
   const pichichis = getPichichis(playersWithStats);
   const topPlayer = playersWithStats[0];
 
@@ -40,7 +36,6 @@ export default async function HomePage() {
       playersWithStats={playersWithStats}
       pichichis={pichichis}
       topPlayer={topPlayer}
-      user={user}
     />
   );
 }

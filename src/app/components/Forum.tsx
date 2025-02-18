@@ -4,15 +4,14 @@ import { SerializedMessage } from "@/app/constants/types";
 import Image from "next/image";
 import Pusher from "pusher-js";
 import { TEAMS_IMAGES } from "../constants/images/teams";
-import { UserProfileWithPlayerId } from "../constants/types";
+import useCustomUser from "../features/auth/hooks/useCustomUser";
 
 export default function Forum({
-  user,
   initialMessages,
 }: {
-  user: UserProfileWithPlayerId | null;
   initialMessages: SerializedMessage[];
 }) {
+  const user = useCustomUser();
   const [messages, setMessages] =
     useState<SerializedMessage[]>(initialMessages);
   const [connectionStatus, setConnectionStatus] = useState("Conectando...");
