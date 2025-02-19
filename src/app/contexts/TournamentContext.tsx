@@ -25,9 +25,6 @@ export const TournamentProvider = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  if (tournaments.length === 0) {
-    throw new Error("Tournaments are required");
-  }
 
   const initialTournament = (() => {
     const tournamentId = searchParams.get("tournamentId");
