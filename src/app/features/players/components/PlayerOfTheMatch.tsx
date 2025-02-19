@@ -5,6 +5,7 @@ import {
 } from "@/app/constants/types";
 import React, { useEffect, useState } from "react";
 import { getVotedPlayers } from "../utils";
+import { useTournament } from "@/app/contexts/TournamentContext";
 
 type PlayerOfTheMatchProps = {
   match: SerializedMatch;
@@ -21,6 +22,8 @@ export default function PlayerOfTheMatch({
   onVoteSubmitted,
   user,
 }: PlayerOfTheMatchProps) {
+  const { selectedTournament } = useTournament();
+  const [error, setError] = useState("");
   const [hasMatchBeenPlayed, setHasMatchBeenPlayed] = useState(
     Boolean(match.winner)
   );
@@ -51,6 +54,7 @@ export default function PlayerOfTheMatch({
   const allPlayers = [...match.oscuras.players, ...match.claras.players];
 
   const handleVoteSubmit = async () => {
+    if (!selectedTournament?.finished) setError("El torneo ha finalizado");
     if (!user || !selectedPlayer) return;
 
     setIsSubmitting(true);
@@ -88,6 +92,7 @@ export default function PlayerOfTheMatch({
 
   return (
     <div className="mt-6 p-4 bg-[#1a472a] rounded-lg space-y-6">
+      {error && <div className="text-red-500">{error}</div>}
       <div className="flex items-center">
         <h3 className="text-xl font-semibold text-white">
           Jugador del Partido

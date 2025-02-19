@@ -5,6 +5,7 @@ import {
   SerializedMatch,
   UserProfileWithPlayerId,
 } from "@/app/constants/types";
+import { useTournament } from "@/app/contexts/TournamentContext";
 
 type MatchOpinionsProps = {
   match: SerializedMatch;
@@ -21,6 +22,7 @@ export default function MatchOpinions({
   onOpinionSubmitted,
   user,
 }: MatchOpinionsProps) {
+  const { selectedTournament } = useTournament();
   const [opinion, setOpinion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -32,6 +34,7 @@ export default function MatchOpinions({
   );
 
   const handleSubmit = async () => {
+    if (!selectedTournament?.finished) setError("El torneo ha finalizado");
     if (!user || !opinion.trim()) return;
 
     setIsSubmitting(true);
@@ -130,6 +133,7 @@ export default function MatchOpinions({
 
   return (
     <div className="mt-6 p-4 bg-[#1a472a] rounded-lg space-y-6">
+      {error && <div className="text-red-500">{error}</div>}
       <h3 className="text-xl font-semibold text-white">
         Opiniones del Partido
       </h3>
