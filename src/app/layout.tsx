@@ -29,17 +29,17 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
-      <Suspense fallback={<div>Loading...</div>}>
-        <AuthProvider>
-          <TournamentProvider tournaments={tournaments}>
-            <body className={`antialiased`}>
+      <body className={`antialiased`}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthProvider>
+            <TournamentProvider tournaments={tournaments}>
               <NavBar />
               <TournamentSelector />
               {children}
-            </body>
-          </TournamentProvider>
-        </AuthProvider>
-      </Suspense>
+            </TournamentProvider>
+          </AuthProvider>
+        </Suspense>
+      </body>
     </html>
   );
 }
