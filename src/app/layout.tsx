@@ -5,6 +5,7 @@ import AuthProvider from "./providers/AuthProvider";
 import { TournamentProvider } from "./contexts/TournamentContext";
 import { getTournaments } from "./features/tournaments/utils/server";
 import TournamentSelector from "@/components/TournamentSelector";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -28,15 +29,17 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
-      <AuthProvider>
-        <TournamentProvider tournaments={tournaments}>
-          <body className={`antialiased`}>
-            <NavBar />
-            <TournamentSelector />
-            {children}
-          </body>
-        </TournamentProvider>
-      </AuthProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <AuthProvider>
+          <TournamentProvider tournaments={tournaments}>
+            <body className={`antialiased`}>
+              <NavBar />
+              <TournamentSelector />
+              {children}
+            </body>
+          </TournamentProvider>
+        </AuthProvider>
+      </Suspense>
     </html>
   );
 }
