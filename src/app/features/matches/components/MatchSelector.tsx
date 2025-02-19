@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
+import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
+import { useTournament } from "@/app/contexts/TournamentContext";
 type MatchSelectorProps = {
   onMatchSelect: (matchNumber: number) => void;
   isLoading: boolean;
@@ -13,11 +13,11 @@ export default function MatchSelector({
   isLoading,
   maxMatchNumber,
 }: MatchSelectorProps) {
-  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
-
-  useEffect(() => {
-    setMatchNumber(maxMatchNumber);
-  }, [maxMatchNumber]);
+  const { selectedTournament } = useTournament();
+  const { matchNumber, setMatchNumber } = useFetchMatchWithStats(
+    [],
+    maxMatchNumber
+  );
 
   const handleNumberClick = (number: number) => {
     setMatchNumber(number);
@@ -80,7 +80,7 @@ export default function MatchSelector({
 
         <div className="flex flex-col items-center text-center">
           <span className="text-green-100 text-lg font-medium">
-            Torneo Clausura 2025
+            {selectedTournament?.name}
           </span>
           <span className="text-green-200 text-md">
             Fecha {matchNumber} de {maxMatchNumber}

@@ -26,6 +26,10 @@ type TeamColumnProps = {
   mostVotedPlayersIds: string[];
   onPercentageCalculated?: (team: MatchTeam, percentage: number) => void;
   showOnlyMatchPercentage?: boolean;
+  columnVisibility?: {
+    goals: boolean;
+    percentage: boolean;
+  };
 };
 
 export default function TeamColumn({
@@ -42,6 +46,10 @@ export default function TeamColumn({
   isPlayerAvailable,
   mostVotedPlayersIds,
   showOnlyMatchPercentage = false,
+  columnVisibility = {
+    goals: true,
+    percentage: true,
+  },
 }: TeamColumnProps) {
   const goalsColumnComponent = (
     <GoalsColumn
@@ -80,15 +88,15 @@ export default function TeamColumn({
     <>
       {team === "oscuras" ? (
         <>
-          {goalsColumnComponent}
+          {columnVisibility.goals && goalsColumnComponent}
+          {columnVisibility.percentage && percentageColumnComponent}
           {playerColumnComponent}
-          {percentageColumnComponent}
         </>
       ) : (
         <>
           {playerColumnComponent}
-          {percentageColumnComponent}
-          {goalsColumnComponent}
+          {columnVisibility.percentage && percentageColumnComponent}
+          {columnVisibility.goals && goalsColumnComponent}
         </>
       )}
     </>

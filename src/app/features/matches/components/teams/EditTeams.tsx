@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { SerializedMatch } from "@/app/constants/types/Match";
+import { useState } from "react";
 import {
   MatchDetailsTable,
   MatchResult,
@@ -12,6 +11,7 @@ import {
   SerializedPlayer,
 } from "@/app/constants/types/Player";
 import { useTournament } from "@/app/contexts/TournamentContext";
+import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
 
 export default function EditTeams({
   maxMatchNumber,
@@ -24,100 +24,23 @@ export default function EditTeams({
   playersMap: { [key: string]: SerializedPlayer };
   playersWithStats: PlayerWithStats[];
 }) {
-  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
-  const [match, setMatch] = useState<SerializedMatch | null>(null);
-  const [currentTeamPercentages, setCurrentTeamPercentages] = useState({
-    oscuras: 0,
-    claras: 0,
-  });
-  const [untilMatchTeamPercentages, setUntilMatchTeamPercentages] = useState({
-    oscuras: 0,
-    claras: 0,
-  });
+  const {
+    playersWithStatsUntilMatchNumber,
+    setMatchNumber,
+    setMatch,
+    match,
+    currentTeamPercentages,
+    untilMatchTeamPercentages,
+    isLoading,
+  } = useFetchMatchWithStats(playersWithStats, maxMatchNumber);
+
   const [isRemoving, setIsRemoving] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [
-    playersWithStatsUntilMatchNumber,
-    setPlayersWithStatsUntilMatchNumber,
-  ] = useState<PlayerWithStats[]>([]);
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
 
   const { selectedTournament } = useTournament();
-
-  const getSumOfPercentageColumnByTeamUntilMatch = useCallback(
-    async (match: SerializedMatch) => {
-      try {
-        const response = await fetch(
-          `/api/players/withStats?matchNumber=${match.matchNumber}&tournamentId=${selectedTournament?._id}`
-        );
-        const data = await response.json();
-
-        setPlayersWithStatsUntilMatchNumber(data);
-        setUntilMatchTeamPercentages(
-          getSumOfPercentageColumnByTeam(data, match)
-        );
-      } catch (error: unknown) {
-        console.error("Error fetching players:", error);
-        setError("Error fetching players");
-      }
-    },
-    [selectedTournament?._id]
-  );
-
-  const fetchMatch = useCallback(
-    async (number: string) => {
-      setIsLoading(true);
-      setError("");
-      setMatch(null);
-      setSuccessMessage("");
-
-      try {
-        const response = await fetch(
-          `/api/matches/${number}?tournamentId=${selectedTournament?._id}`
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          setError(data.error || "Error al buscar el partido");
-        }
-
-        if (data.match) {
-          setMatch(data.match);
-          getSumOfPercentageColumnByTeamUntilMatch(data.match);
-
-          const teamPercentages = getSumOfPercentageColumnByTeam(
-            playersWithStats,
-            data.match
-          );
-
-          setCurrentTeamPercentages(teamPercentages);
-        } else {
-          setError("Partido no encontrado");
-        }
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "Error al buscar el partido"
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [
-      selectedTournament?._id,
-      getSumOfPercentageColumnByTeamUntilMatch,
-      playersWithStats,
-    ]
-  );
-
-  useEffect(() => {
-    if (matchNumber) {
-      fetchMatch(matchNumber.toString());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchNumber]);
 
   const updatePlayerGoals = (
     team: "oscuras" | "claras",
@@ -162,14 +85,6 @@ export default function EditTeams({
       },
     };
 
-    getSumOfPercentageColumnByTeamUntilMatch(updatedMatch);
-
-    const teamPercentages = getSumOfPercentageColumnByTeam(
-      playersWithStats,
-      updatedMatch
-    );
-
-    setCurrentTeamPercentages(teamPercentages);
     setMatch(updatedMatch);
   };
 
@@ -285,31 +200,6 @@ export default function EditTeams({
             </div>
           )}
 
-          <div className="flex justify-end mb-4">
-            <div className="bg-green-800 rounded-lg p-1 flex gap-1">
-              <button
-                onClick={() => setShowOnlyMatchPercentage(false)}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  !showOnlyMatchPercentage
-                    ? "bg-green-600 text-white"
-                    : "text-green-200 hover:bg-green-700"
-                }`}
-              >
-                Porcentaje Actual
-              </button>
-              <button
-                onClick={() => setShowOnlyMatchPercentage(true)}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  showOnlyMatchPercentage
-                    ? "bg-green-600 text-white"
-                    : "text-green-200 hover:bg-green-700"
-                }`}
-              >
-                Porcentaje Fecha {match?.matchNumber}
-              </button>
-            </div>
-          </div>
-
           {match && (
             <>
               <MatchDetailsTable
@@ -317,16 +207,17 @@ export default function EditTeams({
                 players={players}
                 playersMap={playersMap}
                 playersWithStats={playersWithStats}
-                onUpdatePlayerGoals={updatePlayerGoals}
-                isPlayerAvailable={isPlayerAvailable}
-                onUpdatePlayer={updatePlayer}
-                isEditable
                 teamPercentages={currentTeamPercentages}
                 untilMatchTeamPercentages={untilMatchTeamPercentages}
                 playersWithStatsUntilMatchNumber={
                   playersWithStatsUntilMatchNumber
                 }
                 showOnlyMatchPercentage={showOnlyMatchPercentage}
+                onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
+                onUpdatePlayerGoals={updatePlayerGoals}
+                isPlayerAvailable={isPlayerAvailable}
+                onUpdatePlayer={updatePlayer}
+                isEditable
               />
 
               <MatchResult match={match} />
@@ -446,21 +337,4 @@ export default function EditTeams({
       </div>
     </div>
   );
-}
-
-function getSumOfPercentageColumnByTeam(
-  playersWithStats: PlayerWithStats[],
-  match: SerializedMatch
-) {
-  const oscurasPercentage = match.oscuras.players.reduce((acc, player) => {
-    const playerStats = playersWithStats.find((p) => p._id === player._id);
-    return acc + (playerStats?.percentage || 0);
-  }, 0);
-
-  const clarasPercentage = match.claras.players.reduce((acc, player) => {
-    const playerStats = playersWithStats.find((p) => p._id === player._id);
-    return acc + (playerStats?.percentage || 0);
-  }, 0);
-
-  return { oscuras: oscurasPercentage, claras: clarasPercentage };
 }

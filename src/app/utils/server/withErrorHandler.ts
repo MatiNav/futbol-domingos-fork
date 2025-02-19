@@ -7,11 +7,11 @@ import { NextResponse } from "next/server";
 
 type HandlerFunction = (
   request: Request,
-  context: any
+  context: never
 ) => Promise<NextResponse>;
 
 export function withErrorHandler(handler: HandlerFunction) {
-  return async (request: Request, context: any) => {
+  return async (request: Request, context: never) => {
     try {
       return await handler(request, context);
     } catch (error) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import MatchSelector from "./MatchSelector";
 import MatchResultTable from "./details/MatchResult";
 import MatchDetailsTable from "./details/MatchDetailsTable";
@@ -9,60 +8,33 @@ import MatchOpinions from "./MatchOpinions";
 import { PlayersResponse } from "@/app/features/players/utils/server";
 import {
   UserProfileWithPlayerId,
-  SerializedMatch,
+  PlayerWithStats,
 } from "@/app/constants/types";
-import { useTournament } from "@/app/contexts/TournamentContext";
+import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
+import { useState } from "react";
 export default function Matches({
   user,
-  players: { playersMap },
+  players: { playersMap, players },
   maxMatchNumber,
+  playersWithStats,
 }: {
   user: UserProfileWithPlayerId | null;
   players: PlayersResponse;
   maxMatchNumber: number;
+  playersWithStats: PlayerWithStats[];
 }) {
-  const [match, setMatch] = useState<SerializedMatch | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { selectedTournament } = useTournament();
-  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
-  const fetchMatch = useCallback(
-    async (number: string) => {
-      setIsLoading(true);
-      setError("");
-      setMatch(null);
-
-      try {
-        const response = await fetch(
-          `/api/matches/${number}?tournamentId=${selectedTournament?._id}`
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Error al buscar el partido");
-        }
-
-        if (data.match) {
-          setMatch(data.match);
-        } else {
-          setError("Partido no encontrado");
-        }
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "Error al buscar el partido"
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [selectedTournament?._id]
-  );
-
-  useEffect(() => {
-    if (matchNumber) {
-      fetchMatch(matchNumber.toString());
-    }
-  }, [matchNumber, fetchMatch]);
+  const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
+  const {
+    fetchMatch,
+    matchNumber,
+    playersWithStatsUntilMatchNumber,
+    setMatchNumber,
+    match,
+    currentTeamPercentages,
+    untilMatchTeamPercentages,
+    isLoading,
+    error,
+  } = useFetchMatchWithStats(playersWithStats, maxMatchNumber);
 
   const onVoteSubmitted = () => {
     fetchMatch(matchNumber.toString());
@@ -85,7 +57,19 @@ export default function Matches({
 
         {match && (
           <>
-            <MatchDetailsTable match={match} playersMap={playersMap} />
+            <MatchDetailsTable
+              match={match}
+              playersMap={playersMap}
+              players={players}
+              playersWithStats={playersWithStats}
+              teamPercentages={currentTeamPercentages}
+              untilMatchTeamPercentages={untilMatchTeamPercentages}
+              playersWithStatsUntilMatchNumber={
+                playersWithStatsUntilMatchNumber
+              }
+              showOnlyMatchPercentage={showOnlyMatchPercentage}
+              onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
+            />
 
             <MatchResultTable match={match} />
 
