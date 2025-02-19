@@ -5,7 +5,6 @@ import AuthProvider from "./providers/AuthProvider";
 import { TournamentProvider } from "./contexts/TournamentContext";
 import { getTournaments } from "./features/tournaments/utils/server";
 import TournamentSelector from "@/components/TournamentSelector";
-import { getAuthenticatedUser, isAdmin } from "./features/auth/utils";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -25,7 +24,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getAuthenticatedUser();
   const tournaments = await getTournaments();
 
   return (
@@ -34,7 +32,7 @@ export default async function RootLayout({
         <TournamentProvider tournaments={tournaments}>
           <body className={`antialiased`}>
             <NavBar />
-            {isAdmin(user) && <TournamentSelector />}
+            <TournamentSelector />
             {children}
           </body>
         </TournamentProvider>
