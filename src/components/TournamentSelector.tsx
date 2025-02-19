@@ -17,7 +17,7 @@ export default function TournamentSelector() {
   };
 
   return (
-    <div className="flex justify-center py-2 bg-[#0B2818]">
+    <div className="flex justify-center py-3 bg-[#0B2818]">
       <select
         onChange={handleChange}
         value={selectedTournament ? selectedTournament._id : ""}
