@@ -41,3 +41,9 @@ export default async function HomePage() {
     />
   );
 }
+
+/**
+ * TODO:
+ * when changing selector the header of the team is not updated
+ * add percentages in matches and the selector too and make them visible for all the users
+ */

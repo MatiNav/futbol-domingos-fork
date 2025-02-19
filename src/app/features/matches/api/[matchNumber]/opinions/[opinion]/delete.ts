@@ -12,7 +12,7 @@ export async function deleteOpinionHandler(
   request: NextRequest,
   { params }: { params: { matchNumber: string; opinionId: string } }
 ) {
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(true);
 
   const { matchNumber, tournamentId } = getMatchParams(request, params);
   const opinionId = params.opinionId;
@@ -23,13 +23,13 @@ export async function deleteOpinionHandler(
     {
       ...getMatchNumberQuery(matchNumber, tournamentId),
       "opinions._id": new ObjectId(opinionId),
-      "opinions.userId": user?.playerId,
+      "opinions.userId": user.playerId,
     },
     {
       $pull: {
         opinions: {
           _id: new ObjectId(opinionId),
-          userId: user?.playerId,
+          userId: user.playerId,
         },
       },
     }

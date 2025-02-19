@@ -7,21 +7,16 @@ import {
 } from "@/app/features/matches/utils/server";
 import { getOpinionParams } from "../../../utils/server/opinions";
 import { getCollection } from "@/app/utils/server/db";
-import { UnauthorizedError } from "@/app/utils/server/errors";
 
 export async function createOpinionHandler(
   request: NextRequest,
   { params }: { params: { matchNumber: string } }
 ) {
-  const user = await getAuthenticatedUser();
+  const user = await getAuthenticatedUser(true);
   const { matchNumber, tournamentId } = getMatchParams(request, params);
   const { content } = await getOpinionParams(request);
 
   const matchesCollection = await getCollection("matches");
-
-  if (!user) {
-    throw new UnauthorizedError("User not authenticated");
-  }
 
   await matchesCollection.updateOne(
     {
