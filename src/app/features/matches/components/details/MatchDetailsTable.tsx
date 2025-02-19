@@ -52,7 +52,7 @@ export default function MatchDetailsTable({
 
   return (
     <div>
-      <div className="flex justify-start mb-4 mt-4">
+      <div className="flex justify-start mb-2 sm:mb-4 mt-2 sm:mt-4">
         <MatchConfiguration
           columnVisibility={columnVisibility}
           onColumnVisibilityChange={setColumnVisibility}
@@ -61,12 +61,12 @@ export default function MatchDetailsTable({
           matchNumber={match.matchNumber}
         />
       </div>
-      <div className="overflow-x-auto mb-6">
+      <div className="overflow-x-auto mb-3 sm:mb-6">
         <table className="min-w-full bg-[#1a472a]">
           <thead>
             <tr>
               {columnVisibility.goals && (
-                <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
+                <th className="px-2 sm:px-4 py-1 sm:py-2 text-white font-bold uppercase tracking-wider text-sm w-1/7 text-center border-r border-green-700">
                   Goles
                 </th>
               )}
@@ -75,9 +75,9 @@ export default function MatchDetailsTable({
                 playersWithStats &&
                 teamPercentages &&
                 untilMatchTeamPercentages && (
-                  <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
-                    <div className="flex flex-col gap-2">
-                      <div className="text-lg font-bold">
+                  <th className="px-2 sm:px-4 py-1 sm:py-2 text-white font-bold uppercase tracking-wider text-sm w-1/7text-center border-r border-green-700">
+                    <div className="flex flex-col gap-1 sm:gap-2">
+                      <div className="text-base sm:text-lg font-bold">
                         <div className="text-yellow-400">
                           {showOnlyMatchPercentage ? (
                             <span>
@@ -96,10 +96,10 @@ export default function MatchDetailsTable({
                     </div>
                   </th>
                 )}
-              <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-gray-600 border-r border-green-700">
+              <th className="px-2 sm:px-4 py-1 sm:py-2 text-white font-bold uppercase tracking-wider text-sm w-1/7text-center bg-gray-600 border-r border-green-700">
                 Oscuras
               </th>
-              <th className="px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/6 text-center bg-white border-r border-green-700">
+              <th className="px-2 sm:px-4 py-1 sm:py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-1/7text-center bg-white border-r border-green-700">
                 Claras
               </th>
 
@@ -107,9 +107,9 @@ export default function MatchDetailsTable({
                 playersWithStats &&
                 teamPercentages &&
                 untilMatchTeamPercentages && (
-                  <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center border-r border-green-700">
-                    <div className="flex flex-col gap-2">
-                      <div className="text-lg font-bold">
+                  <th className="px-2 sm:px-4 py-1 sm:py-2 text-white font-bold uppercase tracking-wider text-sm w-1/7text-center border-r border-green-700">
+                    <div className="flex flex-col gap-1 sm:gap-2">
+                      <div className="text-base sm:text-lg font-bold">
                         <div className="text-yellow-400">
                           {showOnlyMatchPercentage ? (
                             <span>
@@ -129,7 +129,7 @@ export default function MatchDetailsTable({
                   </th>
                 )}
               {columnVisibility.goals && (
-                <th className="px-4 py-2 text-white font-bold uppercase tracking-wider text-sm w-1/6 text-center">
+                <th className="px-2 sm:px-4 py-1 sm:py-2 text-white font-bold uppercase tracking-wider text-sm w-1/7text-center">
                   Goles
                 </th>
               )}

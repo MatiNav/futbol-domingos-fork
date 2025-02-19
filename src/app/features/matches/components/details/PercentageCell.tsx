@@ -25,8 +25,8 @@ export default function PercentageCell({
   }
 
   return (
-    <td className="px-4 py-2 text-white border-r border-green-700 text-center">
-      <div className="text-lg font-bold">
+    <td className="px-2 sm:px-4 py-1 sm:py-2 text-white border-r border-green-700 text-center">
+      <div className="text-base sm:text-lg font-bold">
         {showOnlyMatchPercentage
           ? percentageUntilMatchNumber?.toFixed(1)
           : currentPercentage?.toFixed(1)}
