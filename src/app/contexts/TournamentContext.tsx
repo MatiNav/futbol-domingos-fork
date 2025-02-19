@@ -55,7 +55,6 @@ export const TournamentProvider = ({
 
   const handleSetSelectedTournament = (tournament: SerializedTournament) => {
     setSelectedTournament(tournament);
-    console.log("tournament", tournament);
     const url = new URL(window.location.href);
     url.searchParams.set("tournamentId", tournament._id);
     router.push(url.toString());

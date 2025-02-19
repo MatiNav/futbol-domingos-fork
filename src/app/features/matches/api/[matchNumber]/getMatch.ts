@@ -16,10 +16,8 @@ export async function getMatchHandler(
   const collection = await getCollection("matches");
 
   const query = getMatchNumberQuery(matchNumber, tournamentId);
-  console.log(query, "query");
   const match = await collection.findOne(query);
 
-  console.log(match, "match");
   if (!match) {
     throw new NotFoundError("Match not found");
   }
