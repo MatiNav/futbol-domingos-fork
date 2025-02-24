@@ -34,7 +34,7 @@ export default function MatchOpinions({
   );
 
   const handleSubmit = async () => {
-    if (!selectedTournament?.finished) setError("El torneo ha finalizado");
+    if (selectedTournament?.finished) setError("El torneo ha finalizado");
     if (!user || !opinion.trim()) return;
 
     setIsSubmitting(true);
