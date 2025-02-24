@@ -6,13 +6,13 @@ import { useSearchParams } from "next/navigation";
 
 type TournamentContextType = {
   tournaments: SerializedTournament[];
-  selectedTournament: SerializedTournament | null;
+  selectedTournament: SerializedTournament;
   setSelectedTournament: (tournament: SerializedTournament) => void;
 };
 
 const TournamentContext = createContext<TournamentContextType>({
   tournaments: [],
-  selectedTournament: null,
+  selectedTournament: {} as SerializedTournament,
   setSelectedTournament: () => {},
 });
 
@@ -25,17 +25,10 @@ export const TournamentProvider = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const initialTournament = (() => {
-    const tournamentId = searchParams.get("tournamentId");
-    if (tournamentId) {
-      return tournaments.find((t) => t._id === tournamentId) || null;
-    }
-    return tournaments[tournaments.length - 1];
-  })();
+  const lastTournament = tournaments[tournaments.length - 1];
 
   const [selectedTournament, setSelectedTournament] =
-    useState<SerializedTournament | null>(initialTournament);
+    useState<SerializedTournament>(lastTournament);
 
   useEffect(() => {
     const tournamentId = searchParams.get("tournamentId");
@@ -45,10 +38,10 @@ export const TournamentProvider = ({
       selectedTournament._id !== tournamentId
     ) {
       setSelectedTournament(
-        tournaments.find((t) => t._id === tournamentId) || null
+        tournaments.find((t) => t._id === tournamentId) || lastTournament
       );
     }
-  }, [tournaments, selectedTournament, searchParams]);
+  }, [tournaments, selectedTournament, searchParams, lastTournament]);
 
   const handleSetSelectedTournament = (tournament: SerializedTournament) => {
     setSelectedTournament(tournament);

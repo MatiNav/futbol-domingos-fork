@@ -7,22 +7,29 @@ import {
   getPlayersWithStats,
 } from "@/app/features/players/utils/server";
 import { ParsedUrlQuery } from "querystring";
+import { getTournamentIdFromParams } from "@/app/utils/url";
+
+export const dynamic = "force-dynamic";
 
 export default async function MatchesPage({
   searchParams,
 }: {
   searchParams: ParsedUrlQuery;
 }) {
-  const tournamentId = searchParams.tournamentId as string;
+  const tournamentId = await getTournamentIdFromParams(searchParams);
   const session = await getSession();
   const user = session?.user as UserProfileWithPlayerId;
 
-  const maxMatchNumber = await getLatestMatchNumber(tournamentId);
-  const players = await getPlayers();
+  const [maxMatchNumber, players, playersWithStats] = await Promise.all([
+    getLatestMatchNumber(tournamentId),
+    getPlayers(),
+    getPlayersWithStats(tournamentId),
+  ]);
+
   if ("error" in players) {
     return <div>Error: {players.error}</div>;
   }
-  const playersWithStats = await getPlayersWithStats(tournamentId);
+
   return (
     <Matches
       maxMatchNumber={maxMatchNumber}
