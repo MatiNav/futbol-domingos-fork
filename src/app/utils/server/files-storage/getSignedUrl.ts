@@ -5,7 +5,7 @@ export default async function getSignedUrl(fileName: string, fileType: string) {
   const bucket = storage.bucket(
     process.env.GCP_FUTBOL_APP_BUCKET_NAME as string
   );
-  const file = bucket.file(fileName);
+  const file = bucket.file(encodeURIComponent(fileName));
 
   const options: GetSignedUrlConfig = {
     version: "v4",

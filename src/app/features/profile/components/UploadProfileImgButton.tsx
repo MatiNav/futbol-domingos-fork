@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
+const imgType = "image/jpg";
+
 export default function UploadProfileImgButton({
   onImageUploaded,
 }: {
@@ -28,7 +30,7 @@ export default function UploadProfileImgButton({
     try {
       const response = await fetch("/api/user/profile/image", {
         method: "POST",
-        body: JSON.stringify({ fileType: "image/png" }),
+        body: JSON.stringify({ fileType: imgType }),
       });
 
       const { url } = await response.json();
@@ -36,7 +38,7 @@ export default function UploadProfileImgButton({
       const uploadResponse = await fetch(url, {
         method: "PUT",
         headers: {
-          "Content-Type": file?.type,
+          "Content-Type": imgType,
         },
         body: file,
       });
