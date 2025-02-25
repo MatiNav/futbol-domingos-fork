@@ -22,6 +22,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.ringtina.com.ar",
       },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+      },
     ],
   },
   env: {

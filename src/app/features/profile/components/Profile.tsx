@@ -83,6 +83,8 @@ export default function ProfileContent({
               width={100}
               height={100}
               className="rounded-full object-cover w-24 h-24"
+              unoptimized
+              crossOrigin="anonymous"
             />
           ) : (
             <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold">
