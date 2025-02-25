@@ -12,7 +12,7 @@ import {
 } from "@/app/constants/types";
 import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
 import { useState } from "react";
-import { useTournament } from "@/app/contexts/TournamentContext";
+
 export default function Matches({
   user,
   players: { playersMap, players },
@@ -25,7 +25,6 @@ export default function Matches({
   playersWithStats: PlayerWithStats[];
 }) {
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
-  const { selectedTournament } = useTournament();
   const {
     fetchMatch,
     matchNumber,

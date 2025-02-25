@@ -5,6 +5,7 @@ import { TeamOption } from "../constants/types/Common";
 import { UserProfileWithPlayerId } from "../constants/types";
 import Image from "next/image";
 import { TEAMS_IMAGES } from "../constants/images/teams";
+import UploadProfileImgButton from "../features/profile/components/UploadProfileImgButton";
 
 export default function ProfileContent({
   user,
@@ -135,6 +136,7 @@ export default function ProfileContent({
             {isUpdating ? "Actualizando..." : "Actualizar Perfil"}
           </button>
         </form>
+        {user.role === "admin" && <UploadProfileImgButton />}
       </div>
     </div>
   );
