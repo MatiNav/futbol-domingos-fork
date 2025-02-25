@@ -1,20 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { BadRequestError } from "../../../../utils/server/errors";
-import { getAuthenticatedUser } from "../../../auth/utils";
-import getSignedUrl from "@/app/utils/server/files-storage/getSignedUrl";
+import { BadRequestError } from "@/app/utils/server/errors";
+import { getSignedUrlProfileImage } from "../../utils/getSignedUrl";
 
-export default async function getSignedUrlProfileImage(req: NextRequest) {
-  const user = await getAuthenticatedUser(true);
+export async function getReadSignedUrlProfileImage() {
+  const url = await getSignedUrlProfileImage("read");
+
+  return NextResponse.json({ url });
+}
+
+export async function getWriteSignedUrlProfileImage(req: NextRequest) {
+  const fileType = await getFileType(req);
+  const url = await getSignedUrlProfileImage("write", fileType);
+
+  return NextResponse.json({ url });
+}
+
+async function getFileType(req?: NextRequest) {
+  if (req == null) {
+    throw new BadRequestError("Missing request");
+  }
 
   const { fileType } = await req.json();
-
-  if (!fileType) {
+  if (fileType == null) {
     throw new BadRequestError("Missing fileType");
   }
 
-  const filename = `${user.name}-profile`;
-
-  const url = await getSignedUrl(filename, fileType);
-
-  return NextResponse.json({ url });
+  return fileType;
 }

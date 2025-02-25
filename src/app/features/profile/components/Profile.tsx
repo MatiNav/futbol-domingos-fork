@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TeamOption } from "../../../constants/types/Common";
 import { UserProfileWithPlayerId } from "../../../constants/types";
 import Image from "next/image";
@@ -9,29 +9,19 @@ import UploadProfileImgButton from "./UploadProfileImgButton";
 
 export default function ProfileContent({
   user,
+  profileImageUrl,
 }: {
   user: UserProfileWithPlayerId;
+  profileImageUrl: string | null;
 }) {
   const [favoriteTeam, setFavoriteTeam] = useState<TeamOption | "">(
     user.favoriteTeam || ""
   );
   const [isUpdating, setIsUpdating] = useState(false);
   const [message, setMessage] = useState("");
-  const [currentImage, setCurrentImage] = useState(user.image);
-
-  //TODO: improve this check by updating the auth0 user image
-  // also improve this flow to get authenticated urls instead of making them public accesible
-  useEffect(() => {
-    const profileImageUrl = `https://storage.googleapis.com/${
-      process.env.NEXT_PUBLIC_FUTBOL_APP_BUCKET_NAME
-    }/${encodeURIComponent(`${user.name}-profile`)}`;
-
-    if (currentImage !== profileImageUrl) {
-      isImageUrl(profileImageUrl).then((isImage) => {
-        setCurrentImage(isImage ? profileImageUrl : "");
-      });
-    }
-  }, [currentImage, user.name]);
+  const [currentImage, setCurrentImage] = useState(
+    profileImageUrl || user.image
+  );
 
   const handleImageUploaded = async (imageUrl: string) => {
     setCurrentImage(imageUrl);
@@ -164,15 +154,4 @@ export default function ProfileContent({
       </div>
     </div>
   );
-}
-
-async function isImageUrl(url: string) {
-  try {
-    const response = await fetch(url, { method: "HEAD" });
-    const contentType = response.headers.get("Content-Type");
-    return contentType && contentType.startsWith("image/");
-  } catch (error) {
-    console.error("Error checking URL:", error);
-    return false;
-  }
 }

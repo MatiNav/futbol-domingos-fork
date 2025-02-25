@@ -1,1 +1,1 @@
-export { default as getSignedUrl } from "./getSignedUrl";
+export { getReadSignedUrl, getWriteSignedUrl } from "./getSignedUrl";
