@@ -17,6 +17,12 @@ export default function ProfileContent({
   );
   const [isUpdating, setIsUpdating] = useState(false);
   const [message, setMessage] = useState("");
+  const [currentImage, setCurrentImage] = useState(user.image);
+
+  const handleImageUploaded = (imageUrl: string) => {
+    setCurrentImage(imageUrl);
+    setMessage("Imagen actualizada correctamente!");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,13 +60,13 @@ export default function ProfileContent({
         <h1 className="text-3xl font-bold text-white mb-8"> Perfil </h1>
 
         <div className="flex items-center mb-8">
-          {user.image ? (
+          {currentImage ? (
             <Image
-              src={user.image}
+              src={currentImage}
               alt={user.name || "Profile"}
               width={100}
               height={100}
-              className="rounded-full"
+              className="rounded-full object-cover w-24 h-24"
             />
           ) : (
             <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold">
@@ -136,7 +142,9 @@ export default function ProfileContent({
             {isUpdating ? "Actualizando..." : "Actualizar Perfil"}
           </button>
         </form>
-        {user.role === "admin" && <UploadProfileImgButton />}
+        {user.role === "admin" && (
+          <UploadProfileImgButton onImageUploaded={handleImageUploaded} />
+        )}
       </div>
     </div>
   );
