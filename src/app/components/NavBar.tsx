@@ -5,7 +5,11 @@ import SoccerBall from "../assets/soccer-ball.svg";
 import Image from "next/image";
 import LoginContent from "../features/auth/components/Login";
 
-export default function NavBar() {
+export default function NavBar({
+  profileImageUrl,
+}: {
+  profileImageUrl: string | null;
+}) {
   return (
     <nav className="bg-[#0B2818] p-4 shadow-lg">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -26,7 +30,7 @@ export default function NavBar() {
             </span>
           </div>
         </Link>
-        <LoginContent />
+        <LoginContent profileImageUrl={profileImageUrl} />
       </div>
     </nav>
   );

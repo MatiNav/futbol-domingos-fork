@@ -23,6 +23,11 @@ export default function ProfileContent({
     profileImageUrl || user.image
   );
 
+  const handleImageChosen = (file: File) => {
+    console.log("file", file);
+    setCurrentImage(URL.createObjectURL(file));
+  };
+
   const handleImageUploaded = async (imageUrl: string) => {
     setCurrentImage(imageUrl);
     setMessage("Imagen actualizada correctamente!");
@@ -48,8 +53,6 @@ export default function ProfileContent({
         throw new Error("Failed to update profile");
       }
 
-      //should call
-
       setMessage("Perfil actualizado correctamente!");
     } catch (error) {
       setMessage(
@@ -63,22 +66,31 @@ export default function ProfileContent({
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
       <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-white mb-8"> Perfil </h1>
+        <h1 className="text-3xl font-bold text-white mb-8">Perfil</h1>
 
-        <div className="flex items-center mb-8">
-          {currentImage ? (
-            <Image
-              src={currentImage}
-              alt={user.name || "Profile"}
-              width={100}
-              height={100}
-              className="rounded-full object-cover w-24 h-24"
-            />
-          ) : (
-            <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold">
-              {user.name?.charAt(0) || "U"}
-            </div>
-          )}
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative">
+            {currentImage ? (
+              <Image
+                src={currentImage}
+                alt={user.name || "Profile"}
+                width={100}
+                height={100}
+                className="rounded-full object-cover w-24 h-24"
+              />
+            ) : (
+              <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold">
+                {user.name?.charAt(0) || "U"}
+              </div>
+            )}
+
+            {user.role === "admin" && (
+              <UploadProfileImgButton
+                onImageChosen={handleImageChosen}
+                onImageUploaded={handleImageUploaded}
+              />
+            )}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -148,9 +160,6 @@ export default function ProfileContent({
             {isUpdating ? "Actualizando..." : "Actualizar Perfil"}
           </button>
         </form>
-        {user.role === "admin" && (
-          <UploadProfileImgButton onImageUploaded={handleImageUploaded} />
-        )}
       </div>
     </div>
   );

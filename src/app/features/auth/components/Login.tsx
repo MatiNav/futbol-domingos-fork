@@ -3,7 +3,11 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function LoginContent() {
+export default function LoginContent({
+  profileImageUrl,
+}: {
+  profileImageUrl: string | null;
+}) {
   const { user, isLoading } = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -35,7 +39,7 @@ export default function LoginContent() {
           >
             {user.picture ? (
               <Image
-                src={user.picture}
+                src={profileImageUrl || user.picture}
                 alt={user.name || "User"}
                 width={40}
                 height={40}

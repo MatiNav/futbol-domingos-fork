@@ -6,6 +6,8 @@ import { TournamentProvider } from "./contexts/TournamentContext";
 import { getTournaments } from "./features/tournaments/utils/server";
 import TournamentSelector from "@/components/TournamentSelector";
 import { Suspense } from "react";
+import { getSignedUrlProfileImage } from "./features/profile/utils/getSignedUrl";
+import { isImageUrl } from "./utils/image";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -26,6 +28,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const tournaments = await getTournaments();
+  const imageUrl = await getSignedUrlProfileImage("read");
+  const isImage = await isImageUrl(imageUrl);
+  const profileImageUrl = isImage ? imageUrl : null;
 
   return (
     <html lang="es">
@@ -33,7 +38,7 @@ export default async function RootLayout({
         <Suspense fallback={<div>Loading...</div>}>
           <AuthProvider>
             <TournamentProvider tournaments={tournaments}>
-              <NavBar />
+              <NavBar profileImageUrl={profileImageUrl} />
               <TournamentSelector />
               {children}
             </TournamentProvider>
