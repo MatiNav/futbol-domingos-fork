@@ -8,15 +8,20 @@ import {
 import { getCollection } from "@/app/utils/server/db";
 import { NotFoundError } from "@/app/utils/server/errors";
 import { getOpinionParams } from "@/app/features/matches/utils/server/opinions";
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
+
 export async function updateOpinionHandler(
   request: NextRequest,
-  { params }: { params: { matchNumber: string; opinionId: string } }
+  context: RouteHandlerContext
 ) {
   const user = await getAuthenticatedUser();
 
-  const { content, opinionId } = await getOpinionParams(request, params);
+  const { content, opinionId } = await getOpinionParams(
+    request,
+    context.params
+  );
 
-  const { matchNumber, tournamentId } = getMatchParams(request, params);
+  const { matchNumber, tournamentId } = getMatchParams(request, context);
 
   const matchesCollection = await getCollection("matches");
 

@@ -6,16 +6,21 @@ import {
   getMatchParams,
 } from "@/app/features/matches/utils/server";
 import { getCollection } from "@/app/utils/server/db";
-import { NotFoundError } from "@/app/utils/server/errors";
+import { BadRequestError, NotFoundError } from "@/app/utils/server/errors";
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
 
 export async function deleteOpinionHandler(
   request: NextRequest,
-  { params }: { params: { matchNumber: string; opinionId: string } }
+  context: RouteHandlerContext
 ) {
   const user = await getAuthenticatedUser(true);
 
-  const { matchNumber, tournamentId } = getMatchParams(request, params);
-  const opinionId = params.opinionId;
+  const opinionId = context.params.opinionId;
+  if (opinionId == null || typeof opinionId !== "string") {
+    throw new BadRequestError("Missing opinionId in params or is not a string");
+  }
+
+  const { matchNumber, tournamentId } = getMatchParams(request, context);
 
   const matchesCollection = await getCollection("matches");
 

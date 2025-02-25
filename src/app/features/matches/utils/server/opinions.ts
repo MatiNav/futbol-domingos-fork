@@ -4,8 +4,8 @@ import { NextRequest } from "next/server";
 // First overload: when params with opinionId is provided
 export async function getOpinionParams(
   request: NextRequest,
-  params: { opinionId: string }
-): Promise<{ content: string; opinionId: string }>;
+  params: { opinionId?: string }
+): Promise<{ content: string; opinionId?: string }>;
 
 // Second overload: when params is optional/undefined
 export async function getOpinionParams(
@@ -15,7 +15,7 @@ export async function getOpinionParams(
 
 export async function getOpinionParams(
   request: NextRequest,
-  params?: { opinionId: string }
+  params?: { opinionId?: string }
 ): Promise<{ content: string } | { content: string; opinionId: string }> {
   const { content } = await request.json();
 

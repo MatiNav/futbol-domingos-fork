@@ -2,21 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/app/features/auth/utils/users";
 import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
-import { getMatchNumberQuery } from "@/app/features/matches/utils/server";
+import {
+  getMatchNumberFromContext,
+  getMatchNumberQuery,
+} from "@/app/features/matches/utils/server";
 import { BadRequestError, NotFoundError } from "@/app/utils/server/errors";
 import { ObjectId } from "mongodb";
-type MatchParams = {
-  matchNumber: string;
-};
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
 
 export async function createVoteHandler(
   request: NextRequest,
-  { params }: { params: MatchParams }
+  context: RouteHandlerContext
 ) {
   const user = await getAuthenticatedUser(true);
 
   const { matchNumber, playerVotedFor, tournamentId } =
-    await getMatchParamsFromJson(request, params);
+    await getMatchParamsFromJson(request, context);
 
   assertTournamentIsNotFinished(tournamentId);
 
@@ -28,17 +29,18 @@ export async function createVoteHandler(
 
 async function getMatchParamsFromJson(
   request: NextRequest,
-  params: MatchParams
+  context: RouteHandlerContext
 ) {
-  const matchNumber = parseInt(params.matchNumber);
+  const matchNumber = getMatchNumberFromContext(context);
+
   const { playerVotedFor, tournamentId } = await request.json();
 
   if (!playerVotedFor) {
-    throw new BadRequestError("Player vote is required");
+    throw new BadRequestError("Missing playerVotedFor in request body");
   }
 
   if (!tournamentId) {
-    throw new BadRequestError("Tournament ID is required");
+    throw new BadRequestError("Missing tournamentId in request body");
   }
 
   return { matchNumber, playerVotedFor, tournamentId };
