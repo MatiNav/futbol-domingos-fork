@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
 import {
   getMatchParams,
@@ -6,12 +6,13 @@ import {
   serializeMatch,
 } from "../../utils/server";
 import { NotFoundError } from "@/app/utils/server/errors";
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
 
 export async function getMatchHandler(
-  request: Request,
-  { params }: { params: { matchNumber: string } }
+  request: NextRequest,
+  context: RouteHandlerContext
 ) {
-  const { matchNumber, tournamentId } = getMatchParams(request, params);
+  const { matchNumber, tournamentId } = getMatchParams(request, context);
 
   const collection = await getCollection("matches");
 

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
 import { DBPlayer } from "@/app/constants/types";
 import { ObjectId } from "mongodb";
@@ -8,7 +8,7 @@ type PlayerWithGoals = DBPlayer & {
   goals: number;
 };
 
-export async function createMatchHandler(request: Request) {
+export async function createMatchHandler(request: NextRequest) {
   const { oscuras, claras, date, tournamentId } = await request.json();
 
   if (!tournamentId) {

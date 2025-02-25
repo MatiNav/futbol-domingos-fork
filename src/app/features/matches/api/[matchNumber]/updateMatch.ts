@@ -1,16 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { MatchPlayer, MatchResult, Team } from "@/app/constants/types";
 import { getCollection } from "@/app/utils/server/db";
-import { getMatchNumberQuery } from "@/app/features/matches/utils/server";
+import {
+  getMatchNumberFromContext,
+  getMatchNumberQuery,
+} from "@/app/features/matches/utils/server";
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
 
 export async function updateMatchHandler(
-  request: Request,
-  { params }: { params: { matchNumber: string } }
+  request: NextRequest,
+  context: RouteHandlerContext
 ) {
   const matchesCollection = await getCollection("matches");
 
   const { matchNumber, oscuras, claras, tournamentId } =
-    await getMatchParamsFromJson(request, params);
+    await getMatchParamsFromJson(request, context);
 
   const result = getMatchResult(oscuras, claras);
 
@@ -25,10 +29,11 @@ export async function updateMatchHandler(
 }
 
 async function getMatchParamsFromJson(
-  request: Request,
-  params: { matchNumber: string }
+  request: NextRequest,
+  context: RouteHandlerContext
 ) {
-  const matchNumber = parseInt(params.matchNumber);
+  const matchNumber = getMatchNumberFromContext(context);
+
   const { oscuras, claras, tournamentId } = await request.json();
 
   if (isNaN(matchNumber)) {

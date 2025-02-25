@@ -1,7 +1,7 @@
 import { getPlayersWithStats } from "@/app/features/players/utils/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function getPlayersWithStatsHandler(request: Request) {
+export async function getPlayersWithStatsHandler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const tournamentIdParam = searchParams.get("tournamentId");

@@ -1,1 +1,2 @@
-export { default as getSignedUrl } from "./getSignedUrl";
+export * from "./image";
+export * from "./updateProfile";

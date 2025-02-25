@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { TeamOption } from "../constants/types/Common";
-import { UserProfileWithPlayerId } from "../constants/types";
+import { useEffect, useState } from "react";
+import { TeamOption } from "../../../constants/types/Common";
+import { UserProfileWithPlayerId } from "../../../constants/types";
 import Image from "next/image";
-import { TEAMS_IMAGES } from "../constants/images/teams";
-import UploadProfileImgButton from "../features/profile/components/UploadProfileImgButton";
+import { TEAMS_IMAGES } from "../../../constants/images/teams";
+import UploadProfileImgButton from "./UploadProfileImgButton";
 
 export default function ProfileContent({
   user,
@@ -19,7 +19,19 @@ export default function ProfileContent({
   const [message, setMessage] = useState("");
   const [currentImage, setCurrentImage] = useState(user.image);
 
-  const handleImageUploaded = (imageUrl: string) => {
+  //TODO: improve this check by updating the auth0 user image
+  // also improve this flow to get authenticated urls instead of making them public accesible
+  useEffect(() => {
+    const profileImageUrl = `https://storage.googleapis.com/${process.env.NEXT_PUBLIC_FUTBOL_APP_BUCKET_NAME}/${user.name}-profile`;
+
+    if (currentImage !== profileImageUrl) {
+      isImageUrl(profileImageUrl).then((isImage) => {
+        setCurrentImage(isImage ? profileImageUrl : "");
+      });
+    }
+  }, [currentImage, user.name]);
+
+  const handleImageUploaded = async (imageUrl: string) => {
     setCurrentImage(imageUrl);
     setMessage("Imagen actualizada correctamente!");
   };
@@ -43,6 +55,8 @@ export default function ProfileContent({
       if (!response.ok) {
         throw new Error("Failed to update profile");
       }
+
+      //should call
 
       setMessage("Perfil actualizado correctamente!");
     } catch (error) {
@@ -148,4 +162,15 @@ export default function ProfileContent({
       </div>
     </div>
   );
+}
+
+async function isImageUrl(url: string) {
+  try {
+    const response = await fetch(url, { method: "HEAD" });
+    const contentType = response.headers.get("Content-Type");
+    return contentType && contentType.startsWith("image/");
+  } catch (error) {
+    console.error("Error checking URL:", error);
+    return false;
+  }
 }

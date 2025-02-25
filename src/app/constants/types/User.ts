@@ -2,6 +2,7 @@ import { UserProfile } from "@auth0/nextjs-auth0/client";
 import { TeamOption } from "./Common";
 
 export type UserProfileWithPlayerId = UserProfile & {
+  email: string;
   displayName: string; // name in our db
   favoriteTeam: TeamOption;
   playerId: string;

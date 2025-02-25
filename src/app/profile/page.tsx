@@ -1,6 +1,6 @@
 import { getSession } from "@auth0/nextjs-auth0";
-import ProfileContent from "../components/Profile";
 import { UserProfileWithPlayerId } from "../constants/types";
+import ProfileContent from "../features/profile/components/Profile";
 
 export default async function ProfilePage() {
   const session = await getSession();

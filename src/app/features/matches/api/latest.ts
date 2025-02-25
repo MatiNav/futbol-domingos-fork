@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getLatestMatchNumber } from "../utils/server";
 import { BadRequestError } from "@/app/utils/server/errors";
 
-export async function getLatestMatchNumberHandler(request: Request) {
+export async function getLatestMatchNumberHandler(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const tournamentId = searchParams.get("tournamentId");
 

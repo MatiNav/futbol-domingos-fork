@@ -7,13 +7,15 @@ import {
 } from "@/app/features/matches/utils/server";
 import { getOpinionParams } from "../../../utils/server/opinions";
 import { getCollection } from "@/app/utils/server/db";
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
 
 export async function createOpinionHandler(
   request: NextRequest,
-  { params }: { params: { matchNumber: string } }
+  context: RouteHandlerContext
 ) {
   const user = await getAuthenticatedUser(true);
-  const { matchNumber, tournamentId } = getMatchParams(request, params);
+
+  const { matchNumber, tournamentId } = getMatchParams(request, context);
   const { content } = await getOpinionParams(request);
 
   const matchesCollection = await getCollection("matches");

@@ -3,15 +3,19 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from "@/app/utils/server/errors";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+export type RouteHandlerContext = {
+  params: Record<string, string | string[]>;
+};
 
 type HandlerFunction = (
-  request: Request,
-  context: never
+  request: NextRequest,
+  context: RouteHandlerContext
 ) => Promise<NextResponse>;
 
 export function withErrorHandler(handler: HandlerFunction) {
-  return async (request: Request, context: never) => {
+  return async (request: NextRequest, context: RouteHandlerContext) => {
     try {
       return await handler(request, context);
     } catch (error) {

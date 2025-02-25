@@ -2,17 +2,32 @@ import { BadRequestError } from "@/app/utils/server/errors";
 import { DBMatch, SerializedMatch } from "@/app/constants/types/Match";
 import { getCollection } from "@/app/utils/server/db";
 import { ObjectId } from "mongodb";
+import { NextRequest } from "next/server";
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
+
+export function getMatchNumberFromContext(context: RouteHandlerContext) {
+  if (
+    context.params.matchNumber == null ||
+    typeof context.params.matchNumber !== "string"
+  ) {
+    throw new BadRequestError(
+      "Missing matchNumber in params or is not a string"
+    );
+  }
+
+  return parseInt(context.params.matchNumber);
+}
 
 export function getMatchParams(
-  request: Request,
-  params: { matchNumber: string }
+  request: NextRequest,
+  context: RouteHandlerContext
 ) {
-  const { matchNumber } = params;
-  const matchNum = parseInt(matchNumber);
+  const matchNumber = getMatchNumberFromContext(context);
+
   const { searchParams } = new URL(request.url);
   const tournamentId = searchParams.get("tournamentId");
 
-  if (isNaN(matchNum)) {
+  if (isNaN(matchNumber)) {
     throw new BadRequestError("Match number is required and must be a number");
   }
 
@@ -20,7 +35,7 @@ export function getMatchParams(
     throw new BadRequestError("Tournament ID is required");
   }
 
-  return { matchNumber: matchNum, tournamentId };
+  return { matchNumber, tournamentId };
 }
 
 export function getMatchNumberQuery(

@@ -1,19 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getCollection } from "@/app/utils/server/db";
 import {
   getMatchParams,
   getMatchNumberQuery,
 } from "@/app/features/matches/utils/server";
-
-type MatchParams = {
-  matchNumber: string;
-};
+import { RouteHandlerContext } from "@/app/utils/server/withErrorHandler";
 
 export async function deleteMatchHandler(
-  request: Request,
-  { params }: { params: MatchParams }
+  request: NextRequest,
+  context: RouteHandlerContext
 ) {
-  const { matchNumber, tournamentId } = getMatchParams(request, params);
+  const { matchNumber, tournamentId } = getMatchParams(request, context);
 
   const matchesCollection = await getCollection("matches");
 
