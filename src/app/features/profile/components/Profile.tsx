@@ -22,7 +22,9 @@ export default function ProfileContent({
   //TODO: improve this check by updating the auth0 user image
   // also improve this flow to get authenticated urls instead of making them public accesible
   useEffect(() => {
-    const profileImageUrl = `https://storage.googleapis.com/${process.env.NEXT_PUBLIC_FUTBOL_APP_BUCKET_NAME}/${user.name}-profile`;
+    const profileImageUrl = `https://storage.googleapis.com/${
+      process.env.NEXT_PUBLIC_FUTBOL_APP_BUCKET_NAME
+    }/${encodeURIComponent(`${user.name}-profile`)}`;
 
     if (currentImage !== profileImageUrl) {
       isImageUrl(profileImageUrl).then((isImage) => {
