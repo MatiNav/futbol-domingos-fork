@@ -30,11 +30,18 @@ export function getVotedPlayers(match: SerializedMatch) {
   if (!match.playerOfTheMatchVotes?.length) return {};
 
   // Count votes for each player
-  const voteCounts = match.playerOfTheMatchVotes.reduce((result, vote) => {
-    const playerId = vote.playerVotedFor.toString();
-    result[playerId] = (result[playerId] || 0) + 1;
-    return result;
-  }, {} as { [key: string]: number });
+  const voteCountsByPlayer = match.playerOfTheMatchVotes.reduce(
+    (result, vote) => {
+      const playerId = vote.playerVotedFor.toString();
+      result[playerId] = (result[playerId] || 0) + 1;
+      return result;
+    },
+    {} as { [key: string]: number }
+  );
 
-  return voteCounts;
+  return Object.fromEntries(
+    Object.entries(voteCountsByPlayer).sort(
+      ([, votes], [, votes2]) => votes2 - votes
+    )
+  );
 }
