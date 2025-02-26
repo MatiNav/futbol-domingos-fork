@@ -2,15 +2,13 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/app/contexts/AuthContext";
 
-export default function LoginContent({
-  profileImageUrl,
-}: {
-  profileImageUrl: string | null;
-}) {
+export default function LoginContent() {
   const { user, isLoading } = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { profileImageUrl } = useAuth();
 
   // Close dropdown when clicking outside
   useEffect(() => {

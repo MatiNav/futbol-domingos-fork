@@ -6,38 +6,63 @@ import { useSearchParams } from "next/navigation";
 
 type TournamentContextType = {
   tournaments: SerializedTournament[];
-  selectedTournament: SerializedTournament;
+  selectedTournament: SerializedTournament | null;
   setSelectedTournament: (tournament: SerializedTournament) => void;
+  errorFetchingTournaments: Error | null;
+  isLoadingTournaments: boolean;
 };
 
 const TournamentContext = createContext<TournamentContextType>({
   tournaments: [],
-  selectedTournament: {} as SerializedTournament,
+  selectedTournament: null,
   setSelectedTournament: () => {},
+  errorFetchingTournaments: null,
+  isLoadingTournaments: false,
 });
 
 export const TournamentProvider = ({
   children,
-  tournaments,
 }: {
   children: React.ReactNode;
-  tournaments: SerializedTournament[];
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [tournaments, setTournaments] = useState<SerializedTournament[]>([]);
+  const [isLoadingTournaments, setIsLoadingTournaments] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const tournamentId = searchParams.get("tournamentId");
-  const lastTournament = tournaments[tournaments.length - 1];
 
   const [selectedTournament, setSelectedTournament] =
-    useState<SerializedTournament>(lastTournament);
+    useState<SerializedTournament | null>(getLastTournament(tournaments));
+
+  useEffect(() => {
+    const fetchTournaments = async () => {
+      try {
+        setIsLoadingTournaments(true);
+        const response = await fetch("/api/tournaments");
+        const data = await response.json();
+        setTournaments(data);
+      } catch (error: unknown) {
+        console.error("Error fetching tournaments", error);
+        setError(error as Error);
+      } finally {
+        setIsLoadingTournaments(false);
+      }
+    };
+
+    fetchTournaments();
+  }, []);
 
   useEffect(() => {
     if (tournamentId) {
       setSelectedTournament(
-        tournaments.find((t) => t._id === tournamentId) || lastTournament
+        tournaments.find((t) => t._id === tournamentId) ||
+          getLastTournament(tournaments)
       );
+    } else {
+      setSelectedTournament(getLastTournament(tournaments));
     }
-  }, [tournaments, lastTournament, tournamentId]);
+  }, [tournaments, tournamentId]);
 
   const handleSetSelectedTournament = (tournament: SerializedTournament) => {
     setSelectedTournament(tournament);
@@ -52,6 +77,8 @@ export const TournamentProvider = ({
         tournaments,
         selectedTournament,
         setSelectedTournament: handleSetSelectedTournament,
+        errorFetchingTournaments: error,
+        isLoadingTournaments,
       }}
     >
       {children}
@@ -66,3 +93,7 @@ export const useTournament = () => {
   }
   return context;
 };
+
+function getLastTournament(tournaments: SerializedTournament[]) {
+  return tournaments.length > 0 ? tournaments[tournaments.length - 1] : null;
+}

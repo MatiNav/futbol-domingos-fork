@@ -1,26 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BadRequestError } from "@/app/utils/server/errors";
-import { getSignedUrlProfileImage } from "../../utils/getSignedUrl";
+import {
+  getReadSignedUrlProfileImage,
+  getWriteSignedUrlProfileImage,
+} from "../../utils/getSignedUrl";
 
-export async function getReadSignedUrlProfileImage() {
-  const url = await getSignedUrlProfileImage("read");
+export async function getProfileReadSignedUrl() {
+  const url = await getReadSignedUrlProfileImage();
 
   return NextResponse.json({ url });
 }
 
-export async function getWriteSignedUrlProfileImage(req: NextRequest) {
+export async function getProfileWriteSignedUrl(req: NextRequest) {
   const fileType = await getFileType(req);
-  const url = await getSignedUrlProfileImage("write", fileType);
+  const url = await getWriteSignedUrlProfileImage(fileType);
 
   return NextResponse.json({ url });
 }
 
-async function getFileType(req?: NextRequest) {
-  if (req == null) {
-    throw new BadRequestError("Missing request");
-  }
-
+async function getFileType(req: NextRequest) {
   const { fileType } = await req.json();
+
   if (fileType == null) {
     throw new BadRequestError("Missing fileType");
   }

@@ -1,9 +1,9 @@
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import {
-  getReadSignedUrlProfileImage,
-  getWriteSignedUrlProfileImage,
+  getProfileReadSignedUrl,
+  getProfileWriteSignedUrl,
 } from "@/app/features/profile/api/image";
 
-export const POST = withApiAuthRequired(getWriteSignedUrlProfileImage);
+export const POST = withApiAuthRequired(getProfileWriteSignedUrl);
 
-export const GET = withApiAuthRequired(getReadSignedUrlProfileImage);
+export const GET = getProfileReadSignedUrl;
