@@ -49,11 +49,11 @@ function getSignedUrl(fileName: string, options: GetSignedUrlConfig) {
 }
 
 export async function getAllProfileImagesSignedUrls() {
-  console.log("aaa");
-  console.log(bucket);
-  const [files] = await bucket.getFiles();
+  const [files] = await bucket.getFiles({
+    autoPaginate: false,
+    maxResults: 5,
+  });
 
-  console.log(files);
   return Object.fromEntries(
     await Promise.all(
       files.map(async (file) => {
