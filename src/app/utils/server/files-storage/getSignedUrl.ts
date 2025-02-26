@@ -50,7 +50,6 @@ function getSignedUrl(fileName: string, options: GetSignedUrlConfig) {
 
 export async function getAllProfileImagesSignedUrls() {
   const [files] = await bucket.getFiles({
-    autoPaginate: false,
     maxResults: 5,
   });
 
