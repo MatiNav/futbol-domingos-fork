@@ -4,6 +4,10 @@ import { getPlayersWithStats } from "@/app/features/players/utils/server";
 import { getPichichis } from "@/app/features/players/utils";
 import { ParsedUrlQuery } from "querystring";
 import { getTournamentIdFromParams } from "@/app/utils/url";
+import { getSignedUrlProfileImage } from "@/app/features/profile/utils/getSignedUrl";
+import { isImageUrl } from "@/app/utils/image";
+import { getAuthenticatedUser } from "@/app/features/auth/utils";
+
 export const dynamic = "force-dynamic";
 
 const DEFAULT_PLAYER_IMAGE_1 =
@@ -19,6 +23,14 @@ export default async function TablePage({
   const tournamentId = await getTournamentIdFromParams(searchParams);
   const playersWithStats = await getPlayersWithStats(tournamentId);
   const pichichis = getPichichis(playersWithStats);
+
+  let profileImageUrl: string | null = null;
+
+  if (await getAuthenticatedUser()) {
+    const imageUrl = await getSignedUrlProfileImage("read");
+    const isImage = await isImageUrl(imageUrl);
+    profileImageUrl = isImage ? imageUrl : null;
+  }
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
@@ -87,7 +99,7 @@ export default async function TablePage({
                         <div className="flex-shrink-0 h-10 w-10 mr-4">
                           <Image
                             src={
-                              player.image ||
+                              profileImageUrl ||
                               TEAMS_IMAGES[
                                 player.favoriteTeam as keyof typeof TEAMS_IMAGES
                               ] ||

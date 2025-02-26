@@ -31,6 +31,7 @@ export default async function RootLayout({
   const tournaments = await getTournaments();
 
   let profileImageUrl: string | null = null;
+
   if (await getAuthenticatedUser()) {
     const imageUrl = await getSignedUrlProfileImage("read");
     const isImage = await isImageUrl(imageUrl);
