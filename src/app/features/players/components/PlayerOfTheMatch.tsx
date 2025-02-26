@@ -54,8 +54,11 @@ export default function PlayerOfTheMatch({
   const allPlayers = [...match.oscuras.players, ...match.claras.players];
 
   const handleVoteSubmit = async () => {
-    if (selectedTournament.finished) setError("El torneo ha finalizado");
-    if (!user || !selectedPlayer) return;
+    if (selectedTournament == null)
+      return setError("No se ha seleccionado un torneo");
+    if (selectedTournament.finished) return setError("El torneo ha finalizado");
+    if (!user || !selectedPlayer)
+      return setError("No se ha seleccionado un jugador");
 
     setIsSubmitting(true);
     try {
