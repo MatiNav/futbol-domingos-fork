@@ -11,15 +11,16 @@ export async function getReadSignedUrlProfileImage() {
   }
 
   const filename = getProfileImageName(user);
-  return await getReadSignedUrl(filename);
+
+  return getReadSignedUrl(filename);
 }
 
 export async function getWriteSignedUrlProfileImage(fileType: string) {
   const user = await getAuthenticatedUser(true);
   const filename = getProfileImageName(user);
-  return await getWriteSignedUrl(filename, fileType);
+  return getWriteSignedUrl(filename, fileType);
 }
 
 export function getProfileImageName(user: UserProfileWithPlayerId) {
-  return `${user.name}-profile`;
+  return `${user.displayName}-profile`;
 }
