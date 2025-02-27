@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTournament } from "@/app/contexts/TournamentContext";
 export default function AdminContent() {
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-600 to-green-800">
@@ -48,7 +48,7 @@ export default function AdminContent() {
             </Link>
 
             <Link
-              href={`/admin/armar-equipos?tournamentId=${selectedTournament?._id}`}
+              href={`/admin/armar-equipos?tournamentId=${selectedTournamentData?.tournament._id}`}
               className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
             >
               <div className="flex items-center space-x-4">
@@ -78,7 +78,7 @@ export default function AdminContent() {
             </Link>
 
             <Link
-              href={`/admin/editar-equipos?tournamentId=${selectedTournament?._id}`}
+              href={`/admin/editar-equipos?tournamentId=${selectedTournamentData?.tournament._id}`}
               className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
             >
               <div className="flex items-center space-x-4">

@@ -22,7 +22,7 @@ export default function PlayerOfTheMatch({
   onVoteSubmitted,
   user,
 }: PlayerOfTheMatchProps) {
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
   const [error, setError] = useState("");
   const [hasMatchBeenPlayed, setHasMatchBeenPlayed] = useState(
     Boolean(match.winner)
@@ -54,9 +54,10 @@ export default function PlayerOfTheMatch({
   const allPlayers = [...match.oscuras.players, ...match.claras.players];
 
   const handleVoteSubmit = async () => {
-    if (selectedTournament == null)
+    if (selectedTournamentData == null)
       return setError("No se ha seleccionado un torneo");
-    if (selectedTournament.finished) return setError("El torneo ha finalizado");
+    if (selectedTournamentData.tournament.finished)
+      return setError("El torneo ha finalizado");
     if (!user || !selectedPlayer)
       return setError("No se ha seleccionado un jugador");
 
@@ -69,7 +70,7 @@ export default function PlayerOfTheMatch({
         },
         body: JSON.stringify({
           playerVotedFor: selectedPlayer,
-          tournamentId: selectedTournament._id,
+          tournamentId: selectedTournamentData.tournament._id,
         }),
       });
 

@@ -1,5 +1,4 @@
 import { EditTeams } from "@/app/features/matches/components/teams";
-import { getLatestMatchNumber } from "@/app/features/matches/utils/server";
 import {
   getPlayers,
   getPlayersWithStats,
@@ -12,8 +11,7 @@ export default async function EditTeamsPage({
 }: {
   searchParams: { tournamentId: string };
 }) {
-  const [maxMatchNumber, players, playersWithStats] = await Promise.all([
-    getLatestMatchNumber(searchParams.tournamentId),
+  const [players, playersWithStats] = await Promise.all([
     getPlayers(),
     getPlayersWithStats(searchParams.tournamentId),
   ]);
@@ -24,7 +22,6 @@ export default async function EditTeamsPage({
 
   return (
     <EditTeams
-      maxMatchNumber={maxMatchNumber}
       players={players.data.players}
       playersMap={players.data.playersMap}
       playersWithStats={playersWithStats}

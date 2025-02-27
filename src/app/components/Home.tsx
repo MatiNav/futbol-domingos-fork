@@ -39,11 +39,13 @@ export default function HomePageContent({
           </div>
 
           {/* Feature Cards */}
-          <div className="grid gap-4 max-w-md mx-auto">
-            <TableLink />
-            <MatchesLink />
-            <AdminLink />
-          </div>
+          {selectedTournamentData && (
+            <div className="grid gap-4 max-w-md mx-auto">
+              <TableLink />
+              <MatchesLink />
+              <AdminLink />
+            </div>
+          )}
         </div>
       </div>
       <Forum initialMessages={initialMessages} />

@@ -22,7 +22,7 @@ export default function MatchOpinions({
   onOpinionSubmitted,
   user,
 }: MatchOpinionsProps) {
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
   const [opinion, setOpinion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +34,8 @@ export default function MatchOpinions({
   );
 
   const handleSubmit = async () => {
-    if (selectedTournament?.finished) setError("El torneo ha finalizado");
+    if (selectedTournamentData?.tournament.finished)
+      setError("El torneo ha finalizado");
     if (!user || !opinion.trim()) return;
 
     setIsSubmitting(true);
