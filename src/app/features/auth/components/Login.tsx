@@ -35,9 +35,9 @@ export default function LoginContent() {
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center space-x-2 text-white hover:bg-white/10 rounded-full p-1 transition-colors"
           >
-            {user.picture ? (
+            {profileImageUrl || user.picture ? (
               <Image
-                src={profileImageUrl || user.picture}
+                src={profileImageUrl || user.picture || ""}
                 alt={user.name || "User"}
                 width={40}
                 height={40}

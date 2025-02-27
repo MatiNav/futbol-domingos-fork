@@ -6,6 +6,7 @@ import { UserProfileWithPlayerId } from "../../../constants/types";
 import Image from "next/image";
 import { TEAMS_IMAGES } from "../../../constants/images/teams";
 import UploadProfileImgButton from "./UploadProfileImgButton";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function ProfileContent({
   user,
@@ -22,14 +23,14 @@ export default function ProfileContent({
   const [currentImage, setCurrentImage] = useState(
     profileImageUrl || user.image
   );
+  const { setProfileImageUrl } = useAuth();
 
   const handleImageChosen = (file: File) => {
-    console.log("file", file);
     setCurrentImage(URL.createObjectURL(file));
   };
 
-  const handleImageUploaded = async (imageUrl: string) => {
-    setCurrentImage(imageUrl);
+  const handleImageUploaded = () => {
+    setProfileImageUrl(currentImage);
     setMessage("Imagen actualizada correctamente!");
   };
 
@@ -84,12 +85,10 @@ export default function ProfileContent({
               </div>
             )}
 
-            {user.role === "admin" && (
-              <UploadProfileImgButton
-                onImageChosen={handleImageChosen}
-                onImageUploaded={handleImageUploaded}
-              />
-            )}
+            <UploadProfileImgButton
+              onImageChosen={handleImageChosen}
+              onImageUploaded={handleImageUploaded}
+            />
           </div>
         </div>
 

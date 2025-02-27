@@ -1,5 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 
+let storageInstance: Storage | null = null;
+
 if (
   !process.env.GCP_PROJECT_ID ||
   !process.env.GCP_CLIENT_EMAIL ||
@@ -10,12 +12,25 @@ if (
   );
 }
 
-const storage = new Storage({
+const productionGCSOptions = {
   projectId: process.env.GCP_PROJECT_ID,
   credentials: {
     client_email: process.env.GCP_CLIENT_EMAIL,
     private_key: process.env.GCP_PRIVATE_KEY.replace(/\\n/g, "\n"),
   },
-});
+};
 
-export default storage;
+const developmentGCSOptions = {
+  keyFilename: process.env.GCP_APPLICATION_CREDENTIALS,
+};
+
+export default async function getStorage() {
+  if (!storageInstance) {
+    storageInstance = new Storage(
+      process.env.NODE_ENV === "production"
+        ? productionGCSOptions
+        : developmentGCSOptions
+    );
+  }
+  return storageInstance;
+}

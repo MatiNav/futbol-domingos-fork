@@ -1,12 +1,15 @@
-import storage from "./Storage";
+import getStorage from "./Storage";
 import { GetSignedUrlConfig } from "@google-cloud/storage";
 
-const bucket = storage.bucket(process.env.GCP_FUTBOL_APP_BUCKET_NAME as string);
+export const PROFILE_IMAGE_TTL = 60 * 60 * 24 * 6; // 6 days
+
+const bucket = async () =>
+  (await getStorage()).bucket(process.env.GCP_FUTBOL_APP_BUCKET_NAME as string);
 
 const readSignedUrlOptions: GetSignedUrlConfig = {
   version: "v4",
   action: "read",
-  expires: Date.now() + 30 * 60 * 1000, // 30 minutes
+  expires: new Date(Date.now() + PROFILE_IMAGE_TTL * 1000), // Convert seconds to ms for Date
 };
 
 const writeSignedUrlOptions: (contentType: string) => GetSignedUrlConfig = (
@@ -14,7 +17,7 @@ const writeSignedUrlOptions: (contentType: string) => GetSignedUrlConfig = (
 ) => ({
   version: "v4",
   action: "write",
-  expires: Date.now() + 5 * 60 * 1000, // 5 minutes
+  expires: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
   contentType,
 });
 
@@ -34,24 +37,26 @@ export async function getReadSignedUrl(fileName: string) {
 }
 
 export async function getReadSignedUrlIfExists(fileName: string) {
-  const file = bucket.file(fileName);
+  const file = (await bucket()).file(fileName);
 
   if (await file.exists()) {
-    return file.getSignedUrl(readSignedUrlOptions);
+    const [url] = await file.getSignedUrl(readSignedUrlOptions);
+    return url;
   }
 
   return null;
 }
-function getSignedUrl(fileName: string, options: GetSignedUrlConfig) {
-  const file = bucket.file(fileName);
+
+async function getSignedUrl(fileName: string, options: GetSignedUrlConfig) {
+  const file = (await bucket()).file(fileName);
 
   return file.getSignedUrl(options);
 }
 
 export async function getAllProfileImagesSignedUrls() {
-  const [files] = await bucket.getFiles();
+  const [files] = await (await bucket()).getFiles({ maxResults: 100 });
 
-  return Object.fromEntries(
+  const signedUrlsFromAllPlayers = Object.fromEntries(
     await Promise.all(
       files.map(async (file) => {
         const displayName = decodeURIComponent(file.name.split("-")[0]);
@@ -60,4 +65,6 @@ export async function getAllProfileImagesSignedUrls() {
       })
     )
   );
+
+  return signedUrlsFromAllPlayers;
 }

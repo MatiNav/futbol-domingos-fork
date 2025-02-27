@@ -3,7 +3,7 @@ import { BadRequestError } from "@/app/utils/server/errors";
 import {
   getReadSignedUrlProfileImage,
   getWriteSignedUrlProfileImage,
-} from "../../utils/getSignedUrl";
+} from "../../utils/getProfileImageSignedUrl";
 
 export async function getProfileReadSignedUrl() {
   const url = await getReadSignedUrlProfileImage();

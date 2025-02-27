@@ -8,12 +8,14 @@ type AuthContextType = {
   profileImageUrl: string | null;
   isLoadingProfileImage: boolean;
   errorProfileImage: string | null;
+  setProfileImageUrl: (url: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
   profileImageUrl: null,
   isLoadingProfileImage: true,
   errorProfileImage: null,
+  setProfileImageUrl: () => {},
 });
 
 export default function AuthProvider({
@@ -51,7 +53,12 @@ export default function AuthProvider({
 
   return (
     <AuthContext.Provider
-      value={{ profileImageUrl, isLoadingProfileImage, errorProfileImage }}
+      value={{
+        profileImageUrl,
+        isLoadingProfileImage,
+        errorProfileImage,
+        setProfileImageUrl,
+      }}
     >
       <UserProvider>{children}</UserProvider>
     </AuthContext.Provider>

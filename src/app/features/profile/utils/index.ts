@@ -1,1 +1,1 @@
-export * from "./getSignedUrl";
+export * from "./getProfileImageSignedUrl";

@@ -95,7 +95,7 @@ export default function TableContent({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 mr-4">
+                        <div className="flex-shrink-0 h-10 w-10 mr-4 relative">
                           <Image
                             src={
                               profileImagesSignedUrls[player.name] ||
@@ -111,11 +111,33 @@ export default function TableContent({
                             width={40}
                             height={40}
                             className={`h-10 w-10 object-contain ${
-                              !player.image && player.favoriteTeam
+                              profileImagesSignedUrls[player.name] ||
+                              player.image
+                                ? "rounded-full"
+                                : !player.image && player.favoriteTeam
                                 ? ""
                                 : "rounded-full"
                             }`}
                           />
+
+                          {/* Team logo overlay - only shown when profile image exists */}
+                          {(profileImagesSignedUrls[player.name] ||
+                            player.image) &&
+                            player.favoriteTeam && (
+                              <div className="absolute bottom-[-6px] right-[-6px] w-6 h-6 overflow-hidden">
+                                <Image
+                                  src={
+                                    TEAMS_IMAGES[
+                                      player.favoriteTeam as keyof typeof TEAMS_IMAGES
+                                    ]
+                                  }
+                                  alt={`${player.favoriteTeam} logo`}
+                                  width={20}
+                                  height={20}
+                                  className="h-full w-full object-contain"
+                                />
+                              </div>
+                            )}
                         </div>
                         <div className="text-white">{player.name}</div>
                       </div>
