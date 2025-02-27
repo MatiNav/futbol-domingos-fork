@@ -4,11 +4,11 @@ import { IoMdFootball } from "react-icons/io";
 import { useTournament } from "@/app/contexts/TournamentContext";
 
 export default function MatchesLink() {
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
 
   return (
     <Link
-      href={`/matches?tournamentId=${selectedTournament?._id}`}
+      href={`/matches?tournamentId=${selectedTournamentData?.tournament._id}`}
       className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
     >
       <div className="flex items-center space-x-4">

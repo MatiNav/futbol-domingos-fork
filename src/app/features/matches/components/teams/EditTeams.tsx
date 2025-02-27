@@ -14,25 +14,22 @@ import { useTournament } from "@/app/contexts/TournamentContext";
 import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
 
 export default function EditTeams({
-  maxMatchNumber,
   players,
   playersMap,
   playersWithStats,
 }: {
-  maxMatchNumber: number;
   players: SerializedPlayer[];
   playersMap: { [key: string]: SerializedPlayer };
   playersWithStats: PlayerWithStats[];
 }) {
   const {
     playersWithStatsUntilMatchNumber,
-    setMatchNumber,
     setMatch,
     match,
     currentTeamPercentages,
     untilMatchTeamPercentages,
     isLoading,
-  } = useFetchMatchWithStats(playersWithStats, maxMatchNumber);
+  } = useFetchMatchWithStats(playersWithStats);
 
   const [isRemoving, setIsRemoving] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -40,7 +37,7 @@ export default function EditTeams({
   const [successMessage, setSuccessMessage] = useState("");
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
 
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
 
   const updatePlayerGoals = (
     team: "oscuras" | "claras",
@@ -109,7 +106,7 @@ export default function EditTeams({
     }
 
     const response = await fetch(
-      `/api/matches/${match.matchNumber}?tournamentId=${selectedTournament?._id}`,
+      `/api/matches/${match.matchNumber}?tournamentId=${selectedTournamentData?.tournament._id}`,
       {
         method: "DELETE",
       }
@@ -137,7 +134,7 @@ export default function EditTeams({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          tournamentId: selectedTournament?._id,
+          tournamentId: selectedTournamentData?.tournament._id,
           oscuras: { team: "oscuras", players: match.oscuras.players },
           claras: { team: "claras", players: match.claras.players },
         }),
@@ -182,11 +179,7 @@ export default function EditTeams({
     <div className="min-h-screen bg-[#0B2818] py-8">
       <div className="max-w-7xl mx-auto px-4 ">
         <div className="bg-[#77777736] rounded-lg shadow-lg p-6">
-          <MatchSelector
-            onMatchSelect={setMatchNumber}
-            isLoading={isLoading}
-            maxMatchNumber={maxMatchNumber}
-          />
+          <MatchSelector isLoading={isLoading} />
 
           {error && (
             <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">

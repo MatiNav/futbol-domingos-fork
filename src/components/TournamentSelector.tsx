@@ -5,18 +5,18 @@ import { useTournament } from "@/app/contexts/TournamentContext";
 
 export default function TournamentSelector() {
   const {
-    selectedTournament,
-    setSelectedTournament,
-    tournaments,
+    selectedTournamentData,
+    setSelectedTournamentData,
+    tournamentsData,
     isLoadingTournaments,
   } = useTournament();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedTournament = tournaments.find(
-      (t) => t._id === e.target.value
+    const selectedTournament = tournamentsData.find(
+      (t) => t.tournament._id === e.target.value
     );
     if (selectedTournament) {
-      setSelectedTournament(selectedTournament);
+      setSelectedTournamentData(selectedTournament);
     }
   };
 
@@ -35,7 +35,7 @@ export default function TournamentSelector() {
       ) : (
         <select
           onChange={handleChange}
-          value={selectedTournament ? selectedTournament._id : ""}
+          value={selectedTournamentData?.tournament._id || ""}
           className="px-3 py-1 bg-[#1a472a]/80 backdrop-blur-sm text-white text-sm 
                   rounded-lg border border-green-700/50 
                   cursor-pointer hover:bg-[#1a472a] transition-colors duration-200
@@ -51,13 +51,13 @@ export default function TournamentSelector() {
           <option value="" disabled className="bg-[#1a472a]">
             Selecciona un Torneo
           </option>
-          {tournaments.map((tournament) => (
+          {tournamentsData.map((tournamentData) => (
             <option
-              key={tournament._id}
-              value={tournament._id}
+              key={tournamentData.tournament._id}
+              value={tournamentData.tournament._id}
               className="bg-[#1a472a]"
             >
-              {tournament.name}
+              {tournamentData.tournament.name}
             </option>
           ))}
         </select>

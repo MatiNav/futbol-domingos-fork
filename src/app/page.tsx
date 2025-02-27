@@ -26,7 +26,7 @@ export default async function HomePage() {
   const tournaments = await getTournaments();
   const [initialMessages, playersWithStats] = await Promise.all([
     getMessages(),
-    getPlayersWithStats(tournaments[tournaments.length - 1]._id),
+    getPlayersWithStats(tournaments[0]._id),
   ]);
 
   const pichichis = getPichichis(playersWithStats);

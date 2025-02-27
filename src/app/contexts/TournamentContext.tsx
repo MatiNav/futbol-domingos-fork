@@ -4,18 +4,23 @@ import { SerializedTournament } from "../constants/types";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
+type TournamentData = {
+  tournament: SerializedTournament;
+  maxMatchNumber: number;
+};
+
 type TournamentContextType = {
-  tournaments: SerializedTournament[];
-  selectedTournament: SerializedTournament | null;
-  setSelectedTournament: (tournament: SerializedTournament) => void;
+  tournamentsData: TournamentData[];
+  selectedTournamentData: TournamentData | null;
+  setSelectedTournamentData: (tournament: TournamentData) => void;
   errorFetchingTournaments: Error | null;
   isLoadingTournaments: boolean;
 };
 
 const TournamentContext = createContext<TournamentContextType>({
-  tournaments: [],
-  selectedTournament: null,
-  setSelectedTournament: () => {},
+  tournamentsData: [],
+  selectedTournamentData: null,
+  setSelectedTournamentData: () => {},
   errorFetchingTournaments: null,
   isLoadingTournaments: false,
 });
@@ -27,21 +32,36 @@ export const TournamentProvider = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [tournaments, setTournaments] = useState<SerializedTournament[]>([]);
+  const [tournamentsData, setTournamentsData] = useState<TournamentData[]>([]);
   const [isLoadingTournaments, setIsLoadingTournaments] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const tournamentId = searchParams.get("tournamentId");
 
-  const [selectedTournament, setSelectedTournament] =
-    useState<SerializedTournament | null>(getLastTournament(tournaments));
+  const [selectedTournamentData, setSelectedTournamentData] =
+    useState<TournamentData | null>(getLastTournament(tournamentsData));
 
   useEffect(() => {
-    const fetchTournaments = async () => {
+    const fetchTournamentsData = async () => {
       try {
         setIsLoadingTournaments(true);
         const response = await fetch("/api/tournaments");
-        const data = await response.json();
-        setTournaments(data);
+        const tournaments = await response.json();
+
+        const responses = await Promise.all(
+          tournaments.map(async (tournament: SerializedTournament) => {
+            const response = await fetch(
+              `/api/matches/latest?tournamentId=${tournament._id}`
+            );
+            return response.json();
+          })
+        );
+
+        const tournamentsData = responses.map((response, index) => ({
+          tournament: tournaments[index],
+          maxMatchNumber: response.maxMatchNumber,
+        }));
+
+        setTournamentsData(tournamentsData);
       } catch (error: unknown) {
         console.error("Error fetching tournaments", error);
         setError(error as Error);
@@ -50,33 +70,33 @@ export const TournamentProvider = ({
       }
     };
 
-    fetchTournaments();
+    fetchTournamentsData();
   }, []);
 
   useEffect(() => {
     if (tournamentId) {
-      setSelectedTournament(
-        tournaments.find((t) => t._id === tournamentId) ||
-          getLastTournament(tournaments)
+      setSelectedTournamentData(
+        tournamentsData.find((t) => t.tournament._id === tournamentId) ||
+          getLastTournament(tournamentsData)
       );
     } else {
-      setSelectedTournament(getLastTournament(tournaments));
+      setSelectedTournamentData(getLastTournament(tournamentsData));
     }
-  }, [tournaments, tournamentId]);
+  }, [tournamentsData, tournamentId]);
 
-  const handleSetSelectedTournament = (tournament: SerializedTournament) => {
-    setSelectedTournament(tournament);
+  const handleSetSelectedTournament = (tournament: TournamentData) => {
+    setSelectedTournamentData(tournament);
     const url = new URL(window.location.href);
-    url.searchParams.set("tournamentId", tournament._id);
+    url.searchParams.set("tournamentId", tournament.tournament._id);
     router.push(url.toString());
   };
 
   return (
     <TournamentContext.Provider
       value={{
-        tournaments,
-        selectedTournament,
-        setSelectedTournament: handleSetSelectedTournament,
+        tournamentsData,
+        selectedTournamentData,
+        setSelectedTournamentData: handleSetSelectedTournament,
         errorFetchingTournaments: error,
         isLoadingTournaments,
       }}
@@ -94,6 +114,6 @@ export const useTournament = () => {
   return context;
 };
 
-function getLastTournament(tournaments: SerializedTournament[]) {
-  return tournaments.length > 0 ? tournaments[tournaments.length - 1] : null;
+function getLastTournament(tournamentsData: TournamentData[]) {
+  return tournamentsData.length > 0 ? tournamentsData[0] : null;
 }

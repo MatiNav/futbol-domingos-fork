@@ -7,13 +7,13 @@ import { useTournament } from "@/app/contexts/TournamentContext";
 
 export default function AdminLink() {
   const user = useCustomUser();
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
 
   return (
     <>
       {isAdmin(user) && (
         <Link
-          href={`/admin?tournamentId=${selectedTournament?._id}`}
+          href={`/admin?tournamentId=${selectedTournamentData?.tournament._id}`}
           className="bg-white/10 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:bg-white/20 transition-all"
         >
           <div className="flex items-center space-x-4">

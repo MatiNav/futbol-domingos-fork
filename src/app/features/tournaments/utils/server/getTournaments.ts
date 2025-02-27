@@ -4,7 +4,10 @@ import { getCollection } from "@/app/utils/server/db";
 export const getTournaments = async (): Promise<SerializedTournament[]> => {
   const tournamentsCollection = await getCollection("tournaments");
 
-  const tournaments = await tournamentsCollection.find({}).toArray();
+  const tournaments = await tournamentsCollection
+    .find({})
+    .sort({ position: 1 })
+    .toArray();
 
   return serializeTournaments(tournaments);
 };

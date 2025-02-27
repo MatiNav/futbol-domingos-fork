@@ -1,7 +1,6 @@
 import { getSession } from "@auth0/nextjs-auth0";
 import Matches from "../features/matches/components/Matches";
 import { UserProfileWithPlayerId } from "../constants/types";
-import { getLatestMatchNumber } from "@/app/features/matches/utils/server";
 import {
   getPlayers,
   getPlayersWithStats,
@@ -20,8 +19,7 @@ export default async function MatchesPage({
   const session = await getSession();
   const user = session?.user as UserProfileWithPlayerId;
 
-  const [maxMatchNumber, players, playersWithStats] = await Promise.all([
-    getLatestMatchNumber(tournamentId),
+  const [players, playersWithStats] = await Promise.all([
     getPlayers(),
     getPlayersWithStats(tournamentId),
   ]);
@@ -32,7 +30,6 @@ export default async function MatchesPage({
 
   return (
     <Matches
-      maxMatchNumber={maxMatchNumber}
       players={players.data}
       user={user}
       playersWithStats={playersWithStats}

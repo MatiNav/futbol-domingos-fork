@@ -5,6 +5,7 @@ export type DBTournament = {
   name: string;
   info: string;
   finished?: boolean;
+  position: number;
 };
 
 export type SerializedTournament = Omit<DBTournament, "_id"> & {

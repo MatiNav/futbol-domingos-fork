@@ -22,7 +22,7 @@ export default function HomePageContent({
   topPlayer: PlayerWithStats;
   initialMessages: SerializedMessage[];
 }) {
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
 
   return (
@@ -30,7 +30,7 @@ export default function HomePageContent({
       <div className="max-w-7xl mx-auto rounded-lg p-1">
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-8">
-            {selectedTournament?.name}
+            {selectedTournamentData?.tournament.name}
           </h1>
 
           {/* Banner Carousel */}

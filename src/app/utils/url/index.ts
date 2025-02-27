@@ -7,7 +7,7 @@ export async function getTournamentIdFromParams({
 }) {
   if (!tournamentId) {
     const tournaments = await getTournaments();
-    tournamentId = tournaments[tournaments.length - 1]._id;
+    tournamentId = tournaments[0]._id;
   }
 
   return tournamentId;

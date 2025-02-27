@@ -12,43 +12,39 @@ import {
 } from "@/app/constants/types";
 import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
 import { useState } from "react";
+import { useTournament } from "@/app/contexts/TournamentContext";
 
 export default function Matches({
   user,
   players: { playersMap, players },
-  maxMatchNumber,
   playersWithStats,
 }: {
   user: UserProfileWithPlayerId | null;
   players: PlayersResponse;
-  maxMatchNumber: number;
   playersWithStats: PlayerWithStats[];
 }) {
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
+
   const {
     fetchMatch,
-    matchNumber,
     playersWithStatsUntilMatchNumber,
-    setMatchNumber,
     match,
     currentTeamPercentages,
     untilMatchTeamPercentages,
     isLoading,
     error,
-  } = useFetchMatchWithStats(playersWithStats, maxMatchNumber);
+  } = useFetchMatchWithStats(playersWithStats);
+
+  const { selectedTournamentData } = useTournament();
 
   const onVoteSubmitted = () => {
-    fetchMatch(matchNumber.toString());
+    fetchMatch();
   };
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
       <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
-        <MatchSelector
-          onMatchSelect={setMatchNumber}
-          isLoading={isLoading}
-          maxMatchNumber={maxMatchNumber}
-        />
+        <MatchSelector isLoading={isLoading} />
 
         {error && (
           <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">
@@ -74,18 +70,22 @@ export default function Matches({
 
             <MatchResultTable match={match} />
 
-            {match.matchNumber >= 5 && (
+            {selectedTournamentData && match.matchNumber >= 5 && (
               <>
                 <PlayerOfTheMatch
                   match={match}
                   playersMap={playersMap}
-                  isLatestMatch={match.matchNumber === maxMatchNumber}
+                  isLatestMatch={
+                    match.matchNumber === selectedTournamentData.maxMatchNumber
+                  }
                   onVoteSubmitted={onVoteSubmitted}
                   user={user}
                 />
                 <MatchOpinions
                   match={match}
-                  isLatestMatch={match.matchNumber === maxMatchNumber}
+                  isLatestMatch={
+                    match.matchNumber === selectedTournamentData.maxMatchNumber
+                  }
                   hasUserPlayedMatch={[match.oscuras, match.claras].some(
                     (team) =>
                       team.players.some(

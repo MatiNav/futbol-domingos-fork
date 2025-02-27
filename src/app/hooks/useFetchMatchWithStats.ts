@@ -2,11 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useTournament } from "../contexts/TournamentContext";
 import { PlayerWithStats, SerializedMatch } from "../constants/types";
 
-export const useFetchMatchWithStats = (
-  playersWithStats: PlayerWithStats[],
-  maxMatchNumber: number
-) => {
-  const [matchNumber, setMatchNumber] = useState(maxMatchNumber);
+export const useFetchMatchWithStats = (playersWithStats: PlayerWithStats[]) => {
+  const [matchNumber, setMatchNumber] = useState(1);
   const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [currentTeamPercentages, setCurrentTeamPercentages] = useState({
     oscuras: 0,
@@ -24,13 +21,13 @@ export const useFetchMatchWithStats = (
     setPlayersWithStatsUntilMatchNumber,
   ] = useState<PlayerWithStats[]>([]);
 
-  const { selectedTournament } = useTournament();
+  const { selectedTournamentData } = useTournament();
 
   const getSumOfPercentageColumnByTeamUntilMatch = useCallback(
     async (match: SerializedMatch) => {
       try {
         const response = await fetch(
-          `/api/players/withStats?matchNumber=${match.matchNumber}&tournamentId=${selectedTournament?._id}`
+          `/api/players/withStats?matchNumber=${match.matchNumber}&tournamentId=${selectedTournamentData?.tournament._id}`
         );
         const data = await response.json();
 
@@ -43,48 +40,68 @@ export const useFetchMatchWithStats = (
         setError("Error fetching players");
       }
     },
-    [selectedTournament?._id]
+    [selectedTournamentData?.tournament._id]
   );
 
-  const fetchMatch = useCallback(
-    async (number: string) => {
-      setIsLoading(true);
-      setError("");
-      setMatch(null);
-      setSuccessMessage("");
+  const fetchMatch = useCallback(async () => {
+    if (!selectedTournamentData?.tournament._id) {
+      return;
+    }
 
-      try {
-        const response = await fetch(
-          `/api/matches/${number}?tournamentId=${selectedTournament?._id}`
-        );
-        const data = await response.json();
+    setIsLoading(true);
+    setError("");
+    setMatch(null);
+    setSuccessMessage("");
 
-        if (!response.ok) {
-          setError(data.error || "Error al buscar el partido");
-        }
-
-        if (data.match) {
-          setMatch(data.match);
-        } else {
-          setError("Partido no encontrado");
-        }
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "Error al buscar el partido"
-        );
-      } finally {
-        setIsLoading(false);
+    try {
+      if (matchNumber > selectedTournamentData.maxMatchNumber) {
+        setError("No hay partidos disponibles");
+        return;
       }
-    },
-    [selectedTournament?._id]
-  );
+
+      const response = await fetch(
+        `/api/matches/${matchNumber}?tournamentId=${selectedTournamentData?.tournament._id}`
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Error al buscar el partido");
+      }
+
+      if (data.match) {
+        setMatch(data.match);
+      } else {
+        setError("Partido no encontrado");
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Error al buscar el partido"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [
+    selectedTournamentData?.tournament._id,
+    selectedTournamentData?.maxMatchNumber,
+    matchNumber,
+  ]);
 
   useEffect(() => {
-    if (matchNumber) {
-      fetchMatch(matchNumber.toString());
+    if (selectedTournamentData?.maxMatchNumber) {
+      setMatchNumber(selectedTournamentData.maxMatchNumber);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchNumber]);
+  }, [selectedTournamentData?.maxMatchNumber]);
+
+  useEffect(() => {
+    if (selectedTournamentData?.maxMatchNumber) {
+      fetchMatch();
+    }
+  }, [
+    selectedTournamentData?.tournament._id,
+    selectedTournamentData?.maxMatchNumber,
+    matchNumber,
+    fetchMatch,
+  ]);
 
   useEffect(() => {
     if (match) {
@@ -100,19 +117,27 @@ export const useFetchMatchWithStats = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [match]);
 
-  useEffect(() => {
-    if (selectedTournament?._id) {
-      setMatchNumber(maxMatchNumber);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTournament?._id]);
+  const handleSetMatchNumber = useCallback(
+    (matchNumber: number) => {
+      if (!selectedTournamentData?.maxMatchNumber) {
+        return;
+      }
+
+      if (matchNumber > selectedTournamentData?.maxMatchNumber) {
+        setMatchNumber(selectedTournamentData?.maxMatchNumber);
+      } else {
+        setMatchNumber(matchNumber);
+      }
+    },
+    [selectedTournamentData?.maxMatchNumber]
+  );
 
   return {
     fetchMatch,
     matchNumber,
     match,
     setMatch,
-    setMatchNumber,
+    setMatchNumber: handleSetMatchNumber,
     currentTeamPercentages,
     untilMatchTeamPercentages,
     isLoading,
