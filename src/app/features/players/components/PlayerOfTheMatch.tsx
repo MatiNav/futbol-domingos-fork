@@ -8,17 +8,15 @@ import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 type PlayerOfTheMatchProps = {
   match: SerializedMatch;
   isLatestMatch: boolean;
-  onVoteSubmitted: () => void;
 };
 
 export default function PlayerOfTheMatch({
   match,
   isLatestMatch,
-  onVoteSubmitted,
 }: PlayerOfTheMatchProps) {
   const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
-  const { playersWithStats } = useMatchWithStats();
+  const { playersWithStats, fetchMatch } = useMatchWithStats();
   const [error, setError] = useState("");
   const [hasMatchBeenPlayed, setHasMatchBeenPlayed] = useState(
     Boolean(match.winner)
@@ -74,7 +72,7 @@ export default function PlayerOfTheMatch({
         throw new Error("Failed to submit vote");
       }
 
-      onVoteSubmitted();
+      fetchMatch();
     } catch (error) {
       console.error("Error submitting vote:", error);
     } finally {

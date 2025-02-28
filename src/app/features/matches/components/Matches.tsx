@@ -25,10 +25,6 @@ export default function Matches() {
 
   const { selectedTournamentData } = useTournament();
 
-  const onVoteSubmitted = () => {
-    fetchMatch();
-  };
-
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
       <div className="max-w-7xl mx-auto bg-[#77777736] rounded-lg shadow-lg p-6">
@@ -63,7 +59,6 @@ export default function Matches() {
                   isLatestMatch={
                     match.matchNumber === selectedTournamentData.maxMatchNumber
                   }
-                  onVoteSubmitted={onVoteSubmitted}
                 />
                 <MatchOpinions
                   match={match}
@@ -71,7 +66,6 @@ export default function Matches() {
                     match.matchNumber === selectedTournamentData.maxMatchNumber
                   }
                   // TODO: Add onOpinionSubmitted
-                  onOpinionSubmitted={onVoteSubmitted}
                 />
               </>
             )}

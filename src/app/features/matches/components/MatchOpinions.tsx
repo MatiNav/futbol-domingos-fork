@@ -4,20 +4,20 @@ import { useState } from "react";
 import { SerializedMatch } from "@/app/constants/types";
 import { useTournament } from "@/app/contexts/TournamentContext";
 import useCustomUser from "../../auth/hooks/useCustomUser";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type MatchOpinionsProps = {
   match: SerializedMatch;
   isLatestMatch: boolean;
-  onOpinionSubmitted: () => void;
 };
 
 export default function MatchOpinions({
   match,
   isLatestMatch,
-  onOpinionSubmitted,
 }: MatchOpinionsProps) {
   const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
+  const { fetchMatch } = useMatchWithStats();
   const [opinion, setOpinion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -61,7 +61,7 @@ export default function MatchOpinions({
       }
 
       setOpinion("");
-      onOpinionSubmitted();
+      fetchMatch();
     } catch (error) {
       console.error(error);
       setError("Error submitting opinion");
@@ -95,7 +95,7 @@ export default function MatchOpinions({
 
       setEditingOpinionId(null);
       setEditedContent("");
-      onOpinionSubmitted();
+      fetchMatch();
     } catch (error) {
       console.error(error);
       setError("Error updating opinion");
@@ -124,7 +124,7 @@ export default function MatchOpinions({
         throw new Error("Failed to delete opinion");
       }
 
-      onOpinionSubmitted();
+      fetchMatch();
     } catch (error) {
       console.error(error);
       setError("Error deleting opinion");
