@@ -32,8 +32,6 @@ export default function MatchSelector({ isLoading }: MatchSelectorProps) {
     setMatchNumber(newNumber);
   };
 
-  console.log("selectedTournamentData", selectedTournamentData);
-  console.log("matchNumber", matchNumber);
   return (
     <div className="flex flex-col space-y-1">
       {selectedTournamentData?.maxMatchNumber && (
