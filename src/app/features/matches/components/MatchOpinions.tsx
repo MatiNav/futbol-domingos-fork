@@ -8,13 +8,9 @@ import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type MatchOpinionsProps = {
   match: SerializedMatch;
-  isLatestMatch: boolean;
 };
 
-export default function MatchOpinions({
-  match,
-  isLatestMatch,
-}: MatchOpinionsProps) {
+export default function MatchOpinions({ match }: MatchOpinionsProps) {
   const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
   const { fetchMatch } = useMatchWithStats();
@@ -23,6 +19,9 @@ export default function MatchOpinions({
   const [error, setError] = useState("");
   const [editingOpinionId, setEditingOpinionId] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState("");
+
+  const isLatestMatch =
+    match.matchNumber === selectedTournamentData?.maxMatchNumber;
 
   const hasUserSubmittedOpinion = match.opinions?.some(
     (opinion) => opinion.userId === user?.playerId.toString()

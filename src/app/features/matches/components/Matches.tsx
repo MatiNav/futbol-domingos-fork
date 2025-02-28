@@ -6,14 +6,12 @@ import MatchDetailsTable from "./details/MatchDetailsTable";
 import PlayerOfTheMatch from "@/app/features/players/components/PlayerOfTheMatch";
 import MatchOpinions from "./MatchOpinions";
 import { useState } from "react";
-import { useTournament } from "@/app/contexts/TournamentContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 export default function Matches() {
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
 
   const {
-    fetchMatch,
     playersWithStatsUntilMatchNumber,
     match,
     currentTeamPercentages,
@@ -22,8 +20,6 @@ export default function Matches() {
     isLoading,
     error,
   } = useMatchWithStats();
-
-  const { selectedTournamentData } = useTournament();
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
@@ -52,23 +48,8 @@ export default function Matches() {
 
             <MatchResultTable match={match} />
 
-            {selectedTournamentData && match.matchNumber >= 5 && (
-              <>
-                <PlayerOfTheMatch
-                  match={match}
-                  isLatestMatch={
-                    match.matchNumber === selectedTournamentData.maxMatchNumber
-                  }
-                />
-                <MatchOpinions
-                  match={match}
-                  isLatestMatch={
-                    match.matchNumber === selectedTournamentData.maxMatchNumber
-                  }
-                  // TODO: Add onOpinionSubmitted
-                />
-              </>
-            )}
+            <PlayerOfTheMatch match={match} />
+            <MatchOpinions match={match} />
           </>
         )}
       </div>

@@ -7,13 +7,9 @@ import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type PlayerOfTheMatchProps = {
   match: SerializedMatch;
-  isLatestMatch: boolean;
 };
 
-export default function PlayerOfTheMatch({
-  match,
-  isLatestMatch,
-}: PlayerOfTheMatchProps) {
+export default function PlayerOfTheMatch({ match }: PlayerOfTheMatchProps) {
   const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
   const { playersWithStats, fetchMatch } = useMatchWithStats();
@@ -24,6 +20,9 @@ export default function PlayerOfTheMatch({
   const [selectedPlayer, setSelectedPlayer] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasUserPlayedMatch, setHasUserPlayedMatch] = useState(false);
+
+  const isLatestMatch =
+    match.matchNumber === selectedTournamentData?.maxMatchNumber;
 
   useEffect(() => {
     setHasMatchBeenPlayed(Boolean(match.winner));
