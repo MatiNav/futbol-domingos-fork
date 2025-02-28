@@ -1,18 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import {
-  SerializedMatch,
-  UserProfileWithPlayerId,
-} from "@/app/constants/types";
+import { SerializedMatch } from "@/app/constants/types";
 import { useTournament } from "@/app/contexts/TournamentContext";
+import useCustomUser from "../../auth/hooks/useCustomUser";
 
 type MatchOpinionsProps = {
   match: SerializedMatch;
   isLatestMatch: boolean;
   hasUserPlayedMatch: boolean;
   onOpinionSubmitted: () => void;
-  user: UserProfileWithPlayerId | null;
 };
 
 export default function MatchOpinions({
@@ -20,8 +17,8 @@ export default function MatchOpinions({
   isLatestMatch,
   hasUserPlayedMatch,
   onOpinionSubmitted,
-  user,
 }: MatchOpinionsProps) {
+  const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
   const [opinion, setOpinion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

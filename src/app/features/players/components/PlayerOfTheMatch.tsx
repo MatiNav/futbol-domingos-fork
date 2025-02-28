@@ -1,18 +1,14 @@
-import {
-  SerializedMatch,
-  SerializedPlayer,
-  UserProfileWithPlayerId,
-} from "@/app/constants/types";
+import { SerializedMatch, SerializedPlayer } from "@/app/constants/types";
 import React, { useEffect, useState } from "react";
 import { getVotedPlayers } from "../utils";
 import { useTournament } from "@/app/contexts/TournamentContext";
+import useCustomUser from "../../auth/hooks/useCustomUser";
 
 type PlayerOfTheMatchProps = {
   match: SerializedMatch;
   playersMap: { [key: string]: SerializedPlayer };
   isLatestMatch: boolean;
   onVoteSubmitted: () => void;
-  user: UserProfileWithPlayerId | null;
 };
 
 export default function PlayerOfTheMatch({
@@ -20,8 +16,8 @@ export default function PlayerOfTheMatch({
   playersMap,
   isLatestMatch,
   onVoteSubmitted,
-  user,
 }: PlayerOfTheMatchProps) {
+  const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
   const [error, setError] = useState("");
   const [hasMatchBeenPlayed, setHasMatchBeenPlayed] = useState(

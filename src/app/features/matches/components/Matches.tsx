@@ -72,7 +72,6 @@ export default function Matches({
                     match.matchNumber === selectedTournamentData.maxMatchNumber
                   }
                   onVoteSubmitted={onVoteSubmitted}
-                  user={user}
                 />
                 <MatchOpinions
                   match={match}
@@ -88,7 +87,6 @@ export default function Matches({
                   )}
                   // TODO: Add onOpinionSubmitted
                   onOpinionSubmitted={onVoteSubmitted}
-                  user={user}
                 />
               </>
             )}
