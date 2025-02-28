@@ -9,7 +9,6 @@ type PlayersCellProps = {
   index: number;
   match: SerializedMatch;
   playersMap: { [key: string]: SerializedPlayer };
-  players: SerializedPlayer[];
   isEditable: boolean;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
   isPlayerAvailable?: (

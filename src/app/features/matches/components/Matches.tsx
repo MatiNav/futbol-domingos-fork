@@ -13,7 +13,7 @@ import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 export default function Matches({
   user,
-  players: { playersMap, players },
+  players: { playersMap },
 }: {
   user: UserProfileWithPlayerId | null;
   players: PlayersResponse;
@@ -57,7 +57,6 @@ export default function Matches({
               currentTeamPercentages={currentTeamPercentages}
               untilMatchTeamPercentages={untilMatchTeamPercentages}
               playersMap={playersMap}
-              players={players}
               showOnlyMatchPercentage={showOnlyMatchPercentage}
               onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
             />

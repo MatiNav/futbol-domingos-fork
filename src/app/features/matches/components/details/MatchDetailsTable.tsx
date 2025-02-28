@@ -17,7 +17,6 @@ type MatchDetailsTableProps = {
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
-  players?: SerializedPlayer[];
   isPlayerAvailable?: (
     playerId: string,
     team: MatchTeam,
@@ -37,7 +36,6 @@ export default function MatchDetailsTable({
   isEditable = false,
   onUpdatePlayerGoals,
   onUpdatePlayer,
-  players = [],
   isPlayerAvailable,
   currentTeamPercentages,
   untilMatchTeamPercentages,
@@ -170,7 +168,6 @@ export default function MatchDetailsTable({
                     isEditable={isEditable}
                     onUpdatePlayerGoals={onUpdatePlayerGoals}
                     onUpdatePlayer={onUpdatePlayer}
-                    players={players}
                     playersWithStats={playersWithStats}
                     isPlayerAvailable={isPlayerAvailable}
                     mostVotedPlayersIds={mostVotedPlayersIds}
@@ -188,7 +185,6 @@ export default function MatchDetailsTable({
                     isEditable={isEditable}
                     onUpdatePlayerGoals={onUpdatePlayerGoals}
                     onUpdatePlayer={onUpdatePlayer}
-                    players={players}
                     playersWithStats={playersWithStats}
                     isPlayerAvailable={isPlayerAvailable}
                     mostVotedPlayersIds={mostVotedPlayersIds}

@@ -12,10 +12,8 @@ import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 import { SerializedMatch } from "@/app/constants/types";
 
 export default function EditTeams({
-  players,
   playersMap,
 }: {
-  players: SerializedPlayer[];
   playersMap: { [key: string]: SerializedPlayer };
 }) {
   const {
@@ -70,7 +68,7 @@ export default function EditTeams({
   ) => {
     if (!match) return;
 
-    const newPlayer = players.find((player) => player._id === playerId);
+    const newPlayer = playersMap[playerId];
 
     const updatedMatch = {
       ...match,
@@ -211,7 +209,6 @@ export default function EditTeams({
                 currentTeamPercentages={currentTeamPercentages}
                 untilMatchTeamPercentages={untilMatchTeamPercentages}
                 match={updatedMatchToSave}
-                players={players}
                 playersMap={playersMap}
                 showOnlyMatchPercentage={showOnlyMatchPercentage}
                 onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}

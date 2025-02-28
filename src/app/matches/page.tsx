@@ -1,38 +1,19 @@
 import { getSession } from "@auth0/nextjs-auth0";
 import Matches from "../features/matches/components/Matches";
 import { UserProfileWithPlayerId } from "../constants/types";
-import {
-  getPlayers,
-  getPlayersWithStats,
-} from "@/app/features/players/utils/server";
-import { ParsedUrlQuery } from "querystring";
-import { getTournamentIdFromParams } from "@/app/utils/url";
+import { getPlayers } from "@/app/features/players/utils/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function MatchesPage({
-  searchParams,
-}: {
-  searchParams: ParsedUrlQuery;
-}) {
-  const tournamentId = await getTournamentIdFromParams(searchParams);
+export default async function MatchesPage() {
   const session = await getSession();
   const user = session?.user as UserProfileWithPlayerId;
 
-  const [players, playersWithStats] = await Promise.all([
-    getPlayers(),
-    getPlayersWithStats(tournamentId),
-  ]);
+  const players = await getPlayers();
 
   if ("error" in players) {
     return <div>Error: {players.error}</div>;
   }
 
-  return (
-    <Matches
-      players={players.data}
-      user={user}
-      playersWithStats={playersWithStats}
-    />
-  );
+  return <Matches players={players.data} user={user} />;
 }

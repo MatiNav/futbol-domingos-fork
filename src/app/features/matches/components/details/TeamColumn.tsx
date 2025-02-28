@@ -17,7 +17,6 @@ type TeamColumnProps = {
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
-  players?: SerializedPlayer[];
   isPlayerAvailable?: (
     playerId: string,
     team: MatchTeam,
@@ -42,7 +41,6 @@ export default function TeamColumn({
   isEditable = false,
   onUpdatePlayerGoals,
   onUpdatePlayer,
-  players = [],
   isPlayerAvailable,
   mostVotedPlayersIds,
   showOnlyMatchPercentage = false,
@@ -68,7 +66,6 @@ export default function TeamColumn({
       index={index}
       match={match}
       playersMap={playersMap}
-      players={players}
       isEditable={isEditable}
       onUpdatePlayer={onUpdatePlayer}
       isPlayerAvailable={isPlayerAvailable}
