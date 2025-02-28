@@ -5,19 +5,11 @@ import MatchResultTable from "./details/MatchResult";
 import MatchDetailsTable from "./details/MatchDetailsTable";
 import PlayerOfTheMatch from "@/app/features/players/components/PlayerOfTheMatch";
 import MatchOpinions from "./MatchOpinions";
-import { PlayersResponse } from "@/app/features/players/utils/server";
-import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { useState } from "react";
 import { useTournament } from "@/app/contexts/TournamentContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
-export default function Matches({
-  user,
-  players: { playersMap },
-}: {
-  user: UserProfileWithPlayerId | null;
-  players: PlayersResponse;
-}) {
+export default function Matches() {
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
 
   const {
@@ -26,6 +18,7 @@ export default function Matches({
     match,
     currentTeamPercentages,
     untilMatchTeamPercentages,
+    playersWithStats,
     isLoading,
     error,
   } = useMatchWithStats();
@@ -51,12 +44,12 @@ export default function Matches({
           <>
             <MatchDetailsTable
               match={match}
+              playersWithStats={playersWithStats}
               playersWithStatsUntilMatchNumber={
                 playersWithStatsUntilMatchNumber
               }
               currentTeamPercentages={currentTeamPercentages}
               untilMatchTeamPercentages={untilMatchTeamPercentages}
-              playersMap={playersMap}
               showOnlyMatchPercentage={showOnlyMatchPercentage}
               onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
             />
@@ -67,7 +60,6 @@ export default function Matches({
               <>
                 <PlayerOfTheMatch
                   match={match}
-                  playersMap={playersMap}
                   isLatestMatch={
                     match.matchNumber === selectedTournamentData.maxMatchNumber
                   }
@@ -78,13 +70,6 @@ export default function Matches({
                   isLatestMatch={
                     match.matchNumber === selectedTournamentData.maxMatchNumber
                   }
-                  hasUserPlayedMatch={[match.oscuras, match.claras].some(
-                    (team) =>
-                      team.players.some(
-                        (player) =>
-                          player._id.toString() === user?.playerId.toString()
-                      )
-                  )}
                   // TODO: Add onOpinionSubmitted
                   onOpinionSubmitted={onVoteSubmitted}
                 />

@@ -10,5 +10,5 @@ export default async function EditTeamsPage() {
     return <div>Error: {players.error}</div>;
   }
 
-  return <EditTeams playersMap={players.data.playersMap} />;
+  return <EditTeams />;
 }

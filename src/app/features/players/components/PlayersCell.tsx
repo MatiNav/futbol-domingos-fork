@@ -1,14 +1,10 @@
-import {
-  MatchTeam,
-  SerializedMatch,
-  SerializedPlayer,
-} from "@/app/constants/types";
+import { MatchTeam, SerializedMatch } from "@/app/constants/types";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type PlayersCellProps = {
   team: MatchTeam;
   index: number;
   match: SerializedMatch;
-  playersMap: { [key: string]: SerializedPlayer };
   isEditable: boolean;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
   isPlayerAvailable?: (
@@ -24,12 +20,13 @@ export default function PlayersCell({
   team,
   index,
   match,
-  playersMap,
   isEditable = false,
   onUpdatePlayer,
   isPlayerAvailable,
   mostVotedPlayersIds,
 }: PlayersCellProps & { className?: string }) {
+  const { playersWithStats } = useMatchWithStats();
+
   const teamData = match[team];
   const isOscuras = team === "oscuras";
 
@@ -67,10 +64,13 @@ export default function PlayersCell({
             }}
           >
             <option value="">
-              {playersMap[teamData.players[index]?._id.toString()]?.name ||
-                "Seleccionar jugador"}
+              {playersWithStats.find(
+                (player) =>
+                  player._id.toString() ===
+                  teamData.players[index]?._id.toString()
+              )?.name || "Seleccionar jugador"}
             </option>
-            {Object.values(playersMap).map((player) => {
+            {playersWithStats.map((player) => {
               const isAvailable = isPlayerAvailable?.(player._id, team, index);
               return (
                 <option
@@ -89,7 +89,11 @@ export default function PlayersCell({
           </select>
         ) : (
           <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
-            {playersMap[teamData.players[index]?._id.toString()]?.name || "-"}
+            {playersWithStats.find(
+              (player) =>
+                player._id.toString() ===
+                teamData.players[index]?._id.toString()
+            )?.name || "-"}
           </div>
         )}
       </div>

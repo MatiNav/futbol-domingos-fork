@@ -1,7 +1,4 @@
-import {
-  PlayerWithStats,
-  SerializedPlayer,
-} from "@/app/constants/types/Player";
+import { PlayerWithStats } from "@/app/constants/types/Player";
 import { MatchTeam, SerializedMatch } from "@/app/constants/types/Match";
 import PlayersCell from "@/app/features/players/components/PlayersCell";
 import GoalsColumn from "@/app/features/matches/components/details/GoalsCell";
@@ -11,7 +8,6 @@ type TeamColumnProps = {
   team: MatchTeam;
   index: number;
   match: SerializedMatch;
-  playersMap: { [key: string]: SerializedPlayer };
   playersWithStats?: PlayerWithStats[];
   playersWithStatsUntilMatchNumber?: PlayerWithStats[];
   isEditable?: boolean;
@@ -35,7 +31,6 @@ export default function TeamColumn({
   team,
   index,
   match,
-  playersMap,
   playersWithStats,
   playersWithStatsUntilMatchNumber,
   isEditable = false,
@@ -65,7 +60,6 @@ export default function TeamColumn({
       team={team}
       index={index}
       match={match}
-      playersMap={playersMap}
       isEditable={isEditable}
       onUpdatePlayer={onUpdatePlayer}
       isPlayerAvailable={isPlayerAvailable}

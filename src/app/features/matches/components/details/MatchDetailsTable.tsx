@@ -2,7 +2,6 @@ import {
   MatchTeam,
   PlayerWithStats,
   SerializedMatch,
-  SerializedPlayer,
 } from "@/app/constants/types";
 import { TeamColumn } from "@/app/features/matches/components/details";
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
@@ -12,8 +11,7 @@ import { TeamPercentage } from "@/app/contexts/MatchWithStatsContext";
 
 type MatchDetailsTableProps = {
   match: SerializedMatch;
-  playersMap: { [key: string]: SerializedPlayer };
-  playersWithStats?: PlayerWithStats[];
+  playersWithStats: PlayerWithStats[];
   isEditable?: boolean;
   onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
   onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
@@ -31,7 +29,6 @@ type MatchDetailsTableProps = {
 
 export default function MatchDetailsTable({
   match,
-  playersMap,
   playersWithStats,
   isEditable = false,
   onUpdatePlayerGoals,
@@ -164,7 +161,6 @@ export default function MatchDetailsTable({
                     team="oscuras"
                     index={index}
                     match={match}
-                    playersMap={playersMap}
                     isEditable={isEditable}
                     onUpdatePlayerGoals={onUpdatePlayerGoals}
                     onUpdatePlayer={onUpdatePlayer}
@@ -181,7 +177,6 @@ export default function MatchDetailsTable({
                     team="claras"
                     index={index}
                     match={match}
-                    playersMap={playersMap}
                     isEditable={isEditable}
                     onUpdatePlayerGoals={onUpdatePlayerGoals}
                     onUpdatePlayer={onUpdatePlayer}

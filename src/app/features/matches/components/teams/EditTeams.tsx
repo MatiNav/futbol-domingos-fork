@@ -6,20 +6,16 @@ import {
   MatchResult,
   MatchSelector,
 } from "@/app/features/matches/components";
-import { SerializedPlayer } from "@/app/constants/types";
 import { useTournament } from "@/app/contexts/TournamentContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 import { SerializedMatch } from "@/app/constants/types";
 
-export default function EditTeams({
-  playersMap,
-}: {
-  playersMap: { [key: string]: SerializedPlayer };
-}) {
+export default function EditTeams() {
   const {
     setMatch,
     match,
     playersWithStatsUntilMatchNumber,
+    playersWithStats,
     currentTeamPercentages,
     untilMatchTeamPercentages,
     isLoading,
@@ -68,7 +64,9 @@ export default function EditTeams({
   ) => {
     if (!match) return;
 
-    const newPlayer = playersMap[playerId];
+    const newPlayer = playersWithStatsUntilMatchNumber.find(
+      (player) => player._id.toString() === playerId
+    );
 
     const updatedMatch = {
       ...match,
@@ -203,13 +201,13 @@ export default function EditTeams({
           {updatedMatchToSave && (
             <>
               <MatchDetailsTable
+                playersWithStats={playersWithStats}
                 playersWithStatsUntilMatchNumber={
                   playersWithStatsUntilMatchNumber
                 }
                 currentTeamPercentages={currentTeamPercentages}
                 untilMatchTeamPercentages={untilMatchTeamPercentages}
                 match={updatedMatchToSave}
-                playersMap={playersMap}
                 showOnlyMatchPercentage={showOnlyMatchPercentage}
                 onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
                 onUpdatePlayerGoals={updatePlayerGoals}

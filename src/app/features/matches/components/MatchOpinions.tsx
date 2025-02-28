@@ -8,14 +8,12 @@ import useCustomUser from "../../auth/hooks/useCustomUser";
 type MatchOpinionsProps = {
   match: SerializedMatch;
   isLatestMatch: boolean;
-  hasUserPlayedMatch: boolean;
   onOpinionSubmitted: () => void;
 };
 
 export default function MatchOpinions({
   match,
   isLatestMatch,
-  hasUserPlayedMatch,
   onOpinionSubmitted,
 }: MatchOpinionsProps) {
   const user = useCustomUser();
@@ -28,6 +26,12 @@ export default function MatchOpinions({
 
   const hasUserSubmittedOpinion = match.opinions?.some(
     (opinion) => opinion.userId === user?.playerId.toString()
+  );
+
+  const hasUserPlayedMatch = [match.oscuras, match.claras].some((team) =>
+    team.players.some(
+      (player) => player._id.toString() === user?.playerId.toString()
+    )
   );
 
   const handleSubmit = async () => {
