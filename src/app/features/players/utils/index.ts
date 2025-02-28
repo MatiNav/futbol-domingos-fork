@@ -1,6 +1,12 @@
 import { PlayerWithStats, SerializedMatch } from "@/app/constants/types";
 
 export function getPichichis(players: PlayerWithStats[]) {
+  const playerHaveGoals = players.some((player) => player.goals > 0);
+
+  if (!playerHaveGoals) {
+    return [];
+  }
+
   return players.reduce((pichichis, player) => {
     if (pichichis.length === 0 || player.goals > pichichis[0].goals) {
       return [player];
