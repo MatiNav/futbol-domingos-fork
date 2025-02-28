@@ -207,21 +207,13 @@ export default function MatchWithStatsProvider({
 
   const handleSetMatchNumber = useCallback(
     (matchNumber: number) => {
-      console.log("matchNumber", matchNumber);
-      console.log(
-        "selectedTournamentData?.maxMatchNumber",
-        selectedTournamentData?.maxMatchNumber
-      );
       if (!selectedTournamentData?.maxMatchNumber) {
         return;
       }
 
-      console.log("it passed");
       if (matchNumber > selectedTournamentData?.maxMatchNumber) {
-        console.log("it passed 2");
         setMatchNumber(selectedTournamentData?.maxMatchNumber);
       } else {
-        console.log("it passed 3");
         setMatchNumber(matchNumber);
       }
     },
