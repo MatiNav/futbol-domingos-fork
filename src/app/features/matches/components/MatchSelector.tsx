@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 import { useTournament } from "@/app/contexts/TournamentContext";
 
 type MatchSelectorProps = {
@@ -9,7 +9,7 @@ type MatchSelectorProps = {
 
 export default function MatchSelector({ isLoading }: MatchSelectorProps) {
   const { selectedTournamentData } = useTournament();
-  const { matchNumber, setMatchNumber } = useFetchMatchWithStats([]);
+  const { matchNumber, setMatchNumber } = useMatchWithStats();
 
   const handleNumberClick = (number: number) => {
     setMatchNumber(number);

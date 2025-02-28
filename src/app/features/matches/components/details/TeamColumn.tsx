@@ -72,6 +72,7 @@ export default function TeamColumn({
       isEditable={isEditable}
       onUpdatePlayer={onUpdatePlayer}
       isPlayerAvailable={isPlayerAvailable}
+      className="w-[30%]"
     />
   );
 

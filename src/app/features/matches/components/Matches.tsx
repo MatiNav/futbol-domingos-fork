@@ -6,22 +6,17 @@ import MatchDetailsTable from "./details/MatchDetailsTable";
 import PlayerOfTheMatch from "@/app/features/players/components/PlayerOfTheMatch";
 import MatchOpinions from "./MatchOpinions";
 import { PlayersResponse } from "@/app/features/players/utils/server";
-import {
-  UserProfileWithPlayerId,
-  PlayerWithStats,
-} from "@/app/constants/types";
-import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
+import { UserProfileWithPlayerId } from "@/app/constants/types";
 import { useState } from "react";
 import { useTournament } from "@/app/contexts/TournamentContext";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 export default function Matches({
   user,
   players: { playersMap, players },
-  playersWithStats,
 }: {
   user: UserProfileWithPlayerId | null;
   players: PlayersResponse;
-  playersWithStats: PlayerWithStats[];
 }) {
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
 
@@ -33,7 +28,7 @@ export default function Matches({
     untilMatchTeamPercentages,
     isLoading,
     error,
-  } = useFetchMatchWithStats(playersWithStats);
+  } = useMatchWithStats();
 
   const { selectedTournamentData } = useTournament();
 
@@ -56,14 +51,13 @@ export default function Matches({
           <>
             <MatchDetailsTable
               match={match}
-              playersMap={playersMap}
-              players={players}
-              playersWithStats={playersWithStats}
-              teamPercentages={currentTeamPercentages}
-              untilMatchTeamPercentages={untilMatchTeamPercentages}
               playersWithStatsUntilMatchNumber={
                 playersWithStatsUntilMatchNumber
               }
+              currentTeamPercentages={currentTeamPercentages}
+              untilMatchTeamPercentages={untilMatchTeamPercentages}
+              playersMap={playersMap}
+              players={players}
               showOnlyMatchPercentage={showOnlyMatchPercentage}
               onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
             />

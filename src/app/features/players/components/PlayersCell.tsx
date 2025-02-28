@@ -21,15 +21,16 @@ type PlayersCellProps = {
 };
 
 export default function PlayersCell({
+  className = "",
   team,
   index,
   match,
   playersMap,
-  isEditable,
+  isEditable = false,
   onUpdatePlayer,
   isPlayerAvailable,
   mostVotedPlayersIds,
-}: PlayersCellProps) {
+}: PlayersCellProps & { className?: string }) {
   const teamData = match[team];
   const isOscuras = team === "oscuras";
 
@@ -44,7 +45,7 @@ export default function PlayersCell({
 
   return (
     <td
-      className={`px-4 py-2 text-center ${bgColor} ${textColor} border-r border-green-900`}
+      className={`px-2 sm:px-4 py-1 sm:py-2 text-center border-r border-green-700 ${bgColor} ${textColor} ${className}`}
     >
       <div className="flex items-center justify-center gap-1">
         {isMvp && <span className="text-yellow-400">⭐</span>}
@@ -88,7 +89,9 @@ export default function PlayersCell({
             })}
           </select>
         ) : (
-          playersMap[teamData.players[index]?._id.toString()]?.name || ""
+          <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+            {playersMap[teamData.players[index]?._id.toString()]?.name || "-"}
+          </div>
         )}
       </div>
     </td>

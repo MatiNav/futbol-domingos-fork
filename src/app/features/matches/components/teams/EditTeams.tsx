@@ -1,52 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MatchDetailsTable,
   MatchResult,
   MatchSelector,
 } from "@/app/features/matches/components";
-import {
-  PlayerWithStats,
-  SerializedPlayer,
-} from "@/app/constants/types/Player";
+import { SerializedPlayer } from "@/app/constants/types";
 import { useTournament } from "@/app/contexts/TournamentContext";
-import { useFetchMatchWithStats } from "@/app/hooks/useFetchMatchWithStats";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
+import { SerializedMatch } from "@/app/constants/types";
 
 export default function EditTeams({
   players,
   playersMap,
-  playersWithStats,
 }: {
   players: SerializedPlayer[];
   playersMap: { [key: string]: SerializedPlayer };
-  playersWithStats: PlayerWithStats[];
 }) {
   const {
-    playersWithStatsUntilMatchNumber,
     setMatch,
     match,
+    playersWithStatsUntilMatchNumber,
     currentTeamPercentages,
     untilMatchTeamPercentages,
     isLoading,
-  } = useFetchMatchWithStats(playersWithStats);
+  } = useMatchWithStats();
 
   const [isRemoving, setIsRemoving] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
+  const [updatedMatchToSave, setUpdatedMatchToSave] =
+    useState<SerializedMatch | null>(match);
 
   const { selectedTournamentData } = useTournament();
+
+  useEffect(() => {
+    setUpdatedMatchToSave(match);
+  }, [match]);
 
   const updatePlayerGoals = (
     team: "oscuras" | "claras",
     index: number,
     goals: number
   ) => {
-    if (!match) return;
+    if (match == null) return;
 
-    setMatch((prevMatch) => {
+    setUpdatedMatchToSave((prevMatch) => {
       if (prevMatch == null) return null;
 
       return {
@@ -82,7 +84,7 @@ export default function EditTeams({
       },
     };
 
-    setMatch(updatedMatch);
+    setUpdatedMatchToSave(updatedMatch);
   };
 
   const removeGame = async () => {
@@ -135,8 +137,14 @@ export default function EditTeams({
         },
         body: JSON.stringify({
           tournamentId: selectedTournamentData?.tournament._id,
-          oscuras: { team: "oscuras", players: match.oscuras.players },
-          claras: { team: "claras", players: match.claras.players },
+          oscuras: {
+            team: "oscuras",
+            players: updatedMatchToSave?.oscuras.players,
+          },
+          claras: {
+            team: "claras",
+            players: updatedMatchToSave?.claras.players,
+          },
         }),
       });
 
@@ -146,6 +154,7 @@ export default function EditTeams({
         throw new Error(data.error || "Error al guardar los cambios");
       }
 
+      setMatch(updatedMatchToSave);
       setSuccessMessage("Cambios guardados exitosamente");
     } catch (error) {
       setError(
@@ -161,13 +170,13 @@ export default function EditTeams({
     team: "oscuras" | "claras",
     currentIndex: number
   ) => {
-    if (!match) return false;
+    if (!updatedMatchToSave) return false;
 
-    const isInOscuras = match.oscuras.players.some(
+    const isInOscuras = updatedMatchToSave.oscuras.players.some(
       (p, i) =>
         p._id === playerId && i !== (team === "oscuras" ? currentIndex : -1)
     );
-    const isInClaras = match.claras.players.some(
+    const isInClaras = updatedMatchToSave.claras.players.some(
       (p, i) =>
         p._id === playerId && i !== (team === "claras" ? currentIndex : -1)
     );
@@ -193,18 +202,17 @@ export default function EditTeams({
             </div>
           )}
 
-          {match && (
+          {updatedMatchToSave && (
             <>
               <MatchDetailsTable
-                match={match}
-                players={players}
-                playersMap={playersMap}
-                playersWithStats={playersWithStats}
-                teamPercentages={currentTeamPercentages}
-                untilMatchTeamPercentages={untilMatchTeamPercentages}
                 playersWithStatsUntilMatchNumber={
                   playersWithStatsUntilMatchNumber
                 }
+                currentTeamPercentages={currentTeamPercentages}
+                untilMatchTeamPercentages={untilMatchTeamPercentages}
+                match={updatedMatchToSave}
+                players={players}
+                playersMap={playersMap}
                 showOnlyMatchPercentage={showOnlyMatchPercentage}
                 onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
                 onUpdatePlayerGoals={updatePlayerGoals}
@@ -213,7 +221,7 @@ export default function EditTeams({
                 isEditable
               />
 
-              <MatchResult match={match} />
+              <MatchResult match={updatedMatchToSave} />
 
               <div className="flex justify-center mb-6">
                 <button
