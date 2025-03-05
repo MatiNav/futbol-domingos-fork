@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 export default function Matches() {
-  const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
+  const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(true);
 
   const {
     playersWithStatsUntilMatchNumber,

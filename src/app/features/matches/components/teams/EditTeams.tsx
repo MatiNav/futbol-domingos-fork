@@ -17,7 +17,7 @@ export default function EditTeams() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
+  const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(true);
 
   const { selectedTournamentData } = useTournament();
   const { draftMatch } = useDraftMatch();
