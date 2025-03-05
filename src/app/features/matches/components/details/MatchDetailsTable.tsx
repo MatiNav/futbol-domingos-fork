@@ -25,6 +25,8 @@ type MatchDetailsTableProps = {
   playersWithStatsUntilMatchNumber: PlayerWithStats[];
   showOnlyMatchPercentage?: boolean;
   onShowOnlyMatchPercentageChange?: (showOnlyMatchPercentage: boolean) => void;
+  onRemoveLastPlayer?: () => void;
+  addNewPlayer?: () => void;
 };
 
 export default function MatchDetailsTable({
@@ -39,6 +41,8 @@ export default function MatchDetailsTable({
   playersWithStatsUntilMatchNumber,
   showOnlyMatchPercentage = false,
   onShowOnlyMatchPercentageChange,
+  onRemoveLastPlayer,
+  addNewPlayer,
 }: MatchDetailsTableProps) {
   const [columnVisibility, setColumnVisibility] = useState({
     goals: true,
@@ -155,45 +159,104 @@ export default function MatchDetailsTable({
                   match.oscuras.players.length,
                   match.claras.players.length
                 ),
-              }).map((_, index) => (
-                <tr key={index} className="border-t border-green-700">
-                  <TeamColumn
-                    team="oscuras"
-                    index={index}
-                    match={match}
-                    isEditable={isEditable}
-                    onUpdatePlayerGoals={onUpdatePlayerGoals}
-                    onUpdatePlayer={onUpdatePlayer}
-                    playersWithStats={playersWithStats}
-                    isPlayerAvailable={isPlayerAvailable}
-                    mostVotedPlayersIds={mostVotedPlayersIds}
-                    playersWithStatsUntilMatchNumber={
-                      playersWithStatsUntilMatchNumber
-                    }
-                    showOnlyMatchPercentage={showOnlyMatchPercentage}
-                    columnVisibility={columnVisibility}
-                  />
-                  <TeamColumn
-                    team="claras"
-                    index={index}
-                    match={match}
-                    isEditable={isEditable}
-                    onUpdatePlayerGoals={onUpdatePlayerGoals}
-                    onUpdatePlayer={onUpdatePlayer}
-                    playersWithStats={playersWithStats}
-                    isPlayerAvailable={isPlayerAvailable}
-                    mostVotedPlayersIds={mostVotedPlayersIds}
-                    playersWithStatsUntilMatchNumber={
-                      playersWithStatsUntilMatchNumber
-                    }
-                    showOnlyMatchPercentage={showOnlyMatchPercentage}
-                    columnVisibility={columnVisibility}
-                  />
-                </tr>
-              ))}
+              }).map((_, index) => {
+                const isLastRow =
+                  index ===
+                  Math.max(
+                    match.oscuras.players.length,
+                    match.claras.players.length
+                  ) -
+                    1;
+
+                return (
+                  <tr key={index} className="border-t border-green-700">
+                    <TeamColumn
+                      team="oscuras"
+                      index={index}
+                      match={match}
+                      isEditable={isEditable}
+                      onUpdatePlayerGoals={onUpdatePlayerGoals}
+                      onUpdatePlayer={onUpdatePlayer}
+                      playersWithStats={playersWithStats}
+                      isPlayerAvailable={isPlayerAvailable}
+                      mostVotedPlayersIds={mostVotedPlayersIds}
+                      playersWithStatsUntilMatchNumber={
+                        playersWithStatsUntilMatchNumber
+                      }
+                      showOnlyMatchPercentage={showOnlyMatchPercentage}
+                      columnVisibility={columnVisibility}
+                    />
+                    <TeamColumn
+                      team="claras"
+                      index={index}
+                      match={match}
+                      isEditable={isEditable}
+                      onUpdatePlayerGoals={onUpdatePlayerGoals}
+                      onUpdatePlayer={onUpdatePlayer}
+                      playersWithStats={playersWithStats}
+                      isPlayerAvailable={isPlayerAvailable}
+                      mostVotedPlayersIds={mostVotedPlayersIds}
+                      playersWithStatsUntilMatchNumber={
+                        playersWithStatsUntilMatchNumber
+                      }
+                      showOnlyMatchPercentage={showOnlyMatchPercentage}
+                      columnVisibility={columnVisibility}
+                    />
+
+                    {isLastRow && isEditable && onRemoveLastPlayer && (
+                      <td className="px-2 py-2 text-center">
+                        <button
+                          onClick={onRemoveLastPlayer}
+                          className="p-1 bg-red-500 hover:bg-red-700 text-white rounded-full"
+                          title="Eliminar última fila"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>
+      {isEditable && (
+        <div className="flex justify-center mb-4 mt-4">
+          <button
+            onClick={addNewPlayer}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            <span>Agregar Jugador</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

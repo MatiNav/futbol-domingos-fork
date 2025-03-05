@@ -68,19 +68,24 @@ export default function EditTeams() {
       (player) => player._id.toString() === playerId
     );
 
-    const updatedMatch = {
-      ...match,
-      [team]: {
-        team,
-        players: match[team].players.map((player, i) =>
-          i === index && !!newPlayer
-            ? { _id: newPlayer._id, goals: player.goals }
-            : player
-        ),
-      },
-    };
+    setUpdatedMatchToSave((prevMatch) => {
+      if (prevMatch == null) return null;
 
-    setUpdatedMatchToSave(updatedMatch);
+      return {
+        ...prevMatch,
+        [team]: {
+          ...prevMatch[team],
+          players: prevMatch[team].players.map((player, i) =>
+            i === index && !!newPlayer
+              ? {
+                  _id: newPlayer._id,
+                  goals: 0,
+                }
+              : player
+          ),
+        },
+      };
+    });
   };
 
   const removeGame = async () => {
@@ -180,6 +185,61 @@ export default function EditTeams() {
     return !isInOscuras && !isInClaras;
   };
 
+  const removeLastPlayer = () => {
+    if (!updatedMatchToSave) return;
+
+    // Only proceed if both teams have at least one player
+    if (
+      updatedMatchToSave.oscuras.players.length <= 1 ||
+      updatedMatchToSave.claras.players.length <= 1
+    ) {
+      setError(
+        "No se puede eliminar, debe quedar al menos un jugador en cada equipo"
+      );
+      return;
+    }
+
+    setUpdatedMatchToSave((prevMatch) => {
+      if (prevMatch == null) return null;
+
+      return {
+        ...prevMatch,
+        oscuras: {
+          ...prevMatch.oscuras,
+          players: prevMatch.oscuras.players.slice(0, -1),
+        },
+        claras: {
+          ...prevMatch.claras,
+          players: prevMatch.claras.players.slice(0, -1),
+        },
+      };
+    });
+
+    setSuccessMessage("Última fila eliminada correctamente");
+  };
+
+  const addNewPlayer = () => {
+    if (!updatedMatchToSave) return;
+
+    setUpdatedMatchToSave((prevMatch) => {
+      if (prevMatch == null) return null;
+
+      return {
+        ...prevMatch,
+        oscuras: {
+          ...prevMatch.oscuras,
+          players: [...prevMatch.oscuras.players, { _id: "", goals: 0 }],
+        },
+        claras: {
+          ...prevMatch.claras,
+          players: [...prevMatch.claras.players, { _id: "", goals: 0 }],
+        },
+      };
+    });
+
+    setSuccessMessage("Nueva fila agregada correctamente");
+  };
+
   return (
     <div className="min-h-screen bg-[#0B2818] py-8">
       <div className="max-w-7xl mx-auto px-4 ">
@@ -213,7 +273,9 @@ export default function EditTeams() {
                 onUpdatePlayerGoals={updatePlayerGoals}
                 isPlayerAvailable={isPlayerAvailable}
                 onUpdatePlayer={updatePlayer}
+                onRemoveLastPlayer={removeLastPlayer}
                 isEditable
+                addNewPlayer={addNewPlayer}
               />
 
               <MatchResult match={updatedMatchToSave} />

@@ -23,6 +23,17 @@ export type TeamPercentage = {
   };
 };
 
+const zeroTeamPercentage: TeamPercentage = {
+  oscuras: {
+    percentage: 0,
+    amountOfPlayersWithout0Percentage: 0,
+  },
+  claras: {
+    percentage: 0,
+    amountOfPlayersWithout0Percentage: 0,
+  },
+};
+
 type MatchWithStatsContextType = {
   fetchMatch: () => Promise<void>;
   matchNumber: number;
@@ -44,26 +55,8 @@ const MatchWithStatsContext = createContext<MatchWithStatsContextType>({
   match: null,
   setMatch: () => {},
   setMatchNumber: () => {},
-  currentTeamPercentages: {
-    oscuras: {
-      percentage: 0,
-      amountOfPlayersWithout0Percentage: 0,
-    },
-    claras: {
-      percentage: 0,
-      amountOfPlayersWithout0Percentage: 0,
-    },
-  },
-  untilMatchTeamPercentages: {
-    oscuras: {
-      percentage: 0,
-      amountOfPlayersWithout0Percentage: 0,
-    },
-    claras: {
-      percentage: 0,
-      amountOfPlayersWithout0Percentage: 0,
-    },
-  },
+  currentTeamPercentages: zeroTeamPercentage,
+  untilMatchTeamPercentages: zeroTeamPercentage,
   isLoading: false,
   error: "",
   successMessage: "",
@@ -79,27 +72,9 @@ export default function MatchWithStatsProvider({
   const [matchNumber, setMatchNumber] = useState(1);
   const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [currentTeamPercentages, setCurrentTeamPercentages] =
-    useState<TeamPercentage>({
-      oscuras: {
-        percentage: 0,
-        amountOfPlayersWithout0Percentage: 0,
-      },
-      claras: {
-        percentage: 0,
-        amountOfPlayersWithout0Percentage: 0,
-      },
-    });
+    useState<TeamPercentage>(zeroTeamPercentage);
   const [untilMatchTeamPercentages, setUntilMatchTeamPercentages] =
-    useState<TeamPercentage>({
-      oscuras: {
-        percentage: 0,
-        amountOfPlayersWithout0Percentage: 0,
-      },
-      claras: {
-        percentage: 0,
-        amountOfPlayersWithout0Percentage: 0,
-      },
-    });
+    useState<TeamPercentage>(zeroTeamPercentage);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");

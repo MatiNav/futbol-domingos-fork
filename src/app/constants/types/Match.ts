@@ -19,6 +19,7 @@ export type DBMatch = {
   date: Date;
   playerOfTheMatchVotes?: MatchVote[];
   opinions?: MatchOpinion[];
+  amountOfPlayersPerTeam?: number;
   createdAt: Date;
   updatedAt?: Date;
   deletedAt?: Date;

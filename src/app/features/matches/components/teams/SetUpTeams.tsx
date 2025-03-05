@@ -4,23 +4,22 @@ import { PlayerWithStats } from "@/app/constants/types/Player";
 import { useEffect, useState } from "react";
 import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
 import { useTournament } from "@/app/contexts/TournamentContext";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
-export default function SetupTeams({
-  playersWithStats,
-}: {
-  playersWithStats: PlayerWithStats[];
-}) {
+export default function SetupTeams() {
   const { selectedTournamentData } = useTournament();
+  const { playersWithStats } = useMatchWithStats();
   const [team1, setTeam1] = useState<(PlayerWithStats | null)[]>([]);
   const [team2, setTeam2] = useState<(PlayerWithStats | null)[]>([]);
   const [teamPercentages, setTeamPercentages] = useState({
     oscuras: 0,
     claras: 0,
   });
+  const [amountOfPlayersPerTeam, setAmountOfPlayersPerTeam] = useState(8);
   const [searchTerms, setSearchTerms] = useState<{
     [key: number]: { team1: string; team2: string };
   }>(
-    Array(8)
+    Array(amountOfPlayersPerTeam)
       .fill(null)
       .reduce(
         (acc, _, index) => ({ ...acc, [index]: { team1: "", team2: "" } }),
@@ -148,10 +147,108 @@ export default function SetupTeams({
     }
   };
 
+  const handlePlayerCountChange = (newCount: number) => {
+    // Don't allow fewer than 1 player
+    const count = Math.max(1, newCount);
+
+    // Update the player count
+    setAmountOfPlayersPerTeam(count);
+
+    // Update search terms to match the new count
+    setSearchTerms((prev) => {
+      const newSearchTerms: {
+        [key: number]: { team1: string; team2: string };
+      } = {};
+
+      // Keep existing search terms for indexes that still exist
+      for (let i = 0; i < count; i++) {
+        if (i < Object.keys(prev).length) {
+          newSearchTerms[i] = prev[i];
+        } else {
+          newSearchTerms[i] = { team1: "", team2: "" };
+        }
+      }
+
+      return newSearchTerms;
+    });
+
+    // Update team arrays to match the new count
+    setTeam1((prev) => {
+      const newTeam = [...prev];
+      if (newTeam.length > count) {
+        // Trim array if new count is smaller
+        return newTeam.slice(0, count);
+      } else {
+        // Extend array with null values if new count is larger
+        while (newTeam.length < count) {
+          newTeam.push(null);
+        }
+        return newTeam;
+      }
+    });
+
+    setTeam2((prev) => {
+      const newTeam = [...prev];
+      if (newTeam.length > count) {
+        return newTeam.slice(0, count);
+      } else {
+        while (newTeam.length < count) {
+          newTeam.push(null);
+        }
+        return newTeam;
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Armar Equipos</h2>
+
+        {/* Player count selector */}
+        <div className="mb-6">
+          <div className="flex items-center">
+            <label
+              htmlFor="playerCount"
+              className="mr-3 text-gray-700 font-medium"
+            >
+              Jugadores por equipo:
+            </label>
+            <div className="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
+              <button
+                onClick={() =>
+                  handlePlayerCountChange(amountOfPlayersPerTeam - 1)
+                }
+                className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium"
+              >
+                -
+              </button>
+              <select
+                id="playerCount"
+                value={amountOfPlayersPerTeam}
+                onChange={(e) =>
+                  handlePlayerCountChange(Number(e.target.value))
+                }
+                className="px-3 py-2 text-gray-800 bg-white border-none focus:ring-0 focus:outline-none text-center"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() =>
+                  handlePlayerCountChange(amountOfPlayersPerTeam + 1)
+                }
+                className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
         {message && (
           <div
             className={`p-4 rounded-lg mb-6 ${
@@ -182,7 +279,7 @@ export default function SetupTeams({
               </tr>
             </thead>
             <tbody>
-              {Array(8)
+              {Array(amountOfPlayersPerTeam)
                 .fill(null)
                 .map((_, index) => (
                   <tr key={index} className="border-t">

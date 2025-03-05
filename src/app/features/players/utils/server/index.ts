@@ -1,5 +1,4 @@
 import "server-only";
-import clientPromise from "@/lib/mongodb";
 import {
   DBPlayer,
   PlayerWithStats,
@@ -25,7 +24,9 @@ export async function getPlayersWithStats(
     })
     .toArray();
 
-  const dbPlayers = await playersCollection.find({}).toArray();
+  const dbPlayers = await playersCollection
+    .find({}, { sort: { name: 1 } })
+    .toArray();
 
   const playersForTable = dbPlayers.map((player) => ({
     ...player,
@@ -120,10 +121,8 @@ export type PlayersResponse = {
 };
 
 export const getPlayers = async (): Promise<FetchResponse<PlayersResponse>> => {
-  const client = await clientPromise;
-  const db = client.db("futbol");
-  const playersCollection = db.collection("players");
-  const players = await playersCollection.find<DBPlayer>({}).toArray();
+  const playersCollection = await getCollection("players");
+  const players = await playersCollection.find({}).toArray();
 
   if (!players || players.length === 0) {
     return {
