@@ -11,15 +11,7 @@ import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 export default function Matches() {
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(true);
 
-  const {
-    playersWithStatsUntilMatchNumber,
-    match,
-    currentTeamPercentages,
-    untilMatchTeamPercentages,
-    playersWithStats,
-    isLoading,
-    error,
-  } = useMatchWithStats();
+  const { match, isLoading, error } = useMatchWithStats();
 
   return (
     <div className="min-h-screen bg-[#0B2818] p-4">
@@ -35,21 +27,14 @@ export default function Matches() {
         {match && (
           <>
             <MatchDetailsTable
-              match={match}
-              playersWithStats={playersWithStats}
-              playersWithStatsUntilMatchNumber={
-                playersWithStatsUntilMatchNumber
-              }
-              currentTeamPercentages={currentTeamPercentages}
-              untilMatchTeamPercentages={untilMatchTeamPercentages}
               showOnlyMatchPercentage={showOnlyMatchPercentage}
               onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
             />
 
-            <MatchResultTable match={match} />
+            <MatchResultTable />
 
-            <PlayerOfTheMatch match={match} />
-            <MatchOpinions match={match} />
+            <PlayerOfTheMatch />
+            <MatchOpinions />
           </>
         )}
       </div>

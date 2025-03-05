@@ -1,34 +1,33 @@
-import { SerializedMatch } from "@/app/constants/types";
 import React, { useEffect, useState } from "react";
 import { getVotedPlayers } from "../utils";
 import { useTournament } from "@/app/contexts/TournamentContext";
 import useCustomUser from "../../auth/hooks/useCustomUser";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
-type PlayerOfTheMatchProps = {
-  match: SerializedMatch;
-};
-
-export default function PlayerOfTheMatch({ match }: PlayerOfTheMatchProps) {
+export default function PlayerOfTheMatch() {
   const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
-  const { playersWithStats, fetchMatch } = useMatchWithStats();
+  const { match, playersWithStats, fetchMatch } = useMatchWithStats();
   const [error, setError] = useState("");
+
   const [hasMatchBeenPlayed, setHasMatchBeenPlayed] = useState(
-    Boolean(match.winner)
+    Boolean(match?.winner)
   );
   const [selectedPlayer, setSelectedPlayer] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasUserPlayedMatch, setHasUserPlayedMatch] = useState(false);
 
   const isLatestMatch =
-    match.matchNumber === selectedTournamentData?.maxMatchNumber;
+    match?.matchNumber === selectedTournamentData?.maxMatchNumber;
 
   useEffect(() => {
+    if (!match) return;
     setHasMatchBeenPlayed(Boolean(match.winner));
   }, [match]);
 
   useEffect(() => {
+    if (!match) return;
+
     const alreadySelectedPlayer =
       match?.playerOfTheMatchVotes
         ?.find((vote) => vote.userId === user?.playerId.toString())
@@ -43,6 +42,8 @@ export default function PlayerOfTheMatch({ match }: PlayerOfTheMatchProps) {
     setSelectedPlayer(alreadySelectedPlayer);
     setHasUserPlayedMatch(userPlayedMatchBoolean);
   }, [user, match]);
+
+  if (!match) return <div>Cargando...</div>;
 
   const allPlayers = [...match.oscuras.players, ...match.claras.players];
 
@@ -116,7 +117,8 @@ export default function PlayerOfTheMatch({ match }: PlayerOfTheMatchProps) {
                   <span className="text-white">
                     {
                       playersWithStats.find(
-                        (player) => player._id.toString() === playerId
+                        (playerWithStats) =>
+                          playerWithStats._id.toString() === playerId
                       )?.name
                     }
                     ({voteCounts[playerId]}{" "}
@@ -143,7 +145,8 @@ export default function PlayerOfTheMatch({ match }: PlayerOfTheMatchProps) {
               <option key={player._id.toString()} value={player._id.toString()}>
                 {
                   playersWithStats.find(
-                    (player) => player._id.toString() === player._id.toString()
+                    (playerWithStats) =>
+                      playerWithStats._id.toString() === player._id.toString()
                   )?.name
                 }
               </option>

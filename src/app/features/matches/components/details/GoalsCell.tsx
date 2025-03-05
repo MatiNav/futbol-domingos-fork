@@ -13,7 +13,6 @@ export default function GoalsCell({
 }: GoalsCellProps) {
   const { draftMatch, updateGoals } = useDraftMatch();
 
-  console.log(draftMatch, "GOALS CELL");
   if (!draftMatch) return <div> Cargando...</div>;
 
   const teamData = draftMatch[team];

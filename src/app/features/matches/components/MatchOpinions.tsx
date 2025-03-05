@@ -1,24 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { SerializedMatch } from "@/app/constants/types";
 import { useTournament } from "@/app/contexts/TournamentContext";
 import useCustomUser from "../../auth/hooks/useCustomUser";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
-type MatchOpinionsProps = {
-  match: SerializedMatch;
-};
-
-export default function MatchOpinions({ match }: MatchOpinionsProps) {
+export default function MatchOpinions() {
   const user = useCustomUser();
   const { selectedTournamentData } = useTournament();
-  const { fetchMatch } = useMatchWithStats();
+  const { match, fetchMatch } = useMatchWithStats();
+
   const [opinion, setOpinion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [editingOpinionId, setEditingOpinionId] = useState<string | null>(null);
   const [editedContent, setEditedContent] = useState("");
+
+  if (!match) return <div>Cargando...</div>;
 
   const isLatestMatch =
     match.matchNumber === selectedTournamentData?.maxMatchNumber;

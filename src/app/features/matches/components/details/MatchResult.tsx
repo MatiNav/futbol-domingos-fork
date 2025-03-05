@@ -8,7 +8,6 @@ function calculateTotalGoals(team: SerializedTeam) {
 export default function MatchResult() {
   const { draftMatch } = useDraftMatch();
 
-  console.log(draftMatch, "MATCH RESULT");
   if (!draftMatch) return <div> Cargando...</div>;
 
   const oscurasTotal = calculateTotalGoals(draftMatch.oscuras);

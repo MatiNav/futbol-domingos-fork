@@ -18,7 +18,6 @@ export default function PlayersCell({
 }: PlayersCellProps & { className?: string }) {
   const { playersWithStats } = useMatchWithStats();
   const { draftMatch, updatePlayer, isPlayerAvailable } = useDraftMatch();
-  console.log(draftMatch, "PLAYERS CELL");
   if (!draftMatch) return <div> Cargando...</div>;
 
   const teamData = draftMatch[team];
