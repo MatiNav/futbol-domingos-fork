@@ -1,16 +1,18 @@
-import { SerializedTeam, SerializedMatch } from "@/app/constants/types";
-
-type MatchResultProps = {
-  match: SerializedMatch;
-};
+import { SerializedTeam } from "@/app/constants/types";
+import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 
 function calculateTotalGoals(team: SerializedTeam) {
   return team.players.reduce((sum, player) => sum + (player.goals || 0), 0);
 }
 
-export default function MatchResult({ match }: MatchResultProps) {
-  const oscurasTotal = calculateTotalGoals(match.oscuras);
-  const clarasTotal = calculateTotalGoals(match.claras);
+export default function MatchResult() {
+  const { draftMatch } = useDraftMatch();
+
+  console.log(draftMatch, "MATCH RESULT");
+  if (!draftMatch) return <div> Cargando...</div>;
+
+  const oscurasTotal = calculateTotalGoals(draftMatch.oscuras);
+  const clarasTotal = calculateTotalGoals(draftMatch.claras);
 
   return (
     <div className="overflow-x-auto mb-6">

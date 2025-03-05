@@ -1,17 +1,11 @@
-import { MatchTeam, SerializedMatch } from "@/app/constants/types";
+import { MatchTeam } from "@/app/constants/types";
+import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type PlayersCellProps = {
   team: MatchTeam;
   index: number;
-  match: SerializedMatch;
   isEditable: boolean;
-  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
-  isPlayerAvailable?: (
-    playerId: string,
-    team: MatchTeam,
-    currentIndex: number
-  ) => boolean;
   mostVotedPlayersIds: string[];
 };
 
@@ -19,15 +13,15 @@ export default function PlayersCell({
   className = "",
   team,
   index,
-  match,
   isEditable = false,
-  onUpdatePlayer,
-  isPlayerAvailable,
   mostVotedPlayersIds,
 }: PlayersCellProps & { className?: string }) {
   const { playersWithStats } = useMatchWithStats();
+  const { draftMatch, updatePlayer, isPlayerAvailable } = useDraftMatch();
+  console.log(draftMatch, "PLAYERS CELL");
+  if (!draftMatch) return <div> Cargando...</div>;
 
-  const teamData = match[team];
+  const teamData = draftMatch[team];
   const isOscuras = team === "oscuras";
 
   // Darker maroon for Oscuras, lighter blue for Claras
@@ -51,7 +45,7 @@ export default function PlayersCell({
             onChange={(e) => {
               const selectedPlayerId = e.target.value as unknown as string;
               if (selectedPlayerId) {
-                onUpdatePlayer?.(team, index, selectedPlayerId);
+                updatePlayer(team, index, selectedPlayerId);
               }
             }}
             className={`w-[115px] px-2 py-1 ${bgColor} border 
@@ -71,7 +65,7 @@ export default function PlayersCell({
               )?.name || "Seleccionar jugador"}
             </option>
             {playersWithStats.map((player) => {
-              const isAvailable = isPlayerAvailable?.(player._id, team, index);
+              const isAvailable = isPlayerAvailable(player._id, team, index);
               return (
                 <option
                   key={player._id.toString()}

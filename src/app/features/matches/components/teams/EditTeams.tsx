@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   MatchDetailsTable,
   MatchResult,
@@ -8,85 +8,19 @@ import {
 } from "@/app/features/matches/components";
 import { useTournament } from "@/app/contexts/TournamentContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
-import { SerializedMatch } from "@/app/constants/types";
+import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 
 export default function EditTeams() {
-  const {
-    setMatch,
-    match,
-    playersWithStatsUntilMatchNumber,
-    playersWithStats,
-    currentTeamPercentages,
-    untilMatchTeamPercentages,
-    isLoading,
-  } = useMatchWithStats();
+  const { setMatch, match, isLoading } = useMatchWithStats();
 
   const [isRemoving, setIsRemoving] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [showOnlyMatchPercentage, setShowOnlyMatchPercentage] = useState(false);
-  const [updatedMatchToSave, setUpdatedMatchToSave] =
-    useState<SerializedMatch | null>(match);
 
   const { selectedTournamentData } = useTournament();
-
-  useEffect(() => {
-    setUpdatedMatchToSave(match);
-  }, [match]);
-
-  const updatePlayerGoals = (
-    team: "oscuras" | "claras",
-    index: number,
-    goals: number
-  ) => {
-    if (match == null) return;
-
-    setUpdatedMatchToSave((prevMatch) => {
-      if (prevMatch == null) return null;
-
-      return {
-        ...prevMatch,
-        [team]: {
-          ...prevMatch[team],
-          players: prevMatch[team].players.map((player, i) =>
-            i === index ? { ...player, goals } : player
-          ),
-        },
-      };
-    });
-  };
-
-  const updatePlayer = (
-    team: "oscuras" | "claras",
-    index: number,
-    playerId: string
-  ) => {
-    if (!match) return;
-
-    const newPlayer = playersWithStatsUntilMatchNumber.find(
-      (player) => player._id.toString() === playerId
-    );
-
-    setUpdatedMatchToSave((prevMatch) => {
-      if (prevMatch == null) return null;
-
-      return {
-        ...prevMatch,
-        [team]: {
-          ...prevMatch[team],
-          players: prevMatch[team].players.map((player, i) =>
-            i === index && !!newPlayer
-              ? {
-                  _id: newPlayer._id,
-                  goals: 0,
-                }
-              : player
-          ),
-        },
-      };
-    });
-  };
+  const { draftMatch } = useDraftMatch();
 
   const removeGame = async () => {
     if (!match) return;
@@ -140,11 +74,11 @@ export default function EditTeams() {
           tournamentId: selectedTournamentData?.tournament._id,
           oscuras: {
             team: "oscuras",
-            players: updatedMatchToSave?.oscuras.players,
+            players: draftMatch?.oscuras.players,
           },
           claras: {
             team: "claras",
-            players: updatedMatchToSave?.claras.players,
+            players: draftMatch?.claras.players,
           },
         }),
       });
@@ -155,7 +89,7 @@ export default function EditTeams() {
         throw new Error(data.error || "Error al guardar los cambios");
       }
 
-      setMatch(updatedMatchToSave);
+      setMatch(draftMatch);
       setSuccessMessage("Cambios guardados exitosamente");
     } catch (error) {
       setError(
@@ -164,80 +98,6 @@ export default function EditTeams() {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const isPlayerAvailable = (
-    playerId: string,
-    team: "oscuras" | "claras",
-    currentIndex: number
-  ) => {
-    if (!updatedMatchToSave) return false;
-
-    const isInOscuras = updatedMatchToSave.oscuras.players.some(
-      (p, i) =>
-        p._id === playerId && i !== (team === "oscuras" ? currentIndex : -1)
-    );
-    const isInClaras = updatedMatchToSave.claras.players.some(
-      (p, i) =>
-        p._id === playerId && i !== (team === "claras" ? currentIndex : -1)
-    );
-
-    return !isInOscuras && !isInClaras;
-  };
-
-  const removeLastPlayer = () => {
-    if (!updatedMatchToSave) return;
-
-    // Only proceed if both teams have at least one player
-    if (
-      updatedMatchToSave.oscuras.players.length <= 1 ||
-      updatedMatchToSave.claras.players.length <= 1
-    ) {
-      setError(
-        "No se puede eliminar, debe quedar al menos un jugador en cada equipo"
-      );
-      return;
-    }
-
-    setUpdatedMatchToSave((prevMatch) => {
-      if (prevMatch == null) return null;
-
-      return {
-        ...prevMatch,
-        oscuras: {
-          ...prevMatch.oscuras,
-          players: prevMatch.oscuras.players.slice(0, -1),
-        },
-        claras: {
-          ...prevMatch.claras,
-          players: prevMatch.claras.players.slice(0, -1),
-        },
-      };
-    });
-
-    setSuccessMessage("Última fila eliminada correctamente");
-  };
-
-  const addNewPlayer = () => {
-    if (!updatedMatchToSave) return;
-
-    setUpdatedMatchToSave((prevMatch) => {
-      if (prevMatch == null) return null;
-
-      return {
-        ...prevMatch,
-        oscuras: {
-          ...prevMatch.oscuras,
-          players: [...prevMatch.oscuras.players, { _id: "", goals: 0 }],
-        },
-        claras: {
-          ...prevMatch.claras,
-          players: [...prevMatch.claras.players, { _id: "", goals: 0 }],
-        },
-      };
-    });
-
-    setSuccessMessage("Nueva fila agregada correctamente");
   };
 
   return (
@@ -258,27 +118,15 @@ export default function EditTeams() {
             </div>
           )}
 
-          {updatedMatchToSave && (
+          {draftMatch && (
             <>
               <MatchDetailsTable
-                playersWithStats={playersWithStats}
-                playersWithStatsUntilMatchNumber={
-                  playersWithStatsUntilMatchNumber
-                }
-                currentTeamPercentages={currentTeamPercentages}
-                untilMatchTeamPercentages={untilMatchTeamPercentages}
-                match={updatedMatchToSave}
                 showOnlyMatchPercentage={showOnlyMatchPercentage}
                 onShowOnlyMatchPercentageChange={setShowOnlyMatchPercentage}
-                onUpdatePlayerGoals={updatePlayerGoals}
-                isPlayerAvailable={isPlayerAvailable}
-                onUpdatePlayer={updatePlayer}
-                onRemoveLastPlayer={removeLastPlayer}
                 isEditable
-                addNewPlayer={addNewPlayer}
               />
 
-              <MatchResult match={updatedMatchToSave} />
+              <MatchResult />
 
               <div className="flex justify-center mb-6">
                 <button

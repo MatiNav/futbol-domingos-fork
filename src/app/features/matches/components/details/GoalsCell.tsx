@@ -1,25 +1,22 @@
-import { SerializedMatch } from "@/app/constants/types";
+import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 
 type GoalsCellProps = {
   team: "oscuras" | "claras";
   index: number;
-  match: SerializedMatch;
   isEditable?: boolean;
-  onUpdatePlayerGoals?: (
-    team: "oscuras" | "claras",
-    index: number,
-    goals: number
-  ) => void;
 };
 
 export default function GoalsCell({
   team,
   index,
-  match,
   isEditable = false,
-  onUpdatePlayerGoals,
 }: GoalsCellProps) {
-  const teamData = match[team];
+  const { draftMatch, updateGoals } = useDraftMatch();
+
+  console.log(draftMatch, "GOALS CELL");
+  if (!draftMatch) return <div> Cargando...</div>;
+
+  const teamData = draftMatch[team];
 
   return (
     <td className="px-4 py-2 text-center text-white border-r border-green-700">
@@ -29,7 +26,7 @@ export default function GoalsCell({
           min="0"
           value={teamData.players[index]?.goals || 0}
           onChange={(e) =>
-            onUpdatePlayerGoals?.(team, index, parseInt(e.target.value) || 0)
+            updateGoals(team, index, parseInt(e.target.value) || 0)
           }
           onFocus={(e) => (e.target as HTMLInputElement).select()}
           onClick={(e) => (e.target as HTMLInputElement).select()}

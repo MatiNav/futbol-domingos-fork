@@ -6,6 +6,7 @@ import { TournamentProvider } from "./contexts/TournamentContext";
 import TournamentSelector from "@/components/TournamentSelector";
 import { Suspense } from "react";
 import MatchWithStatsProvider from "./contexts/MatchWithStatsContext";
+import DraftMatchProvider from "./contexts/DraftMatchContext";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -32,9 +33,11 @@ export default function RootLayout({
           <AuthProvider>
             <TournamentProvider>
               <MatchWithStatsProvider>
-                <NavBar />
-                <TournamentSelector />
-                {children}
+                <DraftMatchProvider>
+                  <NavBar />
+                  <TournamentSelector />
+                  {children}
+                </DraftMatchProvider>
               </MatchWithStatsProvider>
             </TournamentProvider>
           </AuthProvider>

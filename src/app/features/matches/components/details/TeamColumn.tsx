@@ -1,23 +1,14 @@
-import { PlayerWithStats } from "@/app/constants/types/Player";
-import { MatchTeam, SerializedMatch } from "@/app/constants/types/Match";
+import { MatchTeam } from "@/app/constants/types/Match";
 import PlayersCell from "@/app/features/players/components/PlayersCell";
 import GoalsColumn from "@/app/features/matches/components/details/GoalsCell";
 import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
+import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type TeamColumnProps = {
   team: MatchTeam;
   index: number;
-  match: SerializedMatch;
-  playersWithStats?: PlayerWithStats[];
-  playersWithStatsUntilMatchNumber?: PlayerWithStats[];
   isEditable?: boolean;
-  onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
-  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
-  isPlayerAvailable?: (
-    playerId: string,
-    team: MatchTeam,
-    currentIndex: number
-  ) => boolean;
   mostVotedPlayersIds: string[];
   onPercentageCalculated?: (team: MatchTeam, percentage: number) => void;
   showOnlyMatchPercentage?: boolean;
@@ -30,13 +21,7 @@ type TeamColumnProps = {
 export default function TeamColumn({
   team,
   index,
-  match,
-  playersWithStats,
-  playersWithStatsUntilMatchNumber,
   isEditable = false,
-  onUpdatePlayerGoals,
-  onUpdatePlayer,
-  isPlayerAvailable,
   mostVotedPlayersIds,
   showOnlyMatchPercentage = false,
   columnVisibility = {
@@ -44,14 +29,12 @@ export default function TeamColumn({
     percentage: true,
   },
 }: TeamColumnProps) {
+  const { playersWithStats, playersWithStatsUntilMatchNumber } =
+    useMatchWithStats();
+  const { draftMatch } = useDraftMatch();
+
   const goalsColumnComponent = (
-    <GoalsColumn
-      team={team}
-      index={index}
-      match={match}
-      isEditable={isEditable}
-      onUpdatePlayerGoals={onUpdatePlayerGoals}
-    />
+    <GoalsColumn team={team} index={index} isEditable={isEditable} />
   );
 
   const playerColumnComponent = (
@@ -59,17 +42,14 @@ export default function TeamColumn({
       mostVotedPlayersIds={mostVotedPlayersIds}
       team={team}
       index={index}
-      match={match}
       isEditable={isEditable}
-      onUpdatePlayer={onUpdatePlayer}
-      isPlayerAvailable={isPlayerAvailable}
       className="w-[30%]"
     />
   );
 
-  const percentageColumnComponent = playersWithStats && (
+  const percentageColumnComponent = playersWithStats && draftMatch && (
     <PercentageCell
-      playerId={match[team].players[index]?._id.toString()}
+      playerId={draftMatch[team].players[index]?._id.toString()}
       playersWithStats={playersWithStats}
       playersWithStatsUntilMatchNumber={playersWithStatsUntilMatchNumber}
       showOnlyMatchPercentage={showOnlyMatchPercentage}

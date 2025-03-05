@@ -1,66 +1,47 @@
-import {
-  MatchTeam,
-  PlayerWithStats,
-  SerializedMatch,
-} from "@/app/constants/types";
 import { TeamColumn } from "@/app/features/matches/components/details";
 import { getMostVotedPlayersOfTheMatch } from "@/app/features/players/utils";
 import { useState } from "react";
-import { MatchConfiguration } from "./MAtchConfiguration";
-import { TeamPercentage } from "@/app/contexts/MatchWithStatsContext";
+import { MatchConfiguration } from "./MatchConfiguration";
+import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
+import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 
 type MatchDetailsTableProps = {
-  match: SerializedMatch;
-  playersWithStats: PlayerWithStats[];
   isEditable?: boolean;
-  onUpdatePlayerGoals?: (team: MatchTeam, index: number, goals: number) => void;
-  onUpdatePlayer?: (team: MatchTeam, index: number, playerId: string) => void;
-  isPlayerAvailable?: (
-    playerId: string,
-    team: MatchTeam,
-    currentIndex: number
-  ) => boolean;
-  currentTeamPercentages: TeamPercentage;
-  untilMatchTeamPercentages: TeamPercentage;
-  playersWithStatsUntilMatchNumber: PlayerWithStats[];
   showOnlyMatchPercentage?: boolean;
   onShowOnlyMatchPercentageChange?: (showOnlyMatchPercentage: boolean) => void;
-  onRemoveLastPlayer?: () => void;
-  addNewPlayer?: () => void;
 };
 
 export default function MatchDetailsTable({
-  match,
-  playersWithStats,
   isEditable = false,
-  onUpdatePlayerGoals,
-  onUpdatePlayer,
-  isPlayerAvailable,
-  currentTeamPercentages,
-  untilMatchTeamPercentages,
-  playersWithStatsUntilMatchNumber,
   showOnlyMatchPercentage = false,
   onShowOnlyMatchPercentageChange,
-  onRemoveLastPlayer,
-  addNewPlayer,
 }: MatchDetailsTableProps) {
+  const { draftMatch, removeLastPlayer, addNewPlayer } = useDraftMatch();
+  const {
+    playersWithStats,
+    currentTeamPercentages,
+    untilMatchTeamPercentages,
+  } = useMatchWithStats();
+
   const [columnVisibility, setColumnVisibility] = useState({
     goals: true,
     percentage: true,
   });
 
-  const mostVotedPlayersIds = match ? getMostVotedPlayersOfTheMatch(match) : [];
+  const mostVotedPlayersIds = draftMatch
+    ? getMostVotedPlayersOfTheMatch(draftMatch)
+    : [];
 
   return (
     <div>
       <div className="flex justify-start mb-2 sm:mb-4 mt-2 sm:mt-4">
-        {match && (
+        {draftMatch && (
           <MatchConfiguration
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
             showOnlyMatchPercentage={showOnlyMatchPercentage}
             onShowOnlyMatchPercentageChange={onShowOnlyMatchPercentageChange}
-            matchNumber={match.matchNumber}
+            matchNumber={draftMatch.matchNumber}
           />
         )}
       </div>
@@ -153,18 +134,18 @@ export default function MatchDetailsTable({
             </tr>
           </thead>
           <tbody>
-            {match &&
+            {draftMatch &&
               Array.from({
                 length: Math.max(
-                  match.oscuras.players.length,
-                  match.claras.players.length
+                  draftMatch.oscuras.players.length,
+                  draftMatch.claras.players.length
                 ),
               }).map((_, index) => {
                 const isLastRow =
                   index ===
                   Math.max(
-                    match.oscuras.players.length,
-                    match.claras.players.length
+                    draftMatch.oscuras.players.length,
+                    draftMatch.claras.players.length
                   ) -
                     1;
 
@@ -173,40 +154,24 @@ export default function MatchDetailsTable({
                     <TeamColumn
                       team="oscuras"
                       index={index}
-                      match={match}
                       isEditable={isEditable}
-                      onUpdatePlayerGoals={onUpdatePlayerGoals}
-                      onUpdatePlayer={onUpdatePlayer}
-                      playersWithStats={playersWithStats}
-                      isPlayerAvailable={isPlayerAvailable}
                       mostVotedPlayersIds={mostVotedPlayersIds}
-                      playersWithStatsUntilMatchNumber={
-                        playersWithStatsUntilMatchNumber
-                      }
                       showOnlyMatchPercentage={showOnlyMatchPercentage}
                       columnVisibility={columnVisibility}
                     />
                     <TeamColumn
                       team="claras"
                       index={index}
-                      match={match}
                       isEditable={isEditable}
-                      onUpdatePlayerGoals={onUpdatePlayerGoals}
-                      onUpdatePlayer={onUpdatePlayer}
-                      playersWithStats={playersWithStats}
-                      isPlayerAvailable={isPlayerAvailable}
                       mostVotedPlayersIds={mostVotedPlayersIds}
-                      playersWithStatsUntilMatchNumber={
-                        playersWithStatsUntilMatchNumber
-                      }
                       showOnlyMatchPercentage={showOnlyMatchPercentage}
                       columnVisibility={columnVisibility}
                     />
 
-                    {isLastRow && isEditable && onRemoveLastPlayer && (
+                    {isLastRow && isEditable && (
                       <td className="px-2 py-2 text-center">
                         <button
-                          onClick={onRemoveLastPlayer}
+                          onClick={removeLastPlayer}
                           className="p-1 bg-red-500 hover:bg-red-700 text-white rounded-full"
                           title="Eliminar última fila"
                         >
