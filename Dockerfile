@@ -20,6 +20,10 @@ RUN pnpm install
 
 FROM base AS builder
 
+ARG MONGODB_URI
+
+ENV MONGODB_URI=${MONGODB_URI}
+
 WORKDIR /app
 
 RUN npm install -g pnpm
