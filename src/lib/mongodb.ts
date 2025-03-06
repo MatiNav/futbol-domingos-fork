@@ -1,10 +1,15 @@
 import { MongoClient } from "mongodb";
 
-if (!process.env.MONGODB_URI) {
+// Only throw if we're in a runtime context (not during build)
+const isBuildPhase =
+  process.env.NODE_ENV === "production" &&
+  process.env.NEXT_PHASE === "phase-production-build";
+
+if (!isBuildPhase && !process.env.MONGODB_URI) {
   throw new Error("Please add your Mongo URI to .env.local");
 }
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI || "";
 console.log("MongoDB URI exists:", !!uri); // Debug log (don't log the actual URI)
 
 let client: MongoClient;
