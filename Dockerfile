@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN npm ci
+RUN pnpm ci
 
 FROM base AS builder
 
@@ -20,7 +20,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
+RUN pnpm run build
 
 FROM base AS runner
 
@@ -46,5 +46,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
 
