@@ -24,7 +24,6 @@ ENV TEST2=${TEST2}
 RUN echo "MONGODB_URI: ${MONGODB_URI}"
 
 RUN echo "TEST: ${TEST}"
-RUN echo "TEST: ${TEST}"
 
 RUN echo "TEST2: ${TEST2}"
 
