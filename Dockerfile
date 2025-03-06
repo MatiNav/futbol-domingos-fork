@@ -16,6 +16,8 @@ FROM base AS builder
 
 WORKDIR /app
 
+RUN pnpm install
+
 COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
@@ -29,6 +31,8 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+
+RUN pnpm install
 
 RUN addgroup --system --gid 1001 nodejs
 
