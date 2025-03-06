@@ -6,6 +6,10 @@ FROM base AS deps
 
 RUN apk add --no-cache libc6-compat
 
+ARG MONGODB_URI
+
+ENV MONGODB_URI=${MONGODB_URI}
+
 WORKDIR /app
 
 RUN npm install -g pnpm
