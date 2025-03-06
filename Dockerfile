@@ -22,7 +22,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN pnpm run build
+RUN next build
 
 FROM base AS runner
 
@@ -48,5 +48,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]
 
