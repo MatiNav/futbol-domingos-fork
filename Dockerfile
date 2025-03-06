@@ -1,26 +1,5 @@
 FROM node:18-alpine AS base
 
-FROM base AS deps
-
-RUN apk add --no-cache libc6-compat
-
-WORKDIR /app
-
-RUN npm install -g pnpm
-
-COPY package.json ./
-
-RUN pnpm install
-
-FROM base AS builder
-
-WORKDIR /app
-
-RUN npm install -g pnpm
-
-COPY --from=deps /app/node_modules ./node_modules
-
-COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -48,6 +27,56 @@ RUN echo "TEST: ${TEST}"
 RUN echo "TEST: ${TEST}"
 
 RUN echo "TEST2: ${TEST2}"
+
+FROM base AS deps
+
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY package.json ./
+
+RUN pnpm install
+
+FROM base AS builder
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+ARG MONGODB_URI
+
+ARG RANDOM
+
+ARG DB_HOST
+
+ARG TEST
+
+ARG TEST2
+
+ENV MONGODB_URI=${MONGODB_URI}
+
+ENV RANDOM=${RANDOM}
+
+ENV TEST=${TEST}
+
+ENV TEST2=${TEST2}
+
+RUN echo "MONGODB_URI: ${MONGODB_URI}"
+
+RUN echo "TEST: ${TEST}"
+RUN echo "TEST: ${TEST}"
+
+RUN echo "TEST2: ${TEST2}"
+
+COPY --from=deps /app/node_modules ./node_modules
+
+COPY . .
 
 RUN pnpm run build
 
