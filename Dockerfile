@@ -36,6 +36,8 @@ RUN echo "MONGODB_URI: ${MONGODB_URI}"
 
 RUN echo "RANDOM: ${RANDOM}"
 
+RUN echo "NODE_ENV: ${NODE_ENV}"
+
 RUN pnpm run build
 
 FROM base AS runner
