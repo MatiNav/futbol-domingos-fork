@@ -70,5 +70,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["next", "start"]
+CMD ["npm", "start"]
 
