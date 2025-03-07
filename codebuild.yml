@@ -16,7 +16,7 @@ steps:
       - GCP_CLIENT_EMAIL=$_GCP_CLIENT_EMAIL
       - "--build-arg"
       - GCP_PRIVATE_KEY=$_GCP_PRIVATE_KEY
-      - "."
+      - .
     id: Build
   - name: gcr.io/cloud-builders/docker
     args:
