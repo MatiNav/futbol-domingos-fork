@@ -3,6 +3,7 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from "@/app/utils/server/errors";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import { NextRequest, NextResponse } from "next/server";
 
 export type RouteHandlerContext = {
@@ -19,6 +20,9 @@ export function withErrorHandler(handler: HandlerFunction) {
     try {
       return await handler(request, context);
     } catch (error) {
+      if (isDynamicServerError(error)) {
+        throw error;
+      }
       console.error("API Error:", error);
 
       const errorMessage =
