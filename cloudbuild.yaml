@@ -24,6 +24,14 @@ steps:
       - REDIS_PASSWORD=$_REDIS_PASSWORD
       - "--build-arg"
       - REDIS_USERNAME=$_REDIS_USERNAME
+      - "--build-arg"
+      - PUSHER_APP_ID=$_PUSHER_APP_ID
+      - "--build-arg"
+      - PUSHER_KEY=$_PUSHER_KEY
+      - "--build-arg"
+      - PUSHER_SECRET=$_PUSHER_SECRET
+      - "--build-arg"
+      - PUSHER_CLUSTER=$_PUSHER_CLUSTER
       - "."
     id: Build
   - name: gcr.io/cloud-builders/docker
