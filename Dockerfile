@@ -38,23 +38,19 @@ RUN echo "MONGODB_URI: ${MONGODB_URI}"
 
 WORKDIR /app
 
-RUN npm install -g pnpm
-
 ENV NEXT_TELEMETRY_DISABLED 1
 
 COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
-RUN pnpm run build
+RUN npm run build
 
 FROM base AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV production
-
-RUN npm install -g pnpm
 
 RUN addgroup --system --gid 1001 nodejs
 
@@ -74,5 +70,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["pnpm", "start"]
+CMD ["next", "start"]
 
