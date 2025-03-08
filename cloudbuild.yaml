@@ -32,6 +32,10 @@ steps:
       - PUSHER_SECRET=$_PUSHER_SECRET
       - "--build-arg"
       - PUSHER_CLUSTER=$_PUSHER_CLUSTER
+      - "--build-arg"
+      - NEXT_PUBLIC_PUSHER_KEY=$_NEXT_PUBLIC_PUSHER_KEY
+      - "--build-arg"
+      - NEXT_PUBLIC_PUSHER_APP_ID=$_NEXT_PUBLIC_PUSHER_APP_ID
       - "."
     id: Build
   - name: gcr.io/cloud-builders/docker
