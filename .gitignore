@@ -41,3 +41,10 @@ pnpm-debug.log*
 .next/
 
 .DS_Store
+
+# Terraform
+## Ignore the infrastructure folder for now
+infrastructure/
+
+terraform.tfvars
+terraform.tfvars.json
