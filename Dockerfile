@@ -78,9 +78,6 @@ COPY --from=builder /app/package.json ./package.json
 
 COPY --from=builder /app/next.config.mjs ./
 
-## TODO: Remove this
-COPY --from=builder /app/next.config.js ./  
-
 USER nextjs
 
 EXPOSE 3000
