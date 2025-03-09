@@ -43,8 +43,13 @@ pnpm-debug.log*
 .DS_Store
 
 # Terraform
-## Ignore the infrastructure folder for now
-infrastructure/
 
+# Terraform
 terraform.tfvars
 terraform.tfvars.json
+.terraform/
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
