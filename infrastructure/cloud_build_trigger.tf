@@ -11,7 +11,7 @@ resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
   }
 
   substitutions = {
-    _SERVICE_NAME = "futbol-domingos-nextjs-cloud-run-service"
+    _SERVICE_NAME = "futbol-domingos"
     _PROJECT_ID = var.project_id
     _REGION = var.region
     _SERVICE_ACCOUNT = var.service_account

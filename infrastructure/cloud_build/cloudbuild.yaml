@@ -79,7 +79,7 @@ options:
 substitutions:
   _TRIGGER_ID: cb3f172b-1064-4e29-a443-bef607389d6b
   _PLATFORM: managed
-  _SERVICE_NAME: futbol-domingos-nextjs-cloud-run-service
+  _SERVICE_NAME: futbol-domingos
   _DEPLOY_REGION: us-central1
   _AR_HOSTNAME: us-central1-docker.pkg.dev
   _AR_REPOSITORY: cloud-run-source-deploy
