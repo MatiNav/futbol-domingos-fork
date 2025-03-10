@@ -6,6 +6,9 @@ steps:
       - "-t"
       - >-
         $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - "-t"
+      - >-
+        $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest
       - "-f"
       - infrastructure/cloud_build/Dockerfile
       - "--build-arg"
@@ -44,6 +47,12 @@ steps:
       - >-
         $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
     id: Push
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest
+    id: PushLatest
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     args:
       - run
@@ -62,13 +71,15 @@ steps:
 images:
   - >-
     $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+  - >-
+    $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
 substitutions:
   _TRIGGER_ID: cb3f172b-1064-4e29-a443-bef607389d6b
   _PLATFORM: managed
-  _SERVICE_NAME: futbol-domingos
+  _SERVICE_NAME: futbol-domingos-nextjs-cloud-run-service
   _DEPLOY_REGION: us-central1
   _AR_HOSTNAME: us-central1-docker.pkg.dev
   _AR_REPOSITORY: cloud-run-source-deploy
