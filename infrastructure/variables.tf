@@ -13,7 +13,10 @@ variable "region" {
 variable "service_account" {
   type = string
   description = "The service account to use for the GCP project"
-  default = "66313292942-compute@developer.gserviceaccount.com"
 }
 
-
+variable "cloud_service_name" {
+  type = string
+  description = "The name of the Cloud Run service"
+  default = "futbol-domingos-2"
+}

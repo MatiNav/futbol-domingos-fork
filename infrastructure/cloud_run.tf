@@ -1,9 +1,4 @@
 
-# variable "cloud_run_service_name" {
-#   type = string
-#   description = "The name of the Cloud Run service"
-#   default = "futbol-domingos-nextjs-cloud-run-service"
-# }
 
 # resource "google_cloud_run_service" "futbol-domingos-\nextjs-cloud-run-service" {
 #   name     = var.cloud_run_service_name

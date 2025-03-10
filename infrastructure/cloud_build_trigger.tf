@@ -1,6 +1,6 @@
 resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
-  name        = "futbol-domingos-nextjs-cloud-build-trigger"
-  description = "Build and deploy to Cloud Run service futbol-domingos on push to 'main'"
+  name        = var.cloud_service_name
+  description = "Build and deploy to Cloud Run service ${var.cloud_service_name} on push to 'main'"
 
   github {
     owner = "MatiNav"  # GitHub Username or Organization
@@ -11,7 +11,7 @@ resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
   }
 
   substitutions = {
-    _SERVICE_NAME = "futbol-domingos"
+    _SERVICE_NAME = var.cloud_service_name
     _PROJECT_ID = var.project_id
     _REGION = var.region
     _SERVICE_ACCOUNT = var.service_account
@@ -39,7 +39,7 @@ resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
   tags = [
     "gcp-cloud-build-deploy-cloud-run",
     "gcp-cloud-build-deploy-cloud-run-managed",
-    "futbol-domingos"
+    var.cloud_service_name
   ]
 
   service_account = "projects/${var.project_id}/serviceAccounts/${var.service_account}"
