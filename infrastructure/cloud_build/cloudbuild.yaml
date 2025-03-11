@@ -16,12 +16,20 @@ steps:
           var_name="${line%%=*}"
           substitution_expr="${line#*=}"
           
-          # Evaluate the substitution expression directly
-          # This converts $_MONGODB_URI to the actual value
-          eval "echo \"$var_name=$substitution_expr\"" >> .env
+          echo "DEBUG: Processing $var_name with expression $substitution_expr"
           
-          # Add debug info (without showing values)
-          echo "Added $var_name to .env file"
+          # Try direct substitution first (will show in logs, be careful!)
+          direct_value=$(eval "echo $substitution_expr")
+          echo "DEBUG: Direct value for $var_name starts with: ${direct_value:0:3}..."
+          value_length=${#direct_value}
+          echo "DEBUG: Value length for $var_name: $value_length chars"
+          
+          # Add to .env file
+          echo "$var_name=$direct_value" >> .env
+          
+          # Verify file was written correctly
+          grep "^$var_name=" .env || echo "ERROR: Failed to write $var_name to .env"
+
         done < infrastructure/cloud_build/secrets_name.txt
 
         echo "Created .env file with $(grep -c '=' .env) environment variables"
