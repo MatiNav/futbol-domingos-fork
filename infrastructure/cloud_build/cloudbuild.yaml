@@ -1,4 +1,33 @@
 steps:
+  - name: bash
+    id: CreateEnvFile
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        # Start with empty .env file
+        > .env
+
+        # Read each line from secrets_name.txt and add to .env file
+        while read -r secret_name; do
+          # Skip empty lines or comments
+          [[ -z "$secret_name" || "$secret_name" =~ ^# ]] && continue
+          
+          # Convert the secret name to the Cloud Build substitution variable format
+          # For example, MONGODB_URI becomes $_MONGODB_URI
+          substitution_var="_$secret_name"
+          
+          # Access the value using indirect reference
+          eval "value=\$${substitution_var}"
+          
+          # Add to .env file
+          echo "$secret_name=$value" >> .env
+          
+          # Optional: Add debug info (won't show actual values)
+          echo "Added $secret_name to .env file"
+             done < infrastructure/cloud_build/secrets_name.txt
+
+        echo "Created .env file with $(grep -c '=' .env) environment variables"
   - name: gcr.io/cloud-builders/docker
     args:
       - build
@@ -11,34 +40,6 @@ steps:
         $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest
       - "-f"
       - infrastructure/cloud_build/Dockerfile
-      - "--build-arg"
-      - MONGODB_URI=$_MONGODB_URI
-      - "--build-arg"
-      - GCP_PROJECT_ID=$_GCP_PROJECT_ID
-      - "--build-arg"
-      - GCP_CLIENT_EMAIL=$_GCP_CLIENT_EMAIL
-      - "--build-arg"
-      - GCP_PRIVATE_KEY=$_GCP_PRIVATE_KEY
-      - "--build-arg"
-      - REDIS_HOST=$_REDIS_HOST
-      - "--build-arg"
-      - REDIS_PORT=$_REDIS_PORT
-      - "--build-arg"
-      - REDIS_PASSWORD=$_REDIS_PASSWORD
-      - "--build-arg"
-      - REDIS_USERNAME=$_REDIS_USERNAME
-      - "--build-arg"
-      - PUSHER_APP_ID=$_PUSHER_APP_ID
-      - "--build-arg"
-      - PUSHER_KEY=$_PUSHER_KEY
-      - "--build-arg"
-      - PUSHER_SECRET=$_PUSHER_SECRET
-      - "--build-arg"
-      - PUSHER_CLUSTER=$_PUSHER_CLUSTER
-      - "--build-arg"
-      - NEXT_PUBLIC_PUSHER_KEY=$_NEXT_PUBLIC_PUSHER_KEY
-      - "--build-arg"
-      - NEXT_PUBLIC_PUSHER_APP_ID=$_NEXT_PUBLIC_PUSHER_APP_ID
       - "."
     id: Build
   - name: gcr.io/cloud-builders/docker
