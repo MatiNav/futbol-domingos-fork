@@ -7,27 +7,30 @@ steps:
       - |
         # Start with empty .env file
         > .env
-
-        # Read each line from secrets_name.txt and add to .env file
-        while read -r secret_name; do
+        # Process each line from secrets_name.txt
+        while read -r line; do
           # Skip empty lines or comments
-          [[ -z "$secret_name" || "$secret_name" =~ ^# ]] && continue
+          [[ -z "$line" || "$line" =~ ^# ]] && continue
           
-          # Convert the secret name to the Cloud Build substitution variable format
-          # For example, MONGODB_URI becomes $_MONGODB_URI
-          substitution_var="_$secret_name"
+          # Extract variable name and substitution expression
+          var_name="${line%%=*}"
+          substitution_expr="${line#*=}"
           
-          # Access the value using indirect reference
-          eval "value=\$${substitution_var}"
+          # Evaluate the substitution expression directly
+          # This converts $_MONGODB_URI to the actual value
+          eval "echo \"$var_name=$substitution_expr\"" >> .env
           
-          # Add to .env file
-          echo "$secret_name=$value" >> .env
-          
-          # Optional: Add debug info (won't show actual values)
-          echo "Added $secret_name to .env file"
-             done < infrastructure/cloud_build/secrets_name.txt
+          # Add debug info (without showing values)
+          echo "Added $var_name to .env file"
+        done < infrastructure/cloud_build/secrets_name.txt
 
         echo "Created .env file with $(grep -c '=' .env) environment variables"
+
+        # Optionally verify the first line without showing full value
+        first_line=$(head -n 1 .env)
+        var_name=${first_line%%=*}
+        var_value=${first_line#*=}
+        echo "First variable: $var_name=${var_value:0:3}..." # Shows only first 3 chars
   - name: gcr.io/cloud-builders/docker
     args:
       - build
