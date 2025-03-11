@@ -1,55 +1,34 @@
 steps:
   - name: bash
-    id: CreateEnvFile
+    id: BuildWithSecrets
     entrypoint: bash
     args:
       - -c
       - |
-        # Start with empty .env file
-        > .env
-        # Process each line from secrets_name.txt
+        # Start building the Docker command
+        docker_cmd="docker build --no-cache"
+        docker_cmd+=" -t $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"
+        docker_cmd+=" -t $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:latest"
+
+        # Add build args from secrets_name.txt
         while read -r line; do
           # Skip empty lines or comments
           [[ -z "$line" || "$line" =~ ^# ]] && continue
           
-          # Extract variable name and substitution expression
+          # Extract variable name
           var_name="${line%%=*}"
-          substitution_expr="${line#*=}"
           
-          echo "DEBUG: Processing $var_name with expression $substitution_expr"
-          
-          # Try direct substitution first (will show in logs, be careful!)
-          direct_value=$(eval "echo $substitution_expr")
-          echo "DEBUG: Direct value for $var_name starts with: ${direct_value:0:3}..."
-          value_length=${#direct_value}
-          echo "DEBUG: Value length for $var_name: $value_length chars"
-          
-          # Add to .env file
-          echo "$var_name=$direct_value" >> .env
-          
-          # Verify file was written correctly
-          grep "^$var_name=" .env || echo "ERROR: Failed to write $var_name to .env"
-
+          # Add as build arg (the substitution happens in the Docker command itself)
+          docker_cmd+=" --build-arg $var_name=\$_$var_name"
+          echo "Adding build arg: $var_name"
         done < infrastructure/cloud_build/secrets_name.txt
 
-        echo "Created .env file with $(grep -c '=' .env) environment variables"
+        # Add final arguments
+        docker_cmd+=" -f infrastructure/cloud_build/Dockerfile ."
 
-        # Optionally verify the first line without showing full value
-        first_line=$(head -n 1 .env)
-        var_name=${first_line%%=*}
-        var_value=${first_line#*=}
-        echo "First variable: $var_name=${var_value:0:3}..." # Shows only first 3 chars
-
-
-        # Get first line and show first 3 characters properly
-        first_line=$(head -n 1 .env)
-        var_name=${first_line%%=*}
-        var_value=${first_line#*=}
-
-        # Make sure we're using the correct bash substring syntax
-        prefix="${var_value:0:3}"
-        echo "First variable: $var_name=$prefix..."
-
+        # Execute the Docker command
+        echo "Executing: $docker_cmd"
+        eval $docker_cmd
   - name: gcr.io/cloud-builders/docker
     args:
       - build
