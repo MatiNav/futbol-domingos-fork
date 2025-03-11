@@ -31,6 +31,17 @@ steps:
         var_name=${first_line%%=*}
         var_value=${first_line#*=}
         echo "First variable: $var_name=${var_value:0:3}..." # Shows only first 3 chars
+
+
+        # Get first line and show first 3 characters properly
+        first_line=$(head -n 1 .env)
+        var_name=${first_line%%=*}
+        var_value=${first_line#*=}
+
+        # Make sure we're using the correct bash substring syntax
+        prefix="${var_value:0:3}"
+        echo "First variable: $var_name=$prefix..."
+
   - name: gcr.io/cloud-builders/docker
     args:
       - build
