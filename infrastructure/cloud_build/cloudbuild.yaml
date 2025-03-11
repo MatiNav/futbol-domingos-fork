@@ -15,11 +15,11 @@ steps:
           # Skip empty lines or comments
           [[ -z "$line" || "$line" =~ ^# ]] && continue
           
-          # Extract variable name
-          var_name="${line%%=*}"
+          # Extract variable name (no need to process any expression)
+          var_name="$line"
           
-          # Add as build arg (the substitution happens in the Docker command itself)
-          docker_cmd+=" --build-arg $var_name=\$_$var_name"
+          # Add as build arg with correct Cloud Build substitution variable format
+          docker_cmd+=" --build-arg ${var_name}=\$_${var_name}"
           echo "Adding build arg: $var_name"
         done < infrastructure/cloud_build/secrets_name.txt
 
@@ -27,7 +27,7 @@ steps:
         docker_cmd+=" -f infrastructure/cloud_build/Dockerfile ."
 
         # Execute the Docker command
-        echo "Executing: $docker_cmd"
+        echo "Executing Docker build with args (values hidden)"
         eval $docker_cmd
   - name: gcr.io/cloud-builders/docker
     args:
