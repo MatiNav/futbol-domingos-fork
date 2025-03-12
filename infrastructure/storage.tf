@@ -1,8 +1,7 @@
 
 
 locals {
-  description = "The URL of the app"
-  app_url     = "https://${var.cloud_service_name}-${var.service_account_number}.${var.region}.run.app"
+  app_url = "https://${var.cloud_service_name}-${var.service_account_number}.${var.region}.run.app"
 }
 
 
