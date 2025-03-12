@@ -51,6 +51,8 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
+RUN npm run build
+
 FROM base AS runner
 
 WORKDIR /app
