@@ -9,8 +9,8 @@ export async function GET(request: NextRequest) {
     // Verify secret from Authorization header
     const secret = request.headers.get("Authorization");
 
-    // Replace with process.env.AUTH0_ACTION_SECRET
-    if (secret !== "your-secure-random-string") {
+    //replace with process.env.AUTH0_ACTION_SECRET
+    if (secret !== process.env.AUTH0_ACTION_SECRET) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
