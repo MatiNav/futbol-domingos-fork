@@ -12,6 +12,9 @@ VAR_NAME=$1
 VALUE=$2
 IS_SECRET=${3:-false}
 
+# Save the list of terraform files before any changes
+git ls-files --modified 'infrastructure/*.tf' > /tmp/pre_modified_files.txt 2>/dev/null || touch /tmp/pre_modified_files.txt
+
 echo "Adding $VAR_NAME with value '$VALUE' to infrastructure files..."
 
 # 1. Add to terraform.tfvars.tf (create if it doesn't exist)
@@ -155,6 +158,69 @@ if [ -n "$RUNNER_ARG_LINE" ]; then
     fi
 fi
 
+# Check which terraform files were modified
+git ls-files --modified 'infrastructure/*.tf' > /tmp/post_modified_files.txt 2>/dev/null || touch /tmp/post_modified_files.txt
+
+# Check if only our terraform modifications exist
+ONLY_ENV_VAR_CHANGES=true
+
+# Check if any other .tf files were already modified before we ran this script
+if [ -s /tmp/pre_modified_files.txt ]; then
+    ONLY_ENV_VAR_CHANGES=false
+    echo "⚠️ There were already terraform files modified before adding this variable."
+fi
+
+# Check if our diff contains only the env var addition
+if [ "$ONLY_ENV_VAR_CHANGES" = true ]; then
+    while read -r file; do
+        # Get diff for this file
+        git diff "$file" | grep -v "^[+-]variable \"$VAR_NAME\"" | grep -v "^[+-]  description" | grep -v "^[+-]  type" | \
+        grep -v "^[+-]  sensitive" | grep -v "^[+-]  default" | grep -v "^[+-]}" | grep -v "^[+-]$" | \
+        grep -v "^[+-]    _$VAR_NAME = var.$VAR_NAME" | grep -E "^\+|^-" > /tmp/other_changes.txt
+        
+        if [ -s /tmp/other_changes.txt ]; then
+            ONLY_ENV_VAR_CHANGES=false
+            echo "⚠️ Found other changes in $file besides adding $VAR_NAME"
+            break
+        fi
+    done < /tmp/post_modified_files.txt
+fi
+
+# Auto-apply if only env var changes
+if [ "$ONLY_ENV_VAR_CHANGES" = true ]; then
+    echo ""
+    echo "🔍 Only detected changes related to adding $VAR_NAME"
+    echo "💡 Automatically applying Terraform changes..."
+    
+    # Change to infrastructure directory
+    cd infrastructure || exit
+    
+    # Check if terraform needs initialization
+    if [ ! -d ".terraform" ]; then
+        echo "🔧 Running terraform init..."
+        terraform init
+    fi
+    
+    echo "🔧 Running terraform apply..."
+    terraform apply -auto-approve
+    
+    if [ $? -eq 0 ]; then
+        echo "✅ Terraform changes applied successfully!"
+        cd ..
+    else
+        echo "❌ Terraform apply failed! Please check the errors above."
+        cd ..
+        exit 1
+    fi
+else
+    echo ""
+    echo "⚙️ Detected other terraform changes - skipping auto-apply"
+    echo "👉 You should manually review and apply changes:"
+    echo "  cd infrastructure"
+    echo "  terraform plan    # Review changes"
+    echo "  terraform apply   # Apply changes"
+fi
+
 # Enhanced ending message with cool formatting
 echo ""
 echo "✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨"
@@ -167,16 +233,21 @@ echo "  📄 cloud_build_trigger.tf"
 echo "  📄 cloudbuild.yaml"
 echo "  📄 Dockerfile (both builder and runner stages)"
 echo ""
-echo "🔍 Next steps:"
-echo "  1. Review changes in cloud_build_trigger.tf:"
-echo "     git diff infrastructure/cloud_build_trigger.tf"
-echo ""
-echo "  2. If everything looks good, apply your Terraform changes:"
-echo "     cd infrastructure"
-echo "     terraform init    # Only if you haven't initialized before"
-echo "     terraform plan    # Review the planned changes"
-echo "     terraform apply   # Apply the changes to your infrastructure"
-echo ""
+
+# Only show next steps if we didn't auto-apply
+if [ "$ONLY_ENV_VAR_CHANGES" = false ]; then
+    echo "🔍 Next steps:"
+    echo "  1. Review changes in cloud_build_trigger.tf:"
+    echo "     git diff infrastructure/cloud_build_trigger.tf"
+    echo ""
+    echo "  2. If everything looks good, apply your Terraform changes:"
+    echo "     cd infrastructure"
+    echo "     terraform init    # Only if you haven't initialized before"
+    echo "     terraform plan    # Review the planned changes"
+    echo "     terraform apply   # Apply the changes to your infrastructure"
+    echo ""
+fi
+
 echo "  3. Commit and push your changes to trigger a new build"
 echo ""
 echo "✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨" 

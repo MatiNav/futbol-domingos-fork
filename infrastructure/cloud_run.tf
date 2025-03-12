@@ -1,10 +1,10 @@
-
-
 resource "google_cloud_run_service" "futbol-domingos-2" {
 
   lifecycle {
     ignore_changes = [
       template[0].spec[0].containers[0].image,
+      template[0].metadata[0].annotations["run.googleapis.com/client-name"],
+      template[0].metadata[0].annotations["run.googleapis.com/client-version"],
     ]
   }
 
