@@ -49,6 +49,8 @@ steps:
       - "AUTH0_CLIENT_SECRET=$_AUTH0_CLIENT_SECRET"
       - "--build-arg"
       - "AUTH0_DOMAIN=$_AUTH0_DOMAIN"
+      - "--build-arg"
+      - "AUTH0_ACTION_SECRET=$_AUTH0_ACTION_SECRET"
       - "-f"
       - infrastructure/cloud_build/Dockerfile
       - "."
