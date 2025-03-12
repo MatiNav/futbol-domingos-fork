@@ -11,6 +11,7 @@ resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
   }
 
   substitutions = {
+    _VAR_NAME = var.VAR_NAME
     _SERVICE_NAME               = var.cloud_service_name
     _PROJECT_ID                 = var.project_id
     _REGION                     = var.region

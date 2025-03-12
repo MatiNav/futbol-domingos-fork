@@ -50,10 +50,12 @@ if [ -n "$LAST_BUILD_ARG" ]; then
     NEXT_LINE=$((LAST_BUILD_ARG + 2))
     # macOS-compatible sed command - need to create a temporary file
     awk -v line="$NEXT_LINE" -v var="$VAR_NAME" '{
-        print;
-        if (NR == line-1) {
+        if (NR == line) {
             print "      - \"--build-arg\"";
             print "      - \"" var "=${_" var "}\"";
+            print $0;
+        } else {
+            print;
         }
     }' infrastructure/cloud_build/cloudbuild.yaml > /tmp/cloudbuild.yaml.tmp
     mv /tmp/cloudbuild.yaml.tmp infrastructure/cloud_build/cloudbuild.yaml
@@ -63,69 +65,76 @@ else
 fi
 
 # 4. Add to Dockerfile
-# a. Add to builder stage
-BUILDER_ARG_LINE=$(grep -n "ARG AUTH0_ACTION_SECRET" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
+# Add to builder stage
+BUILDER_ARG_LINE=$(grep -n "ARG AUTH0_" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
 if [ -n "$BUILDER_ARG_LINE" ]; then
-    NEXT_LINE=$((BUILDER_ARG_LINE + 1))
-    # macOS-compatible sed approach using awk
-    awk -v line="$NEXT_LINE" -v var="$VAR_NAME" '{
-        print;
-        if (NR == line-1) {
-            print "ARG " var;
-        }
-    }' infrastructure/cloud_build/Dockerfile > /tmp/Dockerfile.tmp
-    mv /tmp/Dockerfile.tmp infrastructure/cloud_build/Dockerfile
-    echo "✅ Added ARG to builder stage in Dockerfile"
-else
-    echo "❌ Failed to find builder ARG position in Dockerfile"
-fi
-
-# b. Add to builder ENV section
-BUILDER_ENV_LINE=$(grep -n "ENV MONGODB_URI" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
-if [ -n "$BUILDER_ENV_LINE" ]; then
-    # Find where the environment block ends
-    LAST_ENV_LINE=$(grep -n "AUTH0_ACTION_SECRET=\${AUTH0_ACTION_SECRET}" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
-    if [ -n "$LAST_ENV_LINE" ]; then
-        # macOS-compatible approach using awk
-        awk -v line="$LAST_ENV_LINE" -v var="$VAR_NAME" '{
+    LAST_BUILDER_ARG_LINE=$(grep -n "ARG AUTH0_BASE_URL" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
+    if [ -n "$LAST_BUILDER_ARG_LINE" ]; then
+        # macOS-compatible approach
+        NEXT_LINE=$((LAST_BUILDER_ARG_LINE + 1))
+        awk -v line="$NEXT_LINE" -v var="$VAR_NAME" '{
             if (NR == line) {
-                print "    " var "=${" var "} \\";
+                print "ARG " var;
                 print $0;
             } else {
                 print;
             }
         }' infrastructure/cloud_build/Dockerfile > /tmp/Dockerfile.tmp
         mv /tmp/Dockerfile.tmp infrastructure/cloud_build/Dockerfile
-        echo "✅ Added ENV to builder stage in Dockerfile"
+        echo "✅ Added ARG to builder stage in Dockerfile"
     else
-        echo "❌ Failed to find ENV block end in Dockerfile"
+        echo "❌ Failed to find builder ARG block end in Dockerfile"
+    fi
+
+    BUILDER_ENV_LINE=$(grep -n "ENV MONGODB_URI" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
+    if [ -n "$BUILDER_ENV_LINE" ]; then
+        LAST_BUILDER_ENV_LINE=$(grep -n "AUTH0_BASE_URL=\${AUTH0_BASE_URL}" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
+        if [ -n "$LAST_BUILDER_ENV_LINE" ]; then
+            # macOS-compatible approach
+            awk -v line="$LAST_BUILDER_ENV_LINE" -v var="$VAR_NAME" '{
+                if (NR == line) {
+                    print "    " var "=${" var "} \\";
+                    print $0;
+                } else {
+                    print;
+                }
+            }' infrastructure/cloud_build/Dockerfile > /tmp/Dockerfile.tmp
+            mv /tmp/Dockerfile.tmp infrastructure/cloud_build/Dockerfile
+            echo "✅ Added ENV to builder stage in Dockerfile"
+        else
+            echo "❌ Failed to find builder ENV block end in Dockerfile"
+        fi
+    else
+        echo "❌ Failed to find builder ENV position in Dockerfile"
     fi
 else
-    echo "❌ Failed to find builder ENV position in Dockerfile"
+    echo "❌ Failed to find builder section in Dockerfile"
 fi
 
-# c. Add to runner stage for client-side vars, if needed
-# Check if this is a client-side variable (starts with NEXT_PUBLIC)
-if [[ "$VAR_NAME" == NEXT_PUBLIC_* ]]; then
-    RUNNER_ARG_LINE=$(grep -n "ARG AUTH0_ACTION_SECRET" infrastructure/cloud_build/Dockerfile | tail -1 | cut -d: -f1)
-    if [ -n "$RUNNER_ARG_LINE" ]; then
-        NEXT_LINE=$((RUNNER_ARG_LINE + 1))
+# Add to runner stage
+RUNNER_ARG_LINE=$(grep -n "ARG MONGODB_URI" infrastructure/cloud_build/Dockerfile | tail -1 | cut -d: -f1)
+if [ -n "$RUNNER_ARG_LINE" ]; then
+    LAST_RUNNER_ARG_LINE=$(grep -n "ARG AUTH0_BASE_URL" infrastructure/cloud_build/Dockerfile | tail -1 | cut -d: -f1)
+    if [ -n "$LAST_RUNNER_ARG_LINE" ]; then
         # macOS-compatible approach
+        NEXT_LINE=$((LAST_RUNNER_ARG_LINE + 1))
         awk -v line="$NEXT_LINE" -v var="$VAR_NAME" '{
-            print;
-            if (NR == line-1) {
+            if (NR == line) {
                 print "ARG " var;
+                print $0;
+            } else {
+                print;
             }
         }' infrastructure/cloud_build/Dockerfile > /tmp/Dockerfile.tmp
         mv /tmp/Dockerfile.tmp infrastructure/cloud_build/Dockerfile
         echo "✅ Added ARG to runner stage in Dockerfile"
     else
-        echo "❌ Failed to find runner ARG position in Dockerfile"
+        echo "❌ Failed to find runner ARG block end in Dockerfile"
     fi
 
-    RUNNER_ENV_LINE=$(grep -n "ENV AUTH0_SECRET" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
+    RUNNER_ENV_LINE=$(grep -n "ENV MONGODB_URI" infrastructure/cloud_build/Dockerfile | tail -1 | cut -d: -f1)
     if [ -n "$RUNNER_ENV_LINE" ]; then
-        LAST_RUNNER_ENV_LINE=$(grep -n "NEXT_PUBLIC_PUSHER_CLUSTER=\${NEXT_PUBLIC_PUSHER_CLUSTER}" infrastructure/cloud_build/Dockerfile | head -1 | cut -d: -f1)
+        LAST_RUNNER_ENV_LINE=$(grep -n "AUTH0_BASE_URL=\${AUTH0_BASE_URL}" infrastructure/cloud_build/Dockerfile | tail -1 | cut -d: -f1)
         if [ -n "$LAST_RUNNER_ENV_LINE" ]; then
             # macOS-compatible approach
             awk -v line="$LAST_RUNNER_ENV_LINE" -v var="$VAR_NAME" '{
@@ -156,7 +165,7 @@ echo "Variable '$VAR_NAME' has been added to:"
 echo "  📄 terraform.tfvars.tf"
 echo "  📄 cloud_build_trigger.tf"
 echo "  📄 cloudbuild.yaml"
-echo "  📄 Dockerfile"
+echo "  📄 Dockerfile (both builder and runner stages)"
 echo ""
 echo "🔍 Next steps:"
 echo "  1. Review changes in cloud_build_trigger.tf:"
