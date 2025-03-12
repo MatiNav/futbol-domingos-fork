@@ -3,17 +3,19 @@
 resource "google_cloud_run_service" "futbol-domingos-2" {
   name     = var.cloud_service_name
   location = var.region
-  
+
   template {
     spec {
       containers {
         image = "us-central1-docker.pkg.dev/${var.project_id}/cloud-run-source-deploy/${var.github_repo_name}/${var.cloud_service_name}:latest"
-        
+        ports {
+          container_port = 3000
+        }
         # Lower resource limits to stay within free tier
         resources {
           limits = {
             cpu    = "1"
-            memory = "512Mi"  # Minimal memory to stay in free tier
+            memory = "512Mi" # Minimal memory to stay in free tier
           }
         }
       }
@@ -22,10 +24,10 @@ resource "google_cloud_run_service" "futbol-domingos-2" {
     }
     metadata {
       annotations = {
-        "autoscaling.knative.dev/maxScale" = "5"  # Lower max instances
-        "autoscaling.knative.dev/minScale" = "0"  # Scale to zero when not in use
-        "run.googleapis.com/cpu-throttling" = "true"  # Request-based billing
-        "run.googleapis.com/startup-cpu-boost" = "true"  # Faster cold starts
+        "autoscaling.knative.dev/maxScale"     = "5"    # Lower max instances
+        "autoscaling.knative.dev/minScale"     = "0"    # Scale to zero when not in use
+        "run.googleapis.com/cpu-throttling"    = "true" # Request-based billing
+        "run.googleapis.com/startup-cpu-boost" = "true" # Faster cold starts
       }
     }
   }
