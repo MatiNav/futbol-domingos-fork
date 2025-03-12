@@ -34,3 +34,92 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment Variable Management Guide
+
+This README explains how to properly configure and manage environment variables throughout your application's infrastructure.
+
+## How to Add or Update an Environment Variable
+
+Follow these steps in order to properly add a new environment variable or update an existing one:
+
+### 1. Add Variable to `terraform.tfvars.tf`
+
+Define your variable in the Terraform variables file:
+
+```terraform
+variable "MY_NEW_VARIABLE" {
+  description = "Description of what this variable is used for"
+  type        = string
+  sensitive   = true  # Use for secrets that should be hidden
+  default     = "default_value" # Production value
+}
+```
+
+### 2. Add Substitution in Cloud Build Trigger
+
+Update the `cloud_build_trigger.tf` file to pass the variable to Cloud Build:
+
+```terraform:README.md
+resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
+  # ... existing code ...
+
+  substitutions = {
+    # ... existing substitutions ...
+    _MY_NEW_VARIABLE = var.MY_NEW_VARIABLE
+  }
+
+  # ... existing code ...
+}
+```
+
+### 3. Add Build Argument in `cloudbuild.yaml`
+
+Make the variable available during build by adding it to your Cloud Build configuration:
+
+```yaml
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      # ... existing args ...
+      - "--build-arg"
+      - "MY_NEW_VARIABLE=${_MY_NEW_VARIABLE}"
+      # ... existing args ...
+```
+
+### 4. Update Dockerfile
+
+Modify your Dockerfile to receive and use the environment variable:
+
+```dockerfile
+# In the builder stage if needed during build
+ARG MY_NEW_VARIABLE
+ENV MY_NEW_VARIABLE=${MY_NEW_VARIABLE}
+
+# ... existing code ...
+
+# In the runner stage if needed at runtime
+ARG MY_NEW_VARIABLE
+ENV MY_NEW_VARIABLE=${MY_NEW_VARIABLE}
+```
+
+### 5. Apply Terraform Changes
+
+Deploy your updated configuration:
+
+```bash
+terraform init  # Only needed first time or when providers change
+terraform plan  # Review changes
+terraform apply # Apply changes
+```
+
+### 6. Commit Your Changes
+
+This will trigger a new build and deploy
+
+## Security Considerations
+
+- Mark sensitive variables with `sensitive = true` in Terraform
+- The `terraform.tfvars.tf` file is not committed to the repository, so it is not visible to the public.
+- Never commit actual secrets to version control

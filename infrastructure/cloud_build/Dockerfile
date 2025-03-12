@@ -92,7 +92,9 @@ ENV AUTH0_SECRET=${AUTH0_SECRET} \
     NEXT_PUBLIC_PUSHER_KEY=${NEXT_PUBLIC_PUSHER_KEY} \
     NEXT_PUBLIC_PUSHER_CLUSTER=${NEXT_PUBLIC_PUSHER_CLUSTER}
 
-RUN addgroup --system --gid 1001 nodejs
+RUN echo "AUTH0_ACTION_SECRET: ${AUTH0_ACTION_SECRET}"
+
+    RUN addgroup --system --gid 1001 nodejs
 
 RUN adduser --system --uid 1001 nextjs
 
