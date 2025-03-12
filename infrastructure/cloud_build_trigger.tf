@@ -31,6 +31,7 @@ resource "google_cloudbuild_trigger" "nextjs_cloud_run_trigger" {
     _GCP_CLIENT_EMAIL           = var.GCP_CLIENT_EMAIL
     _GCP_PRIVATE_KEY            = var.GCP_PRIVATE_KEY
     _AUTH0_SECRET               = var.AUTH0_SECRET
+    _AUTH0_BASE_URL             = var.AUTH0_BASE_URL
     _AUTH0_ISSUER_BASE_URL      = var.AUTH0_ISSUER_BASE_URL
     _AUTH0_CLIENT_ID            = var.AUTH0_CLIENT_ID
     _AUTH0_CLIENT_SECRET        = var.AUTH0_CLIENT_SECRET
