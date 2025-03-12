@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Add environment variable to infrastructure files
-# Usage: ./add_env_var.sh VAR_NAME "Description of the variable" [is_secret]
+# Usage: ./add_env_var.sh VAR_NAME "ACTUAL_VALUE" [is_secret]
 
 if [ $# -lt 2 ]; then
-    echo "Usage: ./add_env_var.sh VAR_NAME \"Description of the variable\" [is_secret]"
+    echo "Usage: ./add_env_var.sh VAR_NAME \"ACTUAL_VALUE\" [is_secret]"
     exit 1
 fi
 
 VAR_NAME=$1
-DESCRIPTION=$2
+VALUE=$2
 IS_SECRET=${3:-false}
 
-echo "Adding $VAR_NAME to infrastructure files..."
+echo "Adding $VAR_NAME with value '$VALUE' to infrastructure files..."
 
 # 1. Add to terraform.tfvars.tf (create if it doesn't exist)
 if [ ! -f "infrastructure/terraform.tfvars.tf" ]; then
@@ -26,15 +26,15 @@ fi
 
 cat << EOF >> infrastructure/terraform.tfvars.tf
 variable "$VAR_NAME" {
-  description = "$DESCRIPTION"
+  description = "The $VAR_NAME variable"
   type        = string
   $SENSITIVE
-  default     = "" # Set your default value here
+  default     = "$VALUE" # Set from add_env_var.sh script
 }
 
 EOF
 
-echo "✅ Added to terraform.tfvars.tf"
+echo "✅ Added to terraform.tfvars.tf with value: $VALUE"
 
 # 2. Add to cloud_build_trigger.tf substitutions
 # macOS-compatible sed command
@@ -161,7 +161,7 @@ echo "✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨�
 echo "🚀 ENV VARIABLE ADDED SUCCESSFULLY! 🚀"
 echo "✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨"
 echo ""
-echo "Variable '$VAR_NAME' has been added to:"
+echo "Variable '$VAR_NAME' has been added with value '$VALUE' to:"
 echo "  📄 terraform.tfvars.tf"
 echo "  📄 cloud_build_trigger.tf"
 echo "  📄 cloudbuild.yaml"

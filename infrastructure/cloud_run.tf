@@ -1,6 +1,13 @@
 
 
 resource "google_cloud_run_service" "futbol-domingos-2" {
+
+  lifecycle {
+    ignore_changes = [
+      template[0].spec[0].containers[0].image,
+    ]
+  }
+
   name     = var.cloud_service_name
   location = var.region
 
