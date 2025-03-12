@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "add-env-var": "chmod +x ./scripts/add_env_var.sh && ./scripts/add_env_var.sh"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",

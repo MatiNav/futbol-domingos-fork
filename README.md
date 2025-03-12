@@ -37,6 +37,48 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Environment Variable Management Guide
 
+### Using the Environment Variable Management Script
+
+This project includes a convenient script to automate the process of adding new environment variables across all necessary infrastructure files.
+
+To add a new environment variable, run:
+
+```bash
+npm run add-env-var VAR_NAME "Description of the variable" true
+```
+
+This will update the following files:
+
+- `infrastructure/cloud_build/cloudbuild.yaml`
+- `infrastructure/cloud_build/Dockerfile`
+- `infrastructure/cloud_build_trigger.tf`
+- `terraform.tfvars.tf`
+
+Then you can review the changes in the cloud_build_trigger.tf file:
+
+```bash
+git diff infrastructure/cloud_build_trigger.tf
+```
+
+If everything looks good, you can apply the changes to your infrastructure:
+
+```bash
+cd infrastructure
+terraform init    # Only if you haven't initialized before
+terraform plan    # Review the planned changes
+terraform apply   # Apply the changes to your infrastructure
+```
+
+Then you can commit and push your changes to trigger a new build:
+
+```bash
+git add .
+git commit -m "Add new environment variable"
+git push
+```
+
+### How to Add or Update an Environment Variable Manually
+
 This README explains how to properly configure and manage environment variables throughout your application's infrastructure.
 
 ## How to Add or Update an Environment Variable
