@@ -9,10 +9,6 @@ export async function getAllPlayersImages() {
   const cachedSignedUrlsFromAllPlayers =
     await getCachedProfileImagesFromAllPlayers();
 
-  console.log(
-    "DDD cachedSignedUrlsFromAllPlayers",
-    cachedSignedUrlsFromAllPlayers
-  );
   if (cachedSignedUrlsFromAllPlayers) {
     return NextResponse.json(cachedSignedUrlsFromAllPlayers);
   }
