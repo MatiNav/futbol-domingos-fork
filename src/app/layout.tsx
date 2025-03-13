@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`antialiased`}>
+      <body className={`antialiased bg-[#0B2818]`}>
         <Suspense fallback={<div>Loading...</div>}>
           <AuthProvider>
             <TournamentProvider>
