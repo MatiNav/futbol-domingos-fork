@@ -5,8 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function getPlayersWithStatsHandler(request: NextRequest) {
   const { tournamentIdParam, matchNumber } = getParams(request);
 
-  console.log("DDD tournamentIdParam", tournamentIdParam);
-
   const playersWithStats = await getPlayersWithStats(
     tournamentIdParam,
     matchNumber

@@ -18,6 +18,8 @@ export async function getReadSignedUrlProfileImage() {
 
   const cachedUrl = await getCachedProfileImageUrl(user.displayName);
 
+  console.log("DDD cachedUrl", cachedUrl);
+
   if (cachedUrl) {
     return cachedUrl;
   }

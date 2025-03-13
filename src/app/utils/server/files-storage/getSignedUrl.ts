@@ -3,8 +3,12 @@ import { GetSignedUrlConfig } from "@google-cloud/storage";
 
 export const PROFILE_IMAGE_TTL = 60 * 60 * 24 * 6; // 6 days
 
-const bucket = async () =>
-  (await getStorage()).bucket(process.env.GCP_FUTBOL_APP_BUCKET_NAME as string);
+const bucket = async () => {
+  console.log("DDD bucket", process.env.GCP_FUTBOL_APP_BUCKET_NAME);
+  return (await getStorage()).bucket(
+    process.env.GCP_FUTBOL_APP_BUCKET_NAME as string
+  );
+};
 
 const readSignedUrlOptions: GetSignedUrlConfig = {
   version: "v4",
@@ -37,13 +41,17 @@ export async function getReadSignedUrl(fileName: string) {
 }
 
 export async function getReadSignedUrlIfExists(fileName: string) {
+  console.log("DDD getReadSignedUrlIfExists", fileName);
+
   const file = (await bucket()).file(fileName);
 
   if (await file.exists()) {
+    console.log("DDD file exists", fileName);
     const [url] = await file.getSignedUrl(readSignedUrlOptions);
     return url;
   }
 
+  console.log("DDD file does not exist", fileName);
   return null;
 }
 
