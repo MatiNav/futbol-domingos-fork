@@ -10,6 +10,7 @@ import {
   TableLink,
 } from "../features/home/components/links";
 import { useTournament } from "../contexts/TournamentContext";
+import Spinner from "./spinner";
 
 export default function HomePageContent({
   playersWithStats,
@@ -22,8 +23,12 @@ export default function HomePageContent({
   topPlayer: PlayerWithStats;
   initialMessages: SerializedMessage[];
 }) {
-  const { selectedTournamentData } = useTournament();
+  const { selectedTournamentData, isLoadingTournaments } = useTournament();
   const banners = getBannerCarousel(playersWithStats, pichichis, topPlayer);
+
+  if (isLoadingTournaments) {
+    return <Spinner />;
+  }
 
   return (
     <div className="min-h-screen bg-[#0B2818] px-4 py-2 sm:py-4">

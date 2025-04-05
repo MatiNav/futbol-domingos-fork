@@ -21,18 +21,8 @@ export default function TournamentSelector() {
   };
 
   return (
-    <div className="flex justify-center py-2 bg-[#0B2818]">
-      {isLoadingTournaments ? (
-        <div
-          className="px-3 py-1 bg-[#1a472a]/80 backdrop-blur-sm text-white text-sm 
-                  rounded-lg border border-green-700/50 
-                  cursor-pointer hover:bg-[#1a472a] transition-colors duration-200
-                  focus:outline-none focus:ring-2 focus:ring-green-600/50 focus:border-transparent
-                  appearance-none w-48 text-center"
-        >
-          Cargando torneos...
-        </div>
-      ) : (
+    <div className="flex justify-center py-2 bg-[#0B2818] mb-14">
+      {!isLoadingTournaments && (
         <select
           onChange={handleChange}
           value={selectedTournamentData?.tournament._id || ""}

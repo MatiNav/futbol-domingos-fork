@@ -104,7 +104,7 @@ export default function EditTeams() {
     <div className="min-h-screen bg-[#0B2818] py-8">
       <div className="max-w-7xl mx-auto px-4 ">
         <div className="bg-[#77777736] rounded-lg shadow-lg p-6">
-          <MatchSelector isLoading={isLoading} />
+          <MatchSelector />
 
           {error && (
             <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg mb-6">

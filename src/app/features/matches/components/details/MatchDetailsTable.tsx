@@ -25,7 +25,7 @@ export default function MatchDetailsTable({
 
   const [columnVisibility, setColumnVisibility] = useState({
     goals: true,
-    percentage: true,
+    percentage: false,
   });
 
   const mostVotedPlayersIds = draftMatch

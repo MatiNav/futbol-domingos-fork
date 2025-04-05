@@ -3,11 +3,7 @@
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 import { useTournament } from "@/app/contexts/TournamentContext";
 
-type MatchSelectorProps = {
-  isLoading: boolean;
-};
-
-export default function MatchSelector({ isLoading }: MatchSelectorProps) {
+export default function MatchSelector() {
   const { selectedTournamentData } = useTournament();
   const { matchNumber, setMatchNumber } = useMatchWithStats();
 
@@ -16,12 +12,16 @@ export default function MatchSelector({ isLoading }: MatchSelectorProps) {
   };
 
   const handlePrevious = () => {
+    if (!matchNumber) {
+      return;
+    }
+
     const newNumber = Math.max(1, matchNumber - 1);
     setMatchNumber(newNumber);
   };
 
   const handleNext = () => {
-    if (!selectedTournamentData) {
+    if (!selectedTournamentData || !matchNumber) {
       return;
     }
 
@@ -64,7 +64,7 @@ export default function MatchSelector({ isLoading }: MatchSelectorProps) {
           <div className="flex items-center justify-between bg-green-900 p-3">
             <button
               onClick={handlePrevious}
-              disabled={matchNumber === 1 || isLoading}
+              disabled={matchNumber === 1}
               className="bg-green-800 p-2 rounded disabled:opacity-50 
                    disabled:cursor-not-allowed hover:bg-green-700 transition-colors duration-200"
             >
@@ -89,8 +89,8 @@ export default function MatchSelector({ isLoading }: MatchSelectorProps) {
             <button
               onClick={handleNext}
               disabled={
-                matchNumber >= selectedTournamentData.maxMatchNumber ||
-                isLoading
+                !matchNumber ||
+                matchNumber >= selectedTournamentData.maxMatchNumber
               }
               className="bg-green-800 p-2 rounded disabled:opacity-50 
                    disabled:cursor-not-allowed hover:bg-green-700 transition-colors duration-200"

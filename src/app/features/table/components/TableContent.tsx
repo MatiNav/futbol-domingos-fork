@@ -4,11 +4,11 @@ import Image from "next/image";
 import { TEAMS_IMAGES } from "@/app/constants/images/teams";
 import { PlayerWithStats } from "@/app/constants/types";
 import { useEffect, useState } from "react";
-
-const DEFAULT_PLAYER_IMAGE_1 =
-  "https://cdn-icons-png.flaticon.com/512/166/166344.png";
-const DEFAULT_PLAYER_IMAGE_2 =
-  "https://img.lovepik.com/element/40127/4259.png_1200.png";
+import Link from "next/link";
+import {
+  DEFAULT_PLAYER_IMAGE_1,
+  DEFAULT_PLAYER_IMAGE_2,
+} from "@/app/constants/images/teams";
 
 export default function TableContent({
   pichichis,
@@ -139,7 +139,12 @@ export default function TableContent({
                               </div>
                             )}
                         </div>
-                        <div className="text-white">{player.name}</div>
+                        <Link
+                          href={`/playerStats/${player.name}`}
+                          className="text-white"
+                        >
+                          {player.name}
+                        </Link>
                       </div>
                     </td>
                     <td className="px-4 py-2 text-center font-bold whitespace-nowrap">

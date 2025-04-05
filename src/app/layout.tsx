@@ -1,12 +1,15 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
+
 import "./globals.css";
-import NavBar from "./components/NavBar";
+
 import AuthProvider from "./contexts/AuthContext";
 import { TournamentProvider } from "./contexts/TournamentContext";
-import TournamentSelector from "@/components/TournamentSelector";
-import { Suspense } from "react";
-import MatchWithStatsProvider from "./contexts/MatchWithStatsContext";
 import DraftMatchProvider from "./contexts/DraftMatchContext";
+import MatchWithStatsProvider from "./contexts/MatchWithStatsContext";
+import NavBar from "@/app/components/NavBar";
+import TournamentSelector from "@/components/TournamentSelector";
+import Spinner from "@/app/components/spinner";
 
 export const metadata: Metadata = {
   title: "Futbol",
@@ -29,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`antialiased bg-[#0B2818]`}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Spinner />}>
           <AuthProvider>
             <TournamentProvider>
               <MatchWithStatsProvider>

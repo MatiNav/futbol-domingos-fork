@@ -1,9 +1,19 @@
 "use client";
 
+import Spinner from "@/app/components/spinner";
+import {
+  DEFAULT_PLAYER_IMAGE_1,
+  TEAMS_IMAGES,
+} from "@/app/constants/images/teams";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface PlayerStats {
-  name: string;
+  player: {
+    name: string;
+    favoriteTeam: string;
+    image: string;
+  };
   tournaments: Array<{
     tournament: string;
     stats: {
@@ -59,11 +69,7 @@ export default function PlayerStatsPage({
   }, [params.playerName]);
 
   if (isLoading) {
-    return (
-      <div className="container w-[90%] md:w-1/2 mx-auto px-4 py-8">
-        <div className="text-center">Loading...</div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (error) {
@@ -83,7 +89,32 @@ export default function PlayerStatsPage({
   }
 
   return (
-    <div className="container w-[90%] md:w-1/2 mx-auto px-4 py-8">
+    <div className="container w-[90%] md:w-1/2 mx-auto py-8 border-2 border-gray-300 rounded-lg px-8">
+      <div className="flex justify-center mb-8">
+        <Image
+          src={playerStats?.player?.image || DEFAULT_PLAYER_IMAGE_1}
+          alt={playerStats.player.name}
+          className="w-24 h-24"
+          width={96}
+          height={96}
+        />
+      </div>
+      <div className="text-center text-2xl font-bold mb-8">
+        {playerStats.player.name}
+        {playerStats?.player?.favoriteTeam && (
+          <Image
+            src={
+              TEAMS_IMAGES[
+                playerStats.player.favoriteTeam as keyof typeof TEAMS_IMAGES
+              ]
+            }
+            alt={playerStats.player.favoriteTeam}
+            width={24}
+            height={24}
+            className="inline-block w-8 h-8 ml-2"
+          />
+        )}
+      </div>
       {playerStats.tournaments.map((tournamentStats, index) => (
         <div key={index} className="mb-8">
           <h2 className="text-xl font-semibold mb-4">
@@ -123,9 +154,12 @@ export default function PlayerStatsPage({
                     Registro
                   </td>
                   <td className="px-6 py-4 text-gray-900 dark:text-white">
-                    {tournamentStats.stats.wins}V -{" "}
-                    {tournamentStats.stats.draws}E -{" "}
-                    {tournamentStats.stats.losses}D
+                    {tournamentStats.stats.wins}
+                    <span className="text-green-500 font-bold">V</span> -{" "}
+                    {tournamentStats.stats.draws}
+                    <span className="text-yellow-500 font-bold">E</span> -{" "}
+                    {tournamentStats.stats.losses}
+                    <span className="text-red-500 font-bold">D</span>
                   </td>
                 </tr>
                 <tr className="border-b border-gray-200 dark:border-gray-700">

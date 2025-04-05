@@ -6,14 +6,12 @@ export default function AdminContent() {
   const { selectedTournamentData } = useTournament();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-600 to-green-800">
-      <main className="p-6">
-        <div className="text-center py-8">
-          <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
+    <div className="min-h-screen bg-[#0B2818]">
+      <main>
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg pb-7">
             Administración
           </h1>
-          <p className="text-green-100 text-lg mb-8">Panel de Control</p>
-
           <div className="grid gap-4 max-w-md mx-auto">
             <Link
               href="/admin/agregar-jugador"

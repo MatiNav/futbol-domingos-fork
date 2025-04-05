@@ -36,7 +36,7 @@ const zeroTeamPercentage: TeamPercentage = {
 
 type MatchWithStatsContextType = {
   fetchMatch: () => Promise<void>;
-  matchNumber: number;
+  matchNumber: number | undefined;
   match: SerializedMatch | null;
   setMatch: (match: SerializedMatch | null) => void;
   setMatchNumber: (matchNumber: number) => void;
@@ -69,7 +69,11 @@ export default function MatchWithStatsProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [matchNumber, setMatchNumber] = useState(1);
+  const { selectedTournamentData } = useTournament();
+
+  const [matchNumber, setMatchNumber] = useState(
+    selectedTournamentData?.maxMatchNumber
+  );
   const [match, setMatch] = useState<SerializedMatch | null>(null);
   const [currentTeamPercentages, setCurrentTeamPercentages] =
     useState<TeamPercentage>(zeroTeamPercentage);
@@ -85,8 +89,6 @@ export default function MatchWithStatsProvider({
   const [playersWithStats, setPlayersWithStats] = useState<PlayerWithStats[]>(
     []
   );
-
-  const { selectedTournamentData } = useTournament();
 
   const getSumOfPercentageColumnByTeamUntilMatch = useCallback(
     async (match: SerializedMatch) => {
@@ -130,7 +132,7 @@ export default function MatchWithStatsProvider({
     setSuccessMessage("");
 
     try {
-      if (matchNumber > selectedTournamentData.maxMatchNumber) {
+      if (!matchNumber || matchNumber > selectedTournamentData.maxMatchNumber) {
         setError("No hay partidos disponibles");
         return;
       }

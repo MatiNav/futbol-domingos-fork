@@ -11,6 +11,7 @@ export async function getPlayerStatsHandler(
 
     const tournamentsResponse = await getTournaments();
     const playerStats = [];
+    let player = null;
 
     for (const tournament of tournamentsResponse) {
       const playersWithStatsResponse = await getPlayersWithStats(
@@ -22,6 +23,10 @@ export async function getPlayerStatsHandler(
       );
 
       if (playerInTournament) {
+        const { name, favoriteTeam, image } = playerInTournament;
+
+        player = { name, favoriteTeam, image };
+
         playerStats.push({
           tournament: tournament.name,
           stats: playerInTournament,
@@ -38,7 +43,7 @@ export async function getPlayerStatsHandler(
 
     return NextResponse.json({
       playerProfile: {
-        name: playerName,
+        player,
         tournaments: playerStats,
       },
     });

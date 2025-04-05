@@ -21,4 +21,15 @@ const RANDOM_IMAGES = {
   ferCampeon: "https://i.postimg.cc/TPj1jrHh/IMG-4126.jpg",
 };
 
-export { TEAMS_IMAGES, BACKGROUND_IMAGES, RANDOM_IMAGES };
+const DEFAULT_PLAYER_IMAGE_1 =
+  "https://cdn-icons-png.flaticon.com/512/166/166344.png";
+const DEFAULT_PLAYER_IMAGE_2 =
+  "https://img.lovepik.com/element/40127/4259.png_1200.png";
+
+export {
+  TEAMS_IMAGES,
+  BACKGROUND_IMAGES,
+  RANDOM_IMAGES,
+  DEFAULT_PLAYER_IMAGE_1,
+  DEFAULT_PLAYER_IMAGE_2,
+};
