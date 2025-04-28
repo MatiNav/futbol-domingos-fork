@@ -87,7 +87,7 @@ export async function getPlayersWithStats(
     const amountOfMVP = mostVotedPlayersPerMatch.filter((players) =>
       players.includes(player._id.toString())
     ).length;
-    const points = player.wins * 3 + player.draws + amountOfMVP;
+    const points = player.wins * 3 + player.draws;
     const totalGames = player.wins + player.draws + player.losses;
     const maxPoints = totalGames * 3;
     const percentage = totalGames === 0 ? 0 : (points / maxPoints) * 100;
@@ -100,12 +100,17 @@ export async function getPlayersWithStats(
     };
   });
 
-  // Sort by points (desc), then goals (desc)
+  // Sort by points (desc), then goals (desc), then total games played (desc)
   const sortedPlayers = playersWithStats.sort((a, b) => {
     if (b.points !== a.points) {
       return b.points - a.points;
     }
-    return b.goals - a.goals;
+    if (b.goals !== a.goals) {
+      return b.goals - a.goals;
+    }
+    const totalGamesA = a.wins + a.draws + a.losses;
+    const totalGamesB = b.wins + b.draws + b.losses;
+    return totalGamesB - totalGamesA;
   });
   // Add position
   return sortedPlayers.map((player, index) => ({
