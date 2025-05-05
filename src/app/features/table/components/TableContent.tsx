@@ -98,7 +98,7 @@ export default function TableContent({
                         <div className="flex-shrink-0 h-10 w-10 mr-4 relative">
                           <Image
                             src={
-                              profileImagesSignedUrls[player.name] ||
+                              // profileImagesSignedUrls[player.name] ||
                               player.image ||
                               TEAMS_IMAGES[
                                 player.favoriteTeam as keyof typeof TEAMS_IMAGES
@@ -111,7 +111,7 @@ export default function TableContent({
                             width={40}
                             height={40}
                             className={`h-10 w-10 object-contain ${
-                              profileImagesSignedUrls[player.name] ||
+                              // profileImagesSignedUrls[player.name] ||
                               player.image
                                 ? "rounded-full"
                                 : !player.image && player.favoriteTeam
@@ -121,9 +121,9 @@ export default function TableContent({
                           />
 
                           {/* Team logo overlay - only shown when profile image exists */}
-                          {(profileImagesSignedUrls[player.name] ||
-                            player.image) &&
-                            player.favoriteTeam && (
+                          {
+                            // (profileImagesSignedUrls[player.name] ||
+                            player.image && player.favoriteTeam && (
                               <div className="absolute bottom-[-6px] right-[-6px] w-6 h-6 overflow-hidden">
                                 <Image
                                   src={
@@ -137,7 +137,8 @@ export default function TableContent({
                                   className="h-full w-full object-contain"
                                 />
                               </div>
-                            )}
+                            )
+                          }
                         </div>
                         <Link
                           href={`/playerStats/${player.name}`}
