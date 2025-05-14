@@ -44,7 +44,15 @@ export const TournamentProvider = ({
     const fetchTournamentsData = async () => {
       try {
         setIsLoadingTournaments(true);
-        const response = await fetch("/api/tournaments");
+        const response = await fetch("/api/tournaments", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+          next: { revalidate: 0 },
+        });
         const tournaments = await response.json();
 
         const responses = await Promise.all(
