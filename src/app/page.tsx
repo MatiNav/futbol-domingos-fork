@@ -4,6 +4,8 @@ import { getPichichis } from "./features/players/utils";
 import { getPlayersWithStats } from "./features/players/utils/server";
 import { getMessages } from "./utils/server/messages";
 
+export const dynamic = "force-dynamic";
+
 /**
  * EC2 => Vercel
  * Api Gateway => Routes
