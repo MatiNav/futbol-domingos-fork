@@ -5,7 +5,13 @@ export default async function getTournamentsHandler() {
   try {
     const tournaments = await getTournaments();
 
-    return NextResponse.json(tournaments);
+    return NextResponse.json(tournaments, {
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
   } catch (error) {
     console.error("Error fetching tournaments:", error);
     return NextResponse.json(
