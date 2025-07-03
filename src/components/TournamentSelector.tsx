@@ -21,7 +21,7 @@ export default function TournamentSelector() {
   };
 
   return (
-    <div className="flex justify-center py-2 bg-[#0B2818] mb-14">
+    <div className="flex justify-center py-2 bg-[#0B2818]">
       {!isLoadingTournaments && (
         <select
           onChange={handleChange}

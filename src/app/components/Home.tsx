@@ -39,7 +39,7 @@ export default function HomePageContent({
           </h1>
 
           {/* Banner Carousel */}
-          <div className="w-full -mt-4 mb-12">
+          <div className="w-full -mt-4 mb-12 flex justify-center">
             <BannerCarousel banners={banners} />
           </div>
 

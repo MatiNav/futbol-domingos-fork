@@ -38,7 +38,7 @@ export default function BannerCarousel({
   }, [banners.length, autoPlayInterval]);
 
   return (
-    <div className="relative w-full h-[250px] md:h-[500px] overflow-hidden">
+    <div className="relative w-[90%] md:w-[30%] h-[420px] md:h-[500px] overflow-hidden">
       {banners.map((banner, index) => (
         <div
           key={index}
@@ -69,6 +69,7 @@ export default function BannerCarousel({
                 className="object-cover object-top"
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+                objectFit="cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B2818]/60 via-transparent to-transparent" />
             </div>
@@ -79,11 +80,11 @@ export default function BannerCarousel({
           )}
 
           {/* Content */}
-          <div className="absolute inset-0 z-20 flex items-center">
+          <div className="absolute inset-0 z-20 flex items-start pt-10">
             <div className="container mx-auto px-4">
               <div className="max-w-2xl">
                 <h2
-                  className={`text-3xl md:text-5xl font-bold text-white mb-2 md:mb-4 transform transition-all duration-500
+                  className={`text-xl md:text-2xl font-bold text-white mb-2 md:mb-4 transform transition-all duration-500
                   drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] text-shadow-lg
                   ${
                     isTransitioning

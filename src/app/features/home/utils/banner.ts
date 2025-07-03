@@ -6,29 +6,48 @@ export const getBannerCarousel = (
   pichichis: PlayerWithStats[],
   topPlayer: PlayerWithStats
 ) => {
-  const ferPlayer = players.find((player) => player.name === "Fer");
-  if (!ferPlayer) {
-    throw new Error("Fer player not found");
+  const lastTourmentChampion = players.find(
+    (player) => player.name === "Santy99"
+  );
+  if (!lastTourmentChampion) {
+    throw new Error("Last tournament champion not found");
   }
-  const lastTournamentWinner = {
-    title: "Campeón del 2024",
-    player: ferPlayer,
+
+  const actualYear = new Date().getFullYear();
+
+  const champions = {
+    title: `Campeones`,
+    player: lastTourmentChampion,
     gradientFrom: "from-blue-900",
     gradientTo: "to-blue-600",
-    image: RANDOM_IMAGES.ferCampeon,
+    image: RANDOM_IMAGES.campeones2025,
+    showGoals: false,
+  };
+
+  const lastTournamentWinner = {
+    title: `Campeón ${actualYear}`,
+    player: lastTourmentChampion,
+    gradientFrom: "from-blue-900",
+    gradientTo: "to-blue-600",
+    image: RANDOM_IMAGES.santy99Campeon,
     showGoals: false,
   };
 
   return [
+    champions,
     lastTournamentWinner,
-    {
-      title: "El Mejor Jugador",
-      subtitle: "Liderando la tabla de posiciones",
-      player: topPlayer,
-      gradientFrom: "from-blue-900",
-      gradientTo: "to-blue-600",
-      showGoals: false,
-    },
+    ...(topPlayer.goals > 0
+      ? [
+          {
+            title: "El Mejor Jugador",
+            subtitle: "Liderando la tabla de posiciones",
+            player: topPlayer,
+            gradientFrom: "from-blue-900",
+            gradientTo: "to-blue-600",
+            showGoals: false,
+          },
+        ]
+      : []),
     ...(pichichis.length > 0
       ? [
           {

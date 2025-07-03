@@ -18,7 +18,9 @@ const BACKGROUND_IMAGES = {
 };
 
 const RANDOM_IMAGES = {
+  campeones2025: "https://i.postimg.cc/gk4gcGYD/campeones.jpg",
   ferCampeon: "https://i.postimg.cc/TPj1jrHh/IMG-4126.jpg",
+  santy99Campeon: "https://i.postimg.cc/sgXwvbxR/santy99.jpg",
 };
 
 const DEFAULT_PLAYER_IMAGE_1 =
