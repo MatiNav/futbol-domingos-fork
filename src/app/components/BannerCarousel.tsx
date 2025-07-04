@@ -38,7 +38,7 @@ export default function BannerCarousel({
   }, [banners.length, autoPlayInterval]);
 
   return (
-    <div className="relative w-[90%] md:w-[30%] h-[420px] md:h-[500px] overflow-hidden">
+    <div className="relative w-[90%] md:w-[34%] h-[490px] md:h-[600px] overflow-hidden rounded-xl">
       {banners.map((banner, index) => (
         <div
           key={index}
