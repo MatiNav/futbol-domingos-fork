@@ -5,6 +5,7 @@ const TEAMS_IMAGES = {
   independiente: "https://i.postimg.cc/50fDrqsn/independiente-svg.png",
   racing: "https://i.postimg.cc/NfLvYDBn/racing.png",
   velezSarfield: "https://i.postimg.cc/90Sj7wcV/velez.png",
+  chicago: "https://i.postimg.cc/4x0X0K4J/chicago.png",
 };
 
 const BACKGROUND_IMAGES = {
@@ -15,6 +16,7 @@ const BACKGROUND_IMAGES = {
     "https://i.postimg.cc/mrF9Mz75/independiente-logo.jpg",
   racingBackground: "https://i.postimg.cc/MHB3FpkP/racing-club-logo.jpg",
   velezSarfieldBackground: "https://i.postimg.cc/W4DGnfcS/velez-logo.jpg",
+  chicagoBackground: "https://i.postimg.cc/kGw2RnQB/chicago-Background.jpg",
 };
 
 const RANDOM_IMAGES = {
