@@ -31,6 +31,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Manufacturing+Consent&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className={`antialiased bg-[#0B2818]`}>
         <Suspense fallback={<Spinner />}>
           <AuthProvider>

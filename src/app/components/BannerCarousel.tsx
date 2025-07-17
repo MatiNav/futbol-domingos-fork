@@ -122,11 +122,17 @@ export default function BannerCarousel({
                       </h3>
 
                       {banner.showGoals && (
-                        <div className="flex items-center space-x-2 mt-2">
-                          <div className="px-3 py-1 rounded-full">
-                            <span className="text-2xl md:text-base text-green-400 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-                              {banner.player.goals} ⚽️
+                        <div className="flex items-center space-x-2 mt-2 justify-center">
+                          <div className="px-3 py-1 rounded-full flex flex-col items-center">
+                            <span className="text-4xl md:text-5xl text-green-400 drop-shadow-[0_2px_4px_rgba(0,0,0,1)] font-manufacturing-consent">
+                              {banner.player.goals}
                             </span>
+                            <Image
+                              src="https://i.postimg.cc/g0vj7nmL/pelota-gol.png"
+                              alt="goles"
+                              width={120}
+                              height={120}
+                            />
                           </div>
                         </div>
                       )}
