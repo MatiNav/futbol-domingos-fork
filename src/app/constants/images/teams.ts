@@ -6,17 +6,18 @@ const TEAMS_IMAGES = {
   racing: "https://i.postimg.cc/NfLvYDBn/racing.png",
   velezSarfield: "https://i.postimg.cc/90Sj7wcV/velez.png",
   chicago: "https://i.postimg.cc/4x0X0K4J/chicago.png",
+  roma: "https://i.postimg.cc/Kvrvbb4R/roma.png",
 };
 
 const BACKGROUND_IMAGES = {
-  bocaJuniorsBackground: "https://i.postimg.cc/zXRxzBc0/boca-juniors-logo.jpg",
-  riverPlateBackground: "https://i.postimg.cc/3wLqyqCB/river-plate-logo.jpg",
-  sanLorenzoBackground: "https://i.postimg.cc/MTVykMTQ/san-lorenzo-logo.jpg",
-  independienteBackground:
-    "https://i.postimg.cc/mrF9Mz75/independiente-logo.jpg",
-  racingBackground: "https://i.postimg.cc/MHB3FpkP/racing-club-logo.jpg",
-  velezSarfieldBackground: "https://i.postimg.cc/W4DGnfcS/velez-logo.jpg",
-  chicagoBackground: "https://i.postimg.cc/kGw2RnQB/chicago-Background.jpg",
+  bocaJuniors: "https://i.postimg.cc/zXRxzBc0/boca-juniors-logo.jpg",
+  riverPlate: "https://i.postimg.cc/3wLqyqCB/river-plate-logo.jpg",
+  sanLorenzo: "https://i.postimg.cc/MTVykMTQ/san-lorenzo-logo.jpg",
+  independiente: "https://i.postimg.cc/mrF9Mz75/independiente-logo.jpg",
+  racing: "https://i.postimg.cc/MHB3FpkP/racing-club-logo.jpg",
+  velezSarfield: "https://i.postimg.cc/W4DGnfcS/velez-logo.jpg",
+  chicago: "https://i.postimg.cc/kGw2RnQB/chicago-Background.jpg",
+  roma: "https://i.postimg.cc/KYK21hc7/roma-festejo.webp",
 };
 
 const RANDOM_IMAGES = {

@@ -52,7 +52,7 @@ export default function BannerCarousel({
           banner.player.image ||
           (banner.player.favoriteTeam &&
             BACKGROUND_IMAGES[
-              `${banner.player.favoriteTeam}Background` as keyof typeof BACKGROUND_IMAGES
+              `${banner.player.favoriteTeam}` as keyof typeof BACKGROUND_IMAGES
             ]) ? (
             <div className="absolute inset-0">
               <Image
@@ -60,7 +60,7 @@ export default function BannerCarousel({
                   banner.image ||
                   banner.player.image ||
                   BACKGROUND_IMAGES[
-                    `${banner.player.favoriteTeam}Background` as keyof typeof BACKGROUND_IMAGES
+                    `${banner.player.favoriteTeam}` as keyof typeof BACKGROUND_IMAGES
                   ] ||
                   ""
                 }
