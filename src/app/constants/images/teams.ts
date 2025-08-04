@@ -7,6 +7,7 @@ const TEAMS_IMAGES = {
   velezSarfield: "https://i.postimg.cc/90Sj7wcV/velez.png",
   chicago: "https://i.postimg.cc/4x0X0K4J/chicago.png",
   roma: "https://i.postimg.cc/Kvrvbb4R/roma.png",
+  napoli: "https://i.postimg.cc/wBJBsLD1/napoli.png",
 };
 
 const BACKGROUND_IMAGES = {
@@ -18,6 +19,7 @@ const BACKGROUND_IMAGES = {
   velezSarfield: "https://i.postimg.cc/W4DGnfcS/velez-logo.jpg",
   chicago: "https://i.postimg.cc/kGw2RnQB/chicago-Background.jpg",
   roma: "https://i.postimg.cc/KYK21hc7/roma-festejo.webp",
+  napoli: "https://i.postimg.cc/j504zH9m/napoli-festejo.webp",
 };
 
 const RANDOM_IMAGES = {
