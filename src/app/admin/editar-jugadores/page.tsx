@@ -17,6 +17,7 @@ export default function EditarJugadoresPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
   // Form state
   const [formData, setFormData] = useState({
@@ -26,6 +27,11 @@ export default function EditarJugadoresPage() {
     image: "",
     role: "user" as "admin" | "user",
   });
+
+  // Filtered players based on search
+  const filteredPlayers = players.filter((player) =>
+    player.name.toLowerCase().includes(searchFilter.toLowerCase())
+  );
 
   // Helper function to get player image with fallbacks
   const getPlayerImageSrc = (player: SerializedPlayer, index: number = 0) => {
@@ -156,13 +162,34 @@ export default function EditarJugadoresPage() {
             <h2 className="text-2xl font-semibold text-white mb-4">
               Seleccionar Jugador
             </h2>
+
+            {/* Search Filter */}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Buscar jugador por nombre..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-green-500"
+              />
+            </div>
+
             <div className="text-green-100 text-sm mb-4">
-              Total: {Array.isArray(players) ? players.length : 0} jugadores
+              {searchFilter ? (
+                <>
+                  {filteredPlayers.length} de {players.length} jugadores
+                  {searchFilter && ` (filtrado por "${searchFilter}")`}
+                </>
+              ) : (
+                <>
+                  Total: {Array.isArray(players) ? players.length : 0} jugadores
+                </>
+              )}
               {loading && " (Cargando...)"}
             </div>
-            <div className="space-y-2 overflow-y-auto max-h-[36rem]">
-              {Array.isArray(players) && players.length > 0 ? (
-                players.map((player, index) => (
+            <div className="space-y-2 overflow-y-auto max-h-[28rem]">
+              {Array.isArray(filteredPlayers) && filteredPlayers.length > 0 ? (
+                filteredPlayers.map((player, index) => (
                   <button
                     key={player._id}
                     onClick={() => handlePlayerSelect(player)}
@@ -201,6 +228,8 @@ export default function EditarJugadoresPage() {
                 <div className="text-green-100 text-center py-8">
                   {loading
                     ? "Cargando jugadores..."
+                    : searchFilter
+                    ? `No se encontraron jugadores que coincidan con "${searchFilter}"`
                     : `No hay jugadores disponibles (${players.length} jugadores cargados)`}
                 </div>
               )}
