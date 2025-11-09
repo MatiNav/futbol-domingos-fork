@@ -24,10 +24,10 @@ export default function DraggablePlayersCell({
 }: DraggablePlayersCellProps) {
   const { playersWithStats } = useMatchWithStats();
   const { draftMatch, updatePlayer, isPlayerAvailable } = useDraftMatch();
-  
+
   // Create unique ID for this cell
   const cellId = `${team}-${index}`;
-  
+
   const {
     attributes,
     listeners,
@@ -35,9 +35,9 @@ export default function DraggablePlayersCell({
     transform,
     transition,
     isDragging,
-  } = useSortable({ 
+  } = useSortable({
     id: cellId,
-    disabled: !isEditable || !draftMatch?.[team].players[index]?._id
+    disabled: !isEditable || !draftMatch?.[team].players[index]?._id,
   });
 
   const style = {
@@ -73,7 +73,7 @@ export default function DraggablePlayersCell({
     >
       <div className="flex items-center justify-center gap-1">
         {isMvp && <span className="text-yellow-400">⭐</span>}
-        
+
         {/* Drag handle icon when draggable */}
         {isEditable && hasPlayer && (
           <div className="mr-1 opacity-50 hover:opacity-100">
@@ -91,7 +91,7 @@ export default function DraggablePlayersCell({
             </svg>
           </div>
         )}
-        
+
         {isEditable ? (
           <PlayerAutocomplete
             players={playersWithStats}

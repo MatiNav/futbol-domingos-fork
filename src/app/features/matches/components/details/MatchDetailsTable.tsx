@@ -31,7 +31,8 @@ export default function MatchDetailsTable({
   showOnlyMatchPercentage = false,
   onShowOnlyMatchPercentageChange,
 }: MatchDetailsTableProps) {
-  const { draftMatch, removeLastPlayer, addNewPlayer, movePlayer } = useDraftMatch();
+  const { draftMatch, removeLastPlayer, addNewPlayer, movePlayer } =
+    useDraftMatch();
   const {
     playersWithStats,
     currentTeamPercentages,
@@ -66,16 +67,22 @@ export default function MatchDetailsTable({
     : 0;
 
   // Create sortable items for each team
-  const oscurasItems = Array.from({ length: maxRows }, (_, index) => `oscuras-${index}`);
-  const clarasItems = Array.from({ length: maxRows }, (_, index) => `claras-${index}`);
+  const oscurasItems = Array.from(
+    { length: maxRows },
+    (_, index) => `oscuras-${index}`
+  );
+  const clarasItems = Array.from(
+    { length: maxRows },
+    (_, index) => `claras-${index}`
+  );
 
   function handleDragEnd(team: "oscuras" | "claras") {
     return (event: DragEndEvent) => {
       const { active, over } = event;
 
       if (active.id !== over?.id && draftMatch) {
-        const oldIndex = parseInt(active.id.toString().split('-')[1]);
-        const newIndex = parseInt(over?.id.toString().split('-')[1] || '0');
+        const oldIndex = parseInt(active.id.toString().split("-")[1]);
+        const newIndex = parseInt(over?.id.toString().split("-")[1] || "0");
 
         if (oldIndex !== newIndex && !isNaN(oldIndex) && !isNaN(newIndex)) {
           movePlayer(team, oldIndex, newIndex);
@@ -195,17 +202,25 @@ export default function MatchDetailsTable({
                 if (active.id !== over?.id && draftMatch) {
                   const activeId = active.id.toString();
                   const overId = over?.id.toString();
-                  
+
                   if (activeId && overId) {
-                    const activeTeam = activeId.split('-')[0] as "oscuras" | "claras";
-                    const overTeam = overId.split('-')[0] as "oscuras" | "claras";
-                    
+                    const activeTeam = activeId.split("-")[0] as
+                      | "oscuras"
+                      | "claras";
+                    const overTeam = overId.split("-")[0] as
+                      | "oscuras"
+                      | "claras";
+
                     // Only allow reordering within the same team
                     if (activeTeam === overTeam) {
-                      const oldIndex = parseInt(activeId.split('-')[1]);
-                      const newIndex = parseInt(overId.split('-')[1]);
+                      const oldIndex = parseInt(activeId.split("-")[1]);
+                      const newIndex = parseInt(overId.split("-")[1]);
 
-                      if (oldIndex !== newIndex && !isNaN(oldIndex) && !isNaN(newIndex)) {
+                      if (
+                        oldIndex !== newIndex &&
+                        !isNaN(oldIndex) &&
+                        !isNaN(newIndex)
+                      ) {
                         movePlayer(activeTeam, oldIndex, newIndex);
                       }
                     }
@@ -213,8 +228,8 @@ export default function MatchDetailsTable({
                 }
               }}
             >
-              <SortableContext 
-                items={[...oscurasItems, ...clarasItems]} 
+              <SortableContext
+                items={[...oscurasItems, ...clarasItems]}
                 strategy={verticalListSortingStrategy}
               >
                 {Array.from({
