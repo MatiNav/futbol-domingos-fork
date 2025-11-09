@@ -156,6 +156,81 @@ export const getPlayers = async (): Promise<FetchResponse<PlayersResponse>> => {
   };
 };
 
+export const updatePlayer = async (
+  playerId: string,
+  updateData: Partial<Omit<DBPlayer, "_id">>
+): Promise<FetchResponse<SerializedPlayer>> => {
+  try {
+    const playersCollection = await getCollection("players");
+
+    // Validate ObjectId
+    if (!ObjectId.isValid(playerId)) {
+      return {
+        error: "Invalid player ID",
+        message: "Invalid player ID",
+        status: 400,
+      };
+    }
+
+    // Check if player exists
+    const existingPlayer = await playersCollection.findOne({
+      _id: new ObjectId(playerId),
+    });
+
+    if (!existingPlayer) {
+      return {
+        error: "Player not found",
+        message: "Player not found",
+        status: 404,
+      };
+    }
+
+    // Update player
+    const result = await playersCollection.updateOne(
+      { _id: new ObjectId(playerId) },
+      { $set: updateData }
+    );
+
+    if (result.modifiedCount === 0) {
+      return {
+        error: "Failed to update player",
+        message: "No changes were made",
+        status: 400,
+      };
+    }
+
+    // Fetch updated player
+    const updatedPlayer = await playersCollection.findOne({
+      _id: new ObjectId(playerId),
+    });
+
+    if (!updatedPlayer) {
+      return {
+        error: "Failed to fetch updated player",
+        message: "Failed to fetch updated player",
+        status: 500,
+      };
+    }
+
+    const serializedPlayer: SerializedPlayer = {
+      ...updatedPlayer,
+      _id: updatedPlayer._id.toString(),
+    };
+
+    return {
+      data: serializedPlayer,
+      status: 200,
+    };
+  } catch (error) {
+    console.error("Error updating player:", error);
+    return {
+      error: "Internal server error",
+      message: "Failed to update player",
+      status: 500,
+    };
+  }
+};
+
 function serializePlayers(players: DBPlayer[]) {
   return players.map((player) => ({
     ...player,

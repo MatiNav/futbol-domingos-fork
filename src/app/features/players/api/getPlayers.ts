@@ -12,7 +12,7 @@ export async function getPlayersHandler() {
       );
     }
 
-    return NextResponse.json({ players: playersResponse.data });
+    return NextResponse.json({ players: playersResponse.data.players });
   } catch (error) {
     console.error("Error fetching players:", error);
     return NextResponse.json(
