@@ -8,8 +8,8 @@ export default function AdminContent() {
   return (
     <div className="min-h-screen bg-[#0B2818]">
       <main>
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg pb-7">
+        <div className="text-center mt-10">
+          <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg pb-7 italic">
             Administración
           </h1>
           <div className="grid gap-4 max-w-md mx-auto">
