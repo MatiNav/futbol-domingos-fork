@@ -1,5 +1,6 @@
 import { MatchTeam } from "@/app/constants/types/Match";
 import PlayersCell from "@/app/features/players/components/PlayersCell";
+import DraggablePlayersCell from "@/app/features/players/components/DraggablePlayersCell";
 import GoalsColumn from "@/app/features/matches/components/details/GoalsCell";
 import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
 import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
@@ -37,7 +38,15 @@ export default function TeamColumn({
     <GoalsColumn team={team} index={index} isEditable={isEditable} />
   );
 
-  const playerColumnComponent = (
+  const playerColumnComponent = isEditable ? (
+    <DraggablePlayersCell
+      mostVotedPlayersIds={mostVotedPlayersIds}
+      team={team}
+      index={index}
+      isEditable={isEditable}
+      className="w-[30%]"
+    />
+  ) : (
     <PlayersCell
       mostVotedPlayersIds={mostVotedPlayersIds}
       team={team}

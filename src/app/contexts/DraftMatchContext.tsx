@@ -12,6 +12,7 @@ type DraftMatchContextType = {
   removeLastPlayer: () => void;
   addNewPlayer: () => void;
   updateGoals: (team: MatchTeam, index: number, goals: number) => void;
+  movePlayer: (team: MatchTeam, fromIndex: number, toIndex: number) => void;
   isPlayerAvailable: (
     playerId: string,
     team: "oscuras" | "claras",
@@ -27,6 +28,7 @@ const DraftMatchContext = createContext<DraftMatchContextType>({
   removeLastPlayer: () => {},
   addNewPlayer: () => {},
   updateGoals: () => {},
+  movePlayer: () => {},
   isPlayerAvailable: () => false,
   error: null,
   success: null,
@@ -66,6 +68,10 @@ export default function DraftMatchProvider({
     dispatch({ type: "ADD_NEW_PLAYER" });
   };
 
+  const movePlayer = (team: MatchTeam, fromIndex: number, toIndex: number) => {
+    dispatch({ type: "MOVE_PLAYER", payload: { team, fromIndex, toIndex } });
+  };
+
   const isPlayerAvailable = (
     playerId: string,
     team: "oscuras" | "claras",
@@ -93,6 +99,7 @@ export default function DraftMatchProvider({
         removeLastPlayer,
         addNewPlayer,
         updateGoals,
+        movePlayer,
         isPlayerAvailable,
         error: state.error,
         success: state.success,

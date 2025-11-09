@@ -4,6 +4,21 @@ import { useState } from "react";
 import { MatchConfiguration } from "./MatchConfiguration";
 import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import DraggablePlayersCell from "../../../players/components/DraggablePlayersCell";
 
 type MatchDetailsTableProps = {
   isEditable?: boolean;
@@ -16,7 +31,7 @@ export default function MatchDetailsTable({
   showOnlyMatchPercentage = false,
   onShowOnlyMatchPercentageChange,
 }: MatchDetailsTableProps) {
-  const { draftMatch, removeLastPlayer, addNewPlayer } = useDraftMatch();
+  const { draftMatch, removeLastPlayer, addNewPlayer, movePlayer } = useDraftMatch();
   const {
     playersWithStats,
     currentTeamPercentages,
@@ -28,9 +43,46 @@ export default function MatchDetailsTable({
     percentage: false,
   });
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const mostVotedPlayersIds = draftMatch
     ? getMostVotedPlayersOfTheMatch(draftMatch)
     : [];
+
+  const maxRows = draftMatch
+    ? Math.max(
+        draftMatch.oscuras.players.length,
+        draftMatch.claras.players.length
+      )
+    : 0;
+
+  // Create sortable items for each team
+  const oscurasItems = Array.from({ length: maxRows }, (_, index) => `oscuras-${index}`);
+  const clarasItems = Array.from({ length: maxRows }, (_, index) => `claras-${index}`);
+
+  function handleDragEnd(team: "oscuras" | "claras") {
+    return (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      if (active.id !== over?.id && draftMatch) {
+        const oldIndex = parseInt(active.id.toString().split('-')[1]);
+        const newIndex = parseInt(over?.id.toString().split('-')[1] || '0');
+
+        if (oldIndex !== newIndex && !isNaN(oldIndex) && !isNaN(newIndex)) {
+          movePlayer(team, oldIndex, newIndex);
+        }
+      }
+    };
+  }
 
   return (
     <div>
@@ -134,67 +186,90 @@ export default function MatchDetailsTable({
             </tr>
           </thead>
           <tbody>
-            {draftMatch &&
-              Array.from({
-                length: Math.max(
-                  draftMatch.oscuras.players.length,
-                  draftMatch.claras.players.length
-                ),
-              }).map((_, index) => {
-                const isLastRow =
-                  index ===
-                  Math.max(
-                    draftMatch.oscuras.players.length,
-                    draftMatch.claras.players.length
-                  ) -
-                    1;
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={(event) => {
+                const { active, over } = event;
 
-                return (
-                  <tr key={index} className="border-t border-green-700">
-                    <TeamColumn
-                      team="oscuras"
-                      index={index}
-                      isEditable={isEditable}
-                      mostVotedPlayersIds={mostVotedPlayersIds}
-                      showOnlyMatchPercentage={showOnlyMatchPercentage}
-                      columnVisibility={columnVisibility}
-                    />
-                    <TeamColumn
-                      team="claras"
-                      index={index}
-                      isEditable={isEditable}
-                      mostVotedPlayersIds={mostVotedPlayersIds}
-                      showOnlyMatchPercentage={showOnlyMatchPercentage}
-                      columnVisibility={columnVisibility}
-                    />
+                if (active.id !== over?.id && draftMatch) {
+                  const activeId = active.id.toString();
+                  const overId = over?.id.toString();
+                  
+                  if (activeId && overId) {
+                    const activeTeam = activeId.split('-')[0] as "oscuras" | "claras";
+                    const overTeam = overId.split('-')[0] as "oscuras" | "claras";
+                    
+                    // Only allow reordering within the same team
+                    if (activeTeam === overTeam) {
+                      const oldIndex = parseInt(activeId.split('-')[1]);
+                      const newIndex = parseInt(overId.split('-')[1]);
 
-                    {isLastRow && isEditable && (
-                      <td className="px-2 py-2 text-center">
-                        <button
-                          onClick={removeLastPlayer}
-                          className="p-1 bg-red-500 hover:bg-red-700 text-white rounded-full"
-                          title="Eliminar última fila"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                      if (oldIndex !== newIndex && !isNaN(oldIndex) && !isNaN(newIndex)) {
+                        movePlayer(activeTeam, oldIndex, newIndex);
+                      }
+                    }
+                  }
+                }
+              }}
+            >
+              <SortableContext 
+                items={[...oscurasItems, ...clarasItems]} 
+                strategy={verticalListSortingStrategy}
+              >
+                {Array.from({
+                  length: maxRows,
+                }).map((_, index) => {
+                  const isLastRow = index === maxRows - 1;
+
+                  return (
+                    <tr key={index} className="border-t border-green-700">
+                      <TeamColumn
+                        team="oscuras"
+                        index={index}
+                        isEditable={isEditable}
+                        mostVotedPlayersIds={mostVotedPlayersIds}
+                        showOnlyMatchPercentage={showOnlyMatchPercentage}
+                        columnVisibility={columnVisibility}
+                      />
+                      <TeamColumn
+                        team="claras"
+                        index={index}
+                        isEditable={isEditable}
+                        mostVotedPlayersIds={mostVotedPlayersIds}
+                        showOnlyMatchPercentage={showOnlyMatchPercentage}
+                        columnVisibility={columnVisibility}
+                      />
+
+                      {isLastRow && isEditable && (
+                        <td className="px-2 py-2 text-center">
+                          <button
+                            onClick={removeLastPlayer}
+                            className="p-1 bg-red-500 hover:bg-red-700 text-white rounded-full"
+                            title="Eliminar última fila"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </td>
-                    )}
-                  </tr>
-                );
-              })}
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
           </tbody>
         </table>
       </div>

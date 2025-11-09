@@ -12,7 +12,11 @@ type DraftMatchAction =
       payload: { team: MatchTeam; index: number; goals: number };
     }
   | { type: "REMOVE_LAST_PLAYER" }
-  | { type: "ADD_NEW_PLAYER" };
+  | { type: "ADD_NEW_PLAYER" }
+  | {
+      type: "MOVE_PLAYER";
+      payload: { team: MatchTeam; fromIndex: number; toIndex: number };
+    };
 
 type DraftMatchState = {
   draftMatch: SerializedMatch | null;
@@ -119,6 +123,30 @@ export default function draftMatchReducer(
         draftMatch: newDraftMatch,
         error: null,
         success: "Jugadores agregados correctamente",
+      };
+    }
+    case "MOVE_PLAYER": {
+      const { team, fromIndex, toIndex } = action.payload;
+
+      if (!draftMatch) return { ...state };
+
+      const players = [...draftMatch[team].players];
+      const [movedPlayer] = players.splice(fromIndex, 1);
+      players.splice(toIndex, 0, movedPlayer);
+
+      const newDraftMatch = {
+        ...draftMatch,
+        [team]: {
+          ...draftMatch[team],
+          players,
+        },
+      };
+
+      return {
+        ...state,
+        draftMatch: newDraftMatch,
+        error: null,
+        success: null,
       };
     }
     default: {

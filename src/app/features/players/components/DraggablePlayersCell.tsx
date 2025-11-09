@@ -1,28 +1,56 @@
+"use client";
+
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { MatchTeam } from "@/app/constants/types";
 import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 import PlayerAutocomplete from "./PlayerAutocomplete";
 
-type PlayersCellProps = {
+type DraggablePlayersCellProps = {
   team: MatchTeam;
   index: number;
   isEditable: boolean;
   mostVotedPlayersIds: string[];
+  className?: string;
 };
 
-export default function PlayersCell({
+export default function DraggablePlayersCell({
   className = "",
   team,
   index,
   isEditable = false,
   mostVotedPlayersIds,
-}: PlayersCellProps & { className?: string }) {
+}: DraggablePlayersCellProps) {
   const { playersWithStats } = useMatchWithStats();
   const { draftMatch, updatePlayer, isPlayerAvailable } = useDraftMatch();
+  
+  // Create unique ID for this cell
+  const cellId = `${team}-${index}`;
+  
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ 
+    id: cellId,
+    disabled: !isEditable || !draftMatch?.[team].players[index]?._id
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.7 : 1,
+  };
+
   if (!draftMatch) return <div> Cargando...</div>;
 
   const teamData = draftMatch[team];
   const isOscuras = team === "oscuras";
+  const hasPlayer = teamData.players[index]?._id;
 
   // Darker maroon for Oscuras, lighter blue for Claras
   const bgColor = isOscuras ? "bg-gray-600" : "bg-white";
@@ -35,10 +63,35 @@ export default function PlayersCell({
 
   return (
     <td
-      className={`px-2 sm:px-4 py-1 sm:py-2 text-center border-r border-green-700 ${bgColor} ${textColor} ${className}`}
+      ref={setNodeRef}
+      style={style}
+      className={`px-2 sm:px-4 py-1 sm:py-2 text-center border-r border-green-700 ${bgColor} ${textColor} ${className} ${
+        isDragging ? "z-50 shadow-lg ring-2 ring-blue-500" : ""
+      } ${isEditable && hasPlayer ? "cursor-grab active:cursor-grabbing" : ""}`}
+      {...(isEditable && hasPlayer ? attributes : {})}
+      {...(isEditable && hasPlayer ? listeners : {})}
     >
       <div className="flex items-center justify-center gap-1">
         {isMvp && <span className="text-yellow-400">⭐</span>}
+        
+        {/* Drag handle icon when draggable */}
+        {isEditable && hasPlayer && (
+          <div className="mr-1 opacity-50 hover:opacity-100">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={textColor}
+            >
+              <path d="M7 7H17V9H7V7Z" fill="currentColor" />
+              <path d="M7 11H17V13H7V11Z" fill="currentColor" />
+              <path d="M7 15H17V17H7V15Z" fill="currentColor" />
+            </svg>
+          </div>
+        )}
+        
         {isEditable ? (
           <PlayerAutocomplete
             players={playersWithStats}
