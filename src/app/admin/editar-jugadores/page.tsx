@@ -26,6 +26,7 @@ export default function EditarJugadoresPage() {
     favoriteTeam: "",
     image: "",
     role: "user" as "admin" | "user",
+    nivel: null as number | null,
   });
 
   // Filtered players based on search
@@ -75,6 +76,7 @@ export default function EditarJugadoresPage() {
       favoriteTeam: "",
       image: "",
       role: "user",
+      nivel: null,
     });
 
     setSelectedPlayer(player);
@@ -86,6 +88,7 @@ export default function EditarJugadoresPage() {
       favoriteTeam: player.favoriteTeam || "",
       image: player.image || "",
       role: player.role || "user",
+      nivel: player.nivel ?? null,
     });
     setMessage("");
   };
@@ -94,7 +97,19 @@ export default function EditarJugadoresPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Handle number inputs (nivel field)
+    if (name === "nivel") {
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, [name]: null }));
+      } else {
+        const numValue = parseInt(value, 10);
+
+        setFormData((prev) => ({ ...prev, [name]: numValue }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -264,14 +279,13 @@ export default function EditarJugadoresPage() {
 
                 <div>
                   <label className="block text-white text-sm font-medium mb-2">
-                    Email
+                    Email (opcional)
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-green-500"
                   />
                 </div>
@@ -336,6 +350,23 @@ export default function EditarJugadoresPage() {
                       Administrador
                     </option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">
+                    Nivel (0-10)
+                  </label>
+                  <input
+                    type="number"
+                    name="nivel"
+                    value={formData.nivel ?? ""}
+                    onChange={handleInputChange}
+                    min="0"
+                    max="10"
+                    step="1"
+                    placeholder="Sin especificar"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-green-500"
+                  />
                 </div>
 
                 {/* Preview */}

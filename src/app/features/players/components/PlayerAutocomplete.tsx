@@ -14,6 +14,8 @@ type PlayerAutocompleteProps = {
   textColor?: string;
   borderColor?: string;
   optionBgColor?: string;
+  userIsAdmin?: boolean;
+  teamType?: string;
 };
 
 export default function PlayerAutocomplete({
@@ -27,6 +29,8 @@ export default function PlayerAutocomplete({
   textColor = "text-gray-600",
   borderColor = "border-gray-300",
   optionBgColor = "#f9fafb",
+  userIsAdmin = false,
+  teamType = "",
 }: PlayerAutocompleteProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -147,7 +151,23 @@ export default function PlayerAutocomplete({
     selectedPlayer && !isOpen ? selectedPlayer.name : searchTerm;
 
   return (
-    <div className={`relative w-full ${className}`} onBlur={handleInputBlur}>
+    <div
+      className={`relative w-full flex items-center gap-2 ${className}`}
+      onBlur={handleInputBlur}
+    >
+      {userIsAdmin &&
+        selectedPlayer?.nivel !== null &&
+        selectedPlayer?.nivel !== undefined && (
+          <div
+            className={`w-5 h-5 rounded flex items-center justify-center text-xs font-bold ${
+              teamType === "oscuras"
+                ? "bg-red-600 text-white"
+                : "bg-blue-500 text-white"
+            }`}
+          >
+            {selectedPlayer.nivel}
+          </div>
+        )}
       <input
         ref={inputRef}
         type="text"
@@ -177,14 +197,14 @@ export default function PlayerAutocomplete({
                 key={player._id.toString()}
                 className={`px-2 py-1 cursor-pointer ${textColor} hover:bg-blue-100 ${
                   index === highlightedIndex ? "bg-blue-100" : ""
-                }`}
+                } flex items-center gap-2`}
                 onMouseDown={(e) => {
                   e.preventDefault(); // Prevent input blur
                   handlePlayerSelect(player);
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
-                {player.name}
+                <span>{player.name}</span>
               </li>
             ))
           )}

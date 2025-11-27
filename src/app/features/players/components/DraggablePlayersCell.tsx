@@ -6,6 +6,8 @@ import { MatchTeam } from "@/app/constants/types";
 import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
 import PlayerAutocomplete from "./PlayerAutocomplete";
+import useCustomUser from "@/app/features/auth/hooks/useCustomUser";
+import { isAdmin } from "@/app/features/auth/utils/roles";
 
 type DraggablePlayersCellProps = {
   team: MatchTeam;
@@ -24,6 +26,8 @@ export default function DraggablePlayersCell({
 }: DraggablePlayersCellProps) {
   const { playersWithStats } = useMatchWithStats();
   const { draftMatch, updatePlayer, isPlayerAvailable } = useDraftMatch();
+  const user = useCustomUser();
+  const userIsAdmin = isAdmin(user);
 
   // Create unique ID for this cell
   const cellId = `${team}-${index}`;
@@ -109,14 +113,36 @@ export default function DraggablePlayersCell({
             textColor={textColor}
             borderColor={borderColor}
             optionBgColor={optionBgColor}
+            userIsAdmin={userIsAdmin}
+            teamType={team}
           />
         ) : (
-          <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
-            {playersWithStats.find(
-              (player) =>
-                player._id.toString() ===
-                teamData.players[index]?._id.toString()
-            )?.name || "-"}
+          <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-full flex items-center gap-2">
+            {(() => {
+              const currentPlayer = playersWithStats.find(
+                (player) =>
+                  player._id.toString() ===
+                  teamData.players[index]?._id.toString()
+              );
+              return (
+                <>
+                  {userIsAdmin &&
+                    currentPlayer?.nivel !== null &&
+                    currentPlayer?.nivel !== undefined && (
+                      <div
+                        className={`w-5 h-5 rounded flex items-center justify-center text-xs font-bold ${
+                          isOscuras
+                            ? "bg-white/20 text-white"
+                            : "bg-gray-600 text-white"
+                        }`}
+                      >
+                        {currentPlayer.nivel}
+                      </div>
+                    )}
+                  <span>{currentPlayer?.name || "-"}</span>
+                </>
+              );
+            })()}
           </div>
         )}
       </div>

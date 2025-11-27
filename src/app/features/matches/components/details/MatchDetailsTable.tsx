@@ -4,6 +4,8 @@ import { useState } from "react";
 import { MatchConfiguration } from "./MatchConfiguration";
 import { useDraftMatch } from "@/app/contexts/DraftMatchContext";
 import { useMatchWithStats } from "@/app/contexts/MatchWithStatsContext";
+import useCustomUser from "@/app/features/auth/hooks/useCustomUser";
+import { isAdmin } from "@/app/features/auth/utils/roles";
 import {
   DndContext,
   closestCenter,
@@ -38,11 +40,27 @@ export default function MatchDetailsTable({
     currentTeamPercentages,
     untilMatchTeamPercentages,
   } = useMatchWithStats();
+  const user = useCustomUser();
+  const userIsAdmin = isAdmin(user);
 
   const [columnVisibility, setColumnVisibility] = useState({
     goals: true,
     percentage: false,
   });
+
+  // Calculate nivel sum for each team
+  const calculateTeamNivelSum = (team: "oscuras" | "claras") => {
+    if (!draftMatch || !playersWithStats) return 0;
+    return draftMatch[team].players.reduce((sum, player) => {
+      const playerWithStats = playersWithStats.find(
+        (p) => p._id.toString() === player._id.toString()
+      );
+      return sum + (playerWithStats?.nivel || 0);
+    }, 0);
+  };
+
+  const oscurasNivelSum = calculateTeamNivelSum("oscuras");
+  const clarasNivelSum = calculateTeamNivelSum("claras");
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -147,10 +165,24 @@ export default function MatchDetailsTable({
                   </th>
                 )}
               <th className="px-2 sm:px-4 py-1 sm:py-2 text-white font-bold uppercase tracking-wider text-sm w-[30%] text-center bg-gray-600 border-r border-green-700">
-                Oscuras
+                <div className="flex items-center justify-center gap-2">
+                  {userIsAdmin && oscurasNivelSum > 0 && (
+                    <span className="bg-white/20 px-2 py-1 rounded text-xs font-bold">
+                      {oscurasNivelSum}
+                    </span>
+                  )}
+                  <span>Oscuras</span>
+                </div>
               </th>
               <th className="px-2 sm:px-4 py-1 sm:py-2 text-gray-600 font-bold uppercase tracking-wider text-sm w-[30%] text-center bg-white border-r border-green-700">
-                Claras
+                <div className="flex items-center justify-center gap-2">
+                  <span>Claras</span>
+                  {userIsAdmin && clarasNivelSum > 0 && (
+                    <span className="bg-gray-600 text-white px-2 py-1 rounded text-xs font-bold">
+                      {clarasNivelSum}
+                    </span>
+                  )}
+                </div>
               </th>
 
               {columnVisibility.percentage &&

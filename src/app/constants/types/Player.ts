@@ -7,6 +7,7 @@ export type DBPlayer = {
   favoriteTeam: string;
   email: string;
   role?: "admin" | "user";
+  nivel?: number | null;
 };
 
 export type SerializedPlayer = Omit<DBPlayer, "_id"> & {
@@ -27,4 +28,5 @@ export type PlayerWithStats = {
   percentage: number;
   position: number;
   mvp: number;
+  nivel?: number | null;
 };
