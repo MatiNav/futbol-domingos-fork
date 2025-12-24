@@ -8,6 +8,7 @@ import {
   AdminLink,
   MatchesLink,
   TableLink,
+  MemesLink,
 } from "../features/home/components/links";
 import { useTournament } from "../contexts/TournamentContext";
 import Spinner from "./spinner";
@@ -49,6 +50,7 @@ export default function HomePageContent({
               <TableLink />
               <MatchesLink />
               <AdminLink />
+              <MemesLink />
             </div>
           )}
         </div>

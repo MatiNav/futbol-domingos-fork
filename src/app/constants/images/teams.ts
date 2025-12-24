@@ -23,10 +23,19 @@ const BACKGROUND_IMAGES = {
 };
 
 const RANDOM_IMAGES = {
+  nicopcampeon: "https://i.postimg.cc/Wb13N2P9/nicopcampeon.jpg",
+  nicopsoborno: "https://i.postimg.cc/4dyL47Bx/nicopsoborno.jpg",
   campeones2025: "https://i.postimg.cc/gk4gcGYD/campeones.jpg",
   ferCampeon: "https://i.postimg.cc/TPj1jrHh/IMG-4126.jpg",
   santy99Campeon: "https://i.postimg.cc/sgXwvbxR/santy99.jpg",
 };
+
+const CD = "https://i.postimg.cc/k5mDdWXm/futbolcd.jpg";
+
+const MEMES = [
+  "https://i.postimg.cc/4dyL47Bx/nicopsoborno.jpg",
+  "https://i.postimg.cc/vTHVwfz3/nicoppasillo.jpg",
+];
 
 const DEFAULT_PLAYER_IMAGE_1 =
   "https://cdn-icons-png.flaticon.com/512/166/166344.png";
@@ -39,4 +48,6 @@ export {
   RANDOM_IMAGES,
   DEFAULT_PLAYER_IMAGE_1,
   DEFAULT_PLAYER_IMAGE_2,
+  MEMES,
+  CD,
 };

@@ -29,13 +29,13 @@ export const getBannerCarousel = (
     player: lastTourmentChampion,
     gradientFrom: "from-blue-900",
     gradientTo: "to-blue-600",
-    image: RANDOM_IMAGES.santy99Campeon,
+    image: RANDOM_IMAGES.nicopcampeon,
     showGoals: false,
   };
 
   return [
-    champions,
     lastTournamentWinner,
+    champions,
     ...(topPlayer.goals > 0
       ? [
           {
