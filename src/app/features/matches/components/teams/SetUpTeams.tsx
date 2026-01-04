@@ -1,6 +1,9 @@
 "use client";
 
-import { PlayerWithStats } from "@/app/constants/types/Player";
+import {
+  PlayerWithStats,
+  SerializedPlayer,
+} from "@/app/constants/types/Player";
 import { useEffect, useState } from "react";
 import PercentageCell from "@/app/features/matches/components/details/PercentageCell";
 import { useTournament } from "@/app/contexts/TournamentContext";
@@ -29,9 +32,31 @@ export default function SetupTeams() {
   const [isLoading, setIsLoading] = useState(false);
   //TODO: message should be an object with type and message
   const [message, setMessage] = useState("");
+  const [players, setPlayers] = useState<SerializedPlayer[]>([]);
+
+  const fetchPlayers = async () => {
+    try {
+      const response = await fetch("/api/players");
+      const data = await response.json();
+
+      if (response.ok && data.players && Array.isArray(data.players)) {
+        setPlayers(data.players);
+      } else {
+        console.error("Error in API response:", data);
+        setMessage(data.error || "Error al cargar los jugadores");
+      }
+    } catch (error) {
+      console.error("Error fetching players:", error);
+      setMessage("Error al cargar los jugadores");
+    }
+  };
+
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
 
   const handlePlayerSelect = (
-    player: PlayerWithStats,
+    player: any,
     team: "team1" | "team2",
     index: number
   ) => {
@@ -86,7 +111,7 @@ export default function SetupTeams() {
     // team: "team1" | "team2"
   ) => {
     // const otherTeam = team === "team1" ? team2 : team1;
-    return playersWithStats.filter(
+    return players.filter(
       (player) =>
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !team1.some((p) => p?._id === player._id) &&
